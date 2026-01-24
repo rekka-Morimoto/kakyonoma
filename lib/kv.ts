@@ -1,13 +1,31 @@
 import { Redis } from '@upstash/redis';
 
+// Vercel上の環境変数の名前が環境によって異なる場合があるため、
+// 可能性のある名前をすべてチェックします。
+const url =
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.KV_REST_API_URL ||
+    process.env.KV_URL;
+
+const token =
+    process.env.UPSTASH_REDIS_REST_TOKEN ||
+    process.env.KV_REST_API_TOKEN;
+
+// 診断用ログ（Vercelのログ画面に表示されます）
+if (!url || !token) {
+    console.error('--- REDIS CONFIG ERROR ---');
+    console.error('Missing Redis environment variables.');
+    console.error('Available env keys:', Object.keys(process.env).filter(k => k.includes('REDIS') || k.includes('KV')));
+    console.error('---------------------------');
+}
+
 /**
- * @vercel/kv の不具合（環境変数の名前不一致）を回避するため、
- * 直接 @upstash/redis を使用します。
- * Redis.fromEnv() は自動的に以下の環境変数を探します：
- * - UPSTASH_REDIS_REST_URL
- * - UPSTASH_REDIS_REST_TOKEN
+ * 直接 URL と Token を渡して初期化することで、
+ * fromEnv() の自動検知に頼らず確実に接続します。
  */
-const kv = Redis.fromEnv();
+export const kv = new Redis({
+    url: url || '',
+    token: token || '',
+});
 
 export default kv;
-export { kv };
