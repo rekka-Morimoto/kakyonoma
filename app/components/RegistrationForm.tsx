@@ -64,12 +64,12 @@ export default function RegistrationForm() {
     };
 
     const handleGenerate = async () => {
-        // 1. 実行される瞬間にだけライブラリを読み込む（サーバーエラー回避）
+        // 1. ブラウザ上であることを確認する（サーバーでの実行を防止）
+        if (typeof window === 'undefined') return null;
+
+        // 2. 実行される瞬間にだけライブラリを読み込む
         // @ts-ignore
         const domtoimage = (await import('dom-to-image-more')).default;
-
-        // 2. ブラウザ上であることを確認する
-        if (typeof window === 'undefined') return null;
 
         const element = document.getElementById('tennyu-todoke');
         if (element) {

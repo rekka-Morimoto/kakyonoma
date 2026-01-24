@@ -150,6 +150,9 @@ export default function Registry() {
             const element = document.getElementById(`renderer-${resident.id}`);
             if (element) {
                 try {
+                    // ブラウザ上であることを確認
+                    if (typeof window === 'undefined') return;
+
                     // @ts-ignore
                     const domtoimage = (await import('dom-to-image-more')).default;
 
