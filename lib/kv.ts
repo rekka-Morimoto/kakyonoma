@@ -1,13 +1,13 @@
-import { createClient } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
 
 /**
- * Vercelの最近のアップデートにより、環境変数の名前が 
- * KV_REST_API_URL ではなく UPSTASH_REDIS_REST_URL になっている場合があります。
- * どちらの名前でも動作するように、共通のクライアントを作成します。
+ * @vercel/kv の不具合（環境変数の名前不一致）を回避するため、
+ * 直接 @upstash/redis を使用します。
+ * Redis.fromEnv() は自動的に以下の環境変数を探します：
+ * - UPSTASH_REDIS_REST_URL
+ * - UPSTASH_REDIS_REST_TOKEN
  */
-export const kv = createClient({
-    url: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '',
-    token: process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '',
-});
+const kv = Redis.fromEnv();
 
 export default kv;
+export { kv };

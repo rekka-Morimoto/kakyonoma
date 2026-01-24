@@ -35,7 +35,7 @@ export async function GET() {
       pipeline.get(`resident:${id}`);
     });
 
-    const residents: (Resident | null)[] = await pipeline.exec();
+    const residents = await pipeline.exec<Resident[]>();
 
     // Filter out nulls and sanitize
     const sanitizedResidents = residents
