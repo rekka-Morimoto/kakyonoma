@@ -1,32 +1,31 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { kv } from '@vercel/kv';
 
-const STATS_PATH = path.join(process.cwd(), 'stats.json');
-const ADMIN_PASSWORD = 'admin'; // Same as residents API for simplicity
-
-// Data interfaces
-interface DailyStats {
-    [questionId: string]: {
-        A: number;
-        B: number;
-    };
-}
-
-interface StatsData {
-    [date: string]: DailyStats;
-}
+const ADMIN_PASSWORD = 'admin';
 
 export async function GET() {
     try {
-        try {
-            await fs.access(STATS_PATH);
-        } catch {
-            await fs.writeFile(STATS_PATH, '{}');
+        // Find all keys that match stats:*
+        const keys = await kv.keys('stats:*');
+
+        const stats: any = {};
+
+        for (const key of keys) {
+            const date = key.replace('stats:', '');
+            const questions = await kv.hgetall(key);
+
+            // Reconstruct the nested structure { [questionId]: { A: n, B: n } }
+            const dailyData: any = {};
+            if (questions) {
+                Object.entries(questions).forEach(([field, count]) => {
+                    const [qId, choice] = field.split(':');
+                    if (!dailyData[qId]) dailyData[qId] = { A: 0, B: 0 };
+                    dailyData[qId][choice] = count;
+                });
+            }
+            stats[date] = dailyData;
         }
 
-        const data = await fs.readFile(STATS_PATH, 'utf-8');
-        const stats: StatsData = JSON.parse(data || '{}');
         return NextResponse.json(stats);
     } catch (error) {
         console.error('Stats GET Error:', error);
@@ -46,25 +45,13 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ error: 'Date is required' }, { status: 400 });
         }
 
-        try {
-            await fs.access(STATS_PATH);
-        } catch {
-            return NextResponse.json({ message: 'No stats to clear' });
-        }
-
-        const data = await fs.readFile(STATS_PATH, 'utf-8');
-        const stats: StatsData = JSON.parse(data || '{}');
-
-        if (stats[date]) {
-            delete stats[date];
-            await fs.writeFile(STATS_PATH, JSON.stringify(stats, null, 2));
-            return NextResponse.json({ message: `Stats for ${date} cleared` });
-        } else {
-            return NextResponse.json({ error: 'Date not found' }, { status: 404 });
-        }
+        await kv.del(`stats:${date}`);
+        return NextResponse.json({ message: `Stats for ${date} cleared` });
 
     } catch (error) {
         console.error('Stats DELETE Error:', error);
         return NextResponse.json({ error: 'Failed to clear stats' }, { status: 500 });
     }
 }
+
+
