@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { kv } from '@/lib/kv';
+import { put, del as blobDel } from '@vercel/blob';
 
 interface Resident {
   id: number;
@@ -12,13 +13,19 @@ interface Resident {
   baseLocation: string;
   roomNumber: number;
   building?: 'あこがれびと' | 'みまもりびと' | 'となりびと' | 'あゆみびと';
-  image: string;
-  icon: string;
+  image: string; // URL または Base64
+  icon: string;  // URL または Base64
   password?: string;
   createdAt: string;
 }
 
 const ADMIN_PASSWORD = '5226ms';
+
+// Helper to convert base64 to Buffer
+function base64ToBuffer(base64: string) {
+  const base64Data = base64.split(',')[1] || base64;
+  return Buffer.from(base64Data, 'base64');
+}
 
 export async function GET() {
   try {
@@ -68,8 +75,37 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Name and Image are required' }, { status: 400 });
     }
 
-    const newId = await kv.incr('resident_counter');
+    // --- Upload images to Vercel Blob ---
+    let imageUrl = image;
+    let iconUrl = icon;
 
+    try {
+      if (image.startsWith('data:')) {
+        const imageBuffer = base64ToBuffer(image);
+        const fileName = `todoke_${Date.now()}.png`;
+        const blob = await put(`residents/${fileName}`, imageBuffer, {
+          access: 'public',
+          contentType: 'image/png',
+        });
+        imageUrl = blob.url;
+      }
+
+      if (icon?.startsWith('data:')) {
+        const iconBuffer = base64ToBuffer(icon);
+        const fileName = `icon_${Date.now()}.png`;
+        const blob = await put(`residents/${fileName}`, iconBuffer, {
+          access: 'public',
+          contentType: 'image/png',
+        });
+        iconUrl = blob.url;
+      }
+    } catch (blobErr) {
+      console.error('Vercel Blob Upload Error:', blobErr);
+      // Fallback to Redis if Blob fails (though we want to avoid this ideally)
+      // return NextResponse.json({ error: 'Storage Error' }, { status: 500 });
+    }
+
+    const newId = await kv.incr('resident_counter');
     const buildingResidentsCountKey = `building_count:${building}`;
     const buildingCount = await kv.incr(buildingResidentsCountKey);
     const roomNumber = Math.ceil(buildingCount / 4);
@@ -85,8 +121,8 @@ export async function POST(request: Request) {
       baseLocation: baseLocation || '',
       roomNumber,
       building,
-      image,
-      icon: icon || '',
+      image: imageUrl,
+      icon: iconUrl,
       password: password || '',
       createdAt: new Date().toISOString(),
     };
@@ -96,6 +132,7 @@ export async function POST(request: Request) {
     pipeline.zadd('resident_ids', newId, String(newId));
     await pipeline.exec();
 
+    // --- Update Statistics ---
     const { answers } = body;
     if (answers) {
       try {
@@ -136,9 +173,22 @@ export async function DELETE(request: Request) {
 
       const residentIds = await kv.zrange('resident_ids', 0, -1);
       const pipeline = kv.pipeline();
-      residentIds.forEach((rid) => {
+
+      for (const rid of residentIds) {
+        const resData = await kv.get(`resident:${rid}`);
+        if (resData) {
+          const res: Resident = typeof resData === 'string' ? JSON.parse(resData) : resData;
+          // Blob削除
+          if (res.image?.includes('public.blob.vercel-storage.com')) {
+            try { await blobDel(res.image); } catch (e) { }
+          }
+          if (res.icon?.includes('public.blob.vercel-storage.com')) {
+            try { await blobDel(res.icon); } catch (e) { }
+          }
+        }
         pipeline.del(`resident:${rid}`);
-      });
+      }
+
       pipeline.del('resident_ids');
       pipeline.del('resident_counter');
       ['あこがれびと', 'みまもりびと', 'となりびと', 'あゆみびと'].forEach(b => {
@@ -157,10 +207,18 @@ export async function DELETE(request: Request) {
     if (!resData) {
       return NextResponse.json({ error: 'Resident not found' }, { status: 404 });
     }
-    const resident: Resident = JSON.parse(resData);
+    const resident: Resident = typeof resData === 'string' ? JSON.parse(resData) : resData;
 
     if (resident.password && resident.password !== password && password !== ADMIN_PASSWORD) {
       return NextResponse.json({ error: 'Invalid password' }, { status: 403 });
+    }
+
+    // Blob削除
+    if (resident.image?.includes('public.blob.vercel-storage.com')) {
+      try { await blobDel(resident.image); } catch (e) { }
+    }
+    if (resident.icon?.includes('public.blob.vercel-storage.com')) {
+      try { await blobDel(resident.icon); } catch (e) { }
     }
 
     const pipeline = kv.pipeline();
@@ -177,3 +235,4 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: 'Failed to delete resident' }, { status: 500 });
   }
 }
+
