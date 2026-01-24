@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import TennyuTodoke from '../components/TennyuTodoke';
 // @ts-ignore
-import domtoimage from 'dom-to-image-more';
+// Dynamic import will be handled in handleViewCertificate
 import { BUILDING_STYLES, getBuildingStyle } from '../utils/buildingConstants';
 
 interface Resident {
@@ -150,6 +150,9 @@ export default function Registry() {
             const element = document.getElementById(`renderer-${resident.id}`);
             if (element) {
                 try {
+                    // @ts-ignore
+                    const domtoimage = (await import('dom-to-image-more')).default;
+
                     const dataUrl = await domtoimage.toPng(element, {
                         quality: 0.95,
                         bgcolor: '#ffffff',

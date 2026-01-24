@@ -65,6 +65,7 @@ export default function RegistrationForm() {
 
     const handleGenerate = async () => {
         // 1. 実行される瞬間にだけライブラリを読み込む（サーバーエラー回避）
+        // @ts-ignore
         const domtoimage = (await import('dom-to-image-more')).default;
 
         // 2. ブラウザ上であることを確認する
