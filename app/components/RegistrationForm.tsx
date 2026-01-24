@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 // @ts-ignore
-import domtoimage from 'dom-to-image-more';
 import TennyuTodoke from './TennyuTodoke';
 import { useRouter } from 'next/navigation';
 import DiagnosisFlow, { ResultType, DIAGNOSIS_RESULTS } from './DiagnosisFlow';
@@ -65,6 +64,12 @@ export default function RegistrationForm() {
     };
 
     const handleGenerate = async () => {
+        // 1. 実行される瞬間にだけライブラリを読み込む（サーバーエラー回避）
+        const domtoimage = (await import('dom-to-image-more')).default;
+
+        // 2. ブラウザ上であることを確認する
+        if (typeof window === 'undefined') return null;
+
         const element = document.getElementById('tennyu-todoke');
         if (element) {
             setLoading(true);
