@@ -5,22 +5,19 @@ const ADMIN_PASSWORD = '5226ms';
 
 export async function GET() {
     try {
-        // Find all keys that match stats:*
         const keys = await kv.keys('stats:*');
-
         const stats: any = {};
 
         for (const key of keys) {
             const date = key.replace('stats:', '');
             const questions = await kv.hgetall(key);
 
-            // Reconstruct the nested structure { [questionId]: { A: n, B: n } }
             const dailyData: any = {};
             if (questions) {
                 Object.entries(questions).forEach(([field, count]) => {
                     const [qId, choice] = field.split(':');
                     if (!dailyData[qId]) dailyData[qId] = { A: 0, B: 0 };
-                    dailyData[qId][choice] = count;
+                    dailyData[qId][choice] = parseInt(String(count), 10);
                 });
             }
             stats[date] = dailyData;
@@ -53,5 +50,3 @@ export async function DELETE(request: Request) {
         return NextResponse.json({ error: 'Failed to clear stats' }, { status: 500 });
     }
 }
-
-

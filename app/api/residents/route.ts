@@ -3,45 +3,51 @@ import { kv } from '@/lib/kv';
 
 interface Resident {
   id: number;
-  name: string; // Full name (Sei + Mei)
-  firstName?: string; // Mei
-  lastName?: string; // Sei
-  nickname?: string; // Yobikata
+  name: string;
+  firstName?: string;
+  lastName?: string;
+  nickname?: string;
   xAccount: string;
   youtubeAccount: string;
   baseLocation: string;
-  roomNumber: number; // New: Automatically assigned room
-  building?: 'あこがれびと' | 'みまもりびと' | 'となりびと' | 'あゆみびと'; // New: Building assignment
-  image: string; // Generated document image
-  icon: string;  // Original user icon
-  password?: string; // Secret password for deletion
+  roomNumber: number;
+  building?: 'あこがれびと' | 'みまもりびと' | 'となりびと' | 'あゆみびと';
+  image: string;
+  icon: string;
+  password?: string;
   createdAt: string;
 }
 
-const ADMIN_PASSWORD = '5226ms'; // Master password updated as requested
+const ADMIN_PASSWORD = '5226ms';
 
 export async function GET() {
   try {
-    // Get all resident IDs
     const residentIds = await kv.zrange('resident_ids', 0, -1);
 
     if (!residentIds || residentIds.length === 0) {
       return NextResponse.json([]);
     }
 
-    // Fetch all residents at once using pipeline for performance
     const pipeline = kv.pipeline();
     residentIds.forEach((id) => {
       pipeline.get(`resident:${id}`);
     });
 
-    const residents = await pipeline.exec<Resident[]>();
+    const results = await pipeline.exec();
+    if (!results) return NextResponse.json([]);
 
-    // Filter out nulls and sanitize
-    const sanitizedResidents = residents
-      .filter((r): r is Resident => r !== null)
-      .map(({ password, ...rest }) => rest);
+    const residents: Resident[] = results
+      .map(([err, res]) => {
+        if (err || !res) return null;
+        try {
+          return typeof res === 'string' ? JSON.parse(res) : res;
+        } catch {
+          return null;
+        }
+      })
+      .filter((r): r is Resident => r !== null);
 
+    const sanitizedResidents = residents.map(({ password, ...rest }) => rest);
     return NextResponse.json(sanitizedResidents);
   } catch (error) {
     console.error('Database Error:', error);
@@ -57,17 +63,13 @@ export async function POST(request: Request) {
       xAccount, youtubeAccount, baseLocation, image, icon, password, building
     } = body;
 
-    // Validate input: Require either name, or both firstName and lastName
     const hasName = name || (firstName && lastName);
-
     if (!hasName || !image) {
       return NextResponse.json({ error: 'Name and Image are required' }, { status: 400 });
     }
 
-    // Generate new ID using an incrementing counter in KV
     const newId = await kv.incr('resident_counter');
 
-    // Room calculation: Count residents in this building
     const buildingResidentsCountKey = `building_count:${building}`;
     const buildingCount = await kv.incr(buildingResidentsCountKey);
     const roomNumber = Math.ceil(buildingCount / 4);
@@ -89,13 +91,11 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
     };
 
-    // Store resident data and add ID to the sorted set
     const pipeline = kv.pipeline();
-    pipeline.set(`resident:${newId}`, newResident);
-    pipeline.zadd('resident_ids', { score: newId, member: String(newId) });
+    pipeline.set(`resident:${newId}`, JSON.stringify(newResident));
+    pipeline.zadd('resident_ids', newId, String(newId));
     await pipeline.exec();
 
-    // --- Update Statistics ---
     const { answers } = body;
     if (answers) {
       try {
@@ -108,14 +108,12 @@ export async function POST(request: Request) {
         const statsPipeline = kv.pipeline();
         Object.entries(answers).forEach(([qId, choice]) => {
           if (choice === 'A' || choice === 'B') {
-            // Redis HINCRBY equivalent in KV
             statsPipeline.hincrby(todayKey, `${qId}:${choice}`, 1);
           }
         });
         await statsPipeline.exec();
       } catch (statsErr) {
         console.error('Failed to update stats:', statsErr);
-        // Do not fail the registration request even if stats fail
       }
     }
 
@@ -131,7 +129,6 @@ export async function DELETE(request: Request) {
     const body = await request.json();
     const { id, password, deleteAll } = body;
 
-    // --- Bulk Deletion ---
     if (deleteAll) {
       if (password !== ADMIN_PASSWORD) {
         return NextResponse.json({ error: 'Invalid admin password' }, { status: 403 });
@@ -144,7 +141,6 @@ export async function DELETE(request: Request) {
       });
       pipeline.del('resident_ids');
       pipeline.del('resident_counter');
-      // Also clear building counts
       ['あこがれびと', 'みまもりびと', 'となりびと', 'あゆみびと'].forEach(b => {
         pipeline.del(`building_count:${b}`);
       });
@@ -153,22 +149,20 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ message: 'All residents deleted' });
     }
 
-    // --- Individual Deletion ---
     if (!id) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    const resident: Resident | null = await kv.get(`resident:${id}`);
-    if (!resident) {
+    const resData = await kv.get(`resident:${id}`);
+    if (!resData) {
       return NextResponse.json({ error: 'Resident not found' }, { status: 404 });
     }
+    const resident: Resident = JSON.parse(resData);
 
-    // Check password ONLY if the resident HAS a password set.
     if (resident.password && resident.password !== password && password !== ADMIN_PASSWORD) {
       return NextResponse.json({ error: 'Invalid password' }, { status: 403 });
     }
 
-    // Delete resident data, remove from set, and decrement building count
     const pipeline = kv.pipeline();
     pipeline.del(`resident:${id}`);
     pipeline.zrem('resident_ids', String(id));
