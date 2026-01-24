@@ -18,7 +18,7 @@ interface Resident {
   createdAt: string;
 }
 
-const ADMIN_PASSWORD = 'admin'; // Master password for developer cleanup
+const ADMIN_PASSWORD = '5226ms'; // Master password updated as requested
 
 export async function GET() {
   try {
