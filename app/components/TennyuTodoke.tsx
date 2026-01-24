@@ -32,7 +32,12 @@ export default function TennyuTodoke({
     freeText,
     residentId = 1,
 }: TennyuTodokeProps) {
-    const currentDate = date || new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+    const [currentDate, setCurrentDate] = React.useState(date || '');
+    React.useEffect(() => {
+        if (!date) {
+            setCurrentDate(new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }));
+        }
+    }, [date]);
 
     return (
         <div
