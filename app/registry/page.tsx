@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import TennyuTodoke from '../components/TennyuTodoke';
-// @ts-ignore
 // Dynamic import will be handled in handleViewCertificate
 import { BUILDING_STYLES, getBuildingStyle } from '../utils/buildingConstants';
 
@@ -153,7 +152,6 @@ export default function Registry() {
                     // ブラウザ上であることを確認
                     if (typeof window === 'undefined') return;
 
-                    // @ts-ignore
                     const domtoimage = (await import('dom-to-image-more')).default;
 
                     const dataUrl = await domtoimage.toPng(element, {

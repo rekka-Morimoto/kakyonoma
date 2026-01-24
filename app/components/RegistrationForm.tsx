@@ -68,7 +68,6 @@ export default function RegistrationForm() {
         if (typeof window === 'undefined') return null;
 
         // 2. 実行される瞬間にだけライブラリを読み込む
-        // @ts-ignore
         const domtoimage = (await import('dom-to-image-more')).default;
 
         const element = document.getElementById('tennyu-todoke');
