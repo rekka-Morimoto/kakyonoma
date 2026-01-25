@@ -29,19 +29,25 @@ export default function Home() {
           {/* Illustration Banner */}
           <div className="max-w-3xl mx-auto mb-8 rounded-2xl overflow-hidden border-4 border-[#8b7355] shadow-lg bg-[#f5f1e8]">
             <div className="relative min-h-[200px] flex items-center justify-center">
-              {/* Image with fallback if not found */}
+              {/* Image with fallback chain: webp -> png -> emoji */}
               <img
-                src="/banner.png"
+                src="/banner.webp"
                 alt="かきょの間 バナー"
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  // If image is missing, show a beautiful gradient and icons as fallback
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.parentElement!.classList.add('p-8', 'bg-gradient-to-b', 'from-[#f5f1e8]', 'to-[#e8dcc8]');
-                  const container = document.createElement('div');
-                  container.className = 'text-center space-y-4';
-                  container.innerHTML = '<div class="text-7xl">🏘️</div><div class="flex items-center justify-center gap-3"><span class="text-3xl opacity-30">🌿</span><span class="text-4xl opacity-40">📮</span><span class="text-5xl">🏮</span><span class="text-4xl opacity-40">🍵</span><span class="text-3xl opacity-30">🌸</span></div>';
-                  e.currentTarget.parentElement!.appendChild(container);
+                  const img = e.currentTarget;
+                  if (img.src.endsWith('.webp')) {
+                    // Try png if webp fails
+                    img.src = '/banner.png';
+                  } else {
+                    // Both failed, show fallback
+                    img.style.display = 'none';
+                    img.parentElement!.classList.add('p-8', 'bg-gradient-to-b', 'from-[#f5f1e8]', 'to-[#e8dcc8]');
+                    const container = document.createElement('div');
+                    container.className = 'text-center space-y-4';
+                    container.innerHTML = '<div class="text-7xl">🏘️</div><div class="flex items-center justify-center gap-3"><span class="text-3xl opacity-30">🌿</span><span class="text-4xl opacity-40">📮</span><span class="text-5xl">🏮</span><span class="text-4xl opacity-40">🍵</span><span class="text-3xl opacity-30">🌸</span></div>';
+                    img.parentElement!.appendChild(container);
+                  }
                 }}
               />
             </div>
