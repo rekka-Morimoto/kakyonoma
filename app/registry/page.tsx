@@ -248,7 +248,7 @@ export default function Registry() {
                         <h1 className="text-5xl md:text-6xl font-serif font-black tracking-tighter mb-4 text-stone-900">
                             入居者名簿
                         </h1>
-                        <p className="text-stone-500 font-bold tracking-[0.3em] uppercase text-sm">Resident Registry — Kakyo-no-ma Residence</p>
+                        <p className="text-stone-500 font-bold tracking-[0.3em] uppercase text-sm">Resident Registry — Kakyo-no-ma</p>
                     </div>
 
                     <div className="flex gap-4">
@@ -256,7 +256,7 @@ export default function Registry() {
                             href="/kakyonoma"
                             className="bg-stone-900 text-white px-8 py-4 rounded-full font-bold hover:bg-stone-800 transition-all shadow-xl hover:shadow-2xl active:scale-95 text-lg"
                         >
-                            畳の間へ
+                            かきょの間へ
                         </Link>
                         <Link
                             href="/"

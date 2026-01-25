@@ -239,7 +239,7 @@ export default function Home() {
             <div className="text-[#c9a64e] text-sm opacity-60">✦</div>
             <div className="h-px bg-[#8b7355] w-16 opacity-40" />
           </div>
-          <p className="text-[#9a8b7a] text-xs tracking-[0.2em] font-serif">© 2026 Maison de Kyo</p>
+          <p className="text-[#9a8b7a] text-xs tracking-[0.2em] font-serif">© 2026 かきょの間 (Kakyo-no-ma)</p>
         </div>
 
       </div>

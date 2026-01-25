@@ -134,7 +134,7 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
     return (
         <div
             ref={containerRef}
-            className={`bg-[#3e3b2e] rounded-xl shadow-2xl border-[20px] border-[#2c2a21] relative overflow-hidden h-[800px] cursor-${isDragging ? 'grabbing' : 'grab'}`}
+            className={`w-full h-full bg-[#3e3b2e] relative overflow-hidden cursor-${isDragging ? 'grabbing' : 'grab'}`}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -143,7 +143,7 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
         >
             <div className="absolute inset-0 flex items-center justify-center transition-transform duration-75 ease-out select-none"
                 style={{ transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})` }}>
-                <div className="grid border-4 border-[#1a1814]"
+                <div className="grid border-4 border-[#1a1814] shadow-[0_0_100px_rgba(0,0,0,0.5)]"
                     style={{ gridTemplateColumns: `repeat(${layout.cols}, 80px)`, gridTemplateRows: `repeat(${layout.rows}, 80px)`, backgroundColor: '#1a1814', padding: '1px' }}>
                     {layout.mats.map((mat, index) => {
                         const resident = placedResidents[index];
@@ -184,10 +184,19 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
                     })}
                 </div>
             </div>
-            <div className="absolute top-4 right-4 bg-white/95 p-1 rounded-lg border border-stone-200 flex flex-col z-50">
-                <button onClick={() => setScale(s => Math.min(s + 0.2, 3))} className="p-2 hover:bg-stone-100 font-bold">+</button>
-                <button onClick={() => setScale(s => Math.max(s - 0.2, 0.2))} className="p-2 hover:bg-stone-100 font-bold">-</button>
-                <button onClick={() => { setScale(0.8); setOffset({ x: 0, y: 0 }); }} className="p-2 hover:bg-stone-100 font-bold">⟲</button>
+
+            {/* Controls Overlay */}
+            <div className="absolute top-1/2 -translate-y-1/2 right-6 bg-black/30 backdrop-blur-md p-1.5 rounded-2xl border border-white/10 flex flex-col z-[100] shadow-2xl">
+                <button onClick={() => setScale(s => Math.min(s + 0.2, 3))} className="p-3 text-white hover:bg-white/10 rounded-xl transition text-xl font-bold" title="拡大">+</button>
+                <div className="h-px bg-white/10 mx-2" />
+                <button onClick={() => setScale(s => Math.max(s - 0.2, 0.2))} className="p-3 text-white hover:bg-white/10 rounded-xl transition text-xl font-bold" title="縮小">-</button>
+                <div className="h-px bg-white/10 mx-2" />
+                <button onClick={() => { setScale(0.8); setOffset({ x: 0, y: 0 }); }} className="p-3 text-white hover:bg-white/10 rounded-xl transition text-xl" title="リセット">⟲</button>
+            </div>
+
+            {/* Legend / Info Overlay */}
+            <div className="absolute bottom-6 right-6 z-50 pointer-events-none opacity-40 hover:opacity-100 transition-opacity">
+                <p className="text-white text-[10px] tracking-widest text-right">DRAG TO PAN • WHEEL TO ZOOM</p>
             </div>
         </div>
     );

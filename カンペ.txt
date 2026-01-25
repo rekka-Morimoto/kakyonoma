@@ -1,0 +1,5 @@
+データ移動用プロンプト
+$url = "https://kakyonoma.vercel.app/api/migrate"
+Invoke-RestMethod -Uri $url -Method Post -Body '{ "password": "5226ms" }' -ContentType "application/json"
+
+PowerShellにうちこむ
