@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#fcf9f2] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <main className="min-h-screen bg-transparent flex flex-col items-center justify-center p-6 relative overflow-hidden">
       {/* Decorative corner ornaments */}
       <div className="absolute top-8 left-8 w-24 h-24 border-t-4 border-l-4 border-[#8b7355] opacity-40" />
       <div className="absolute top-8 right-8 w-24 h-24 border-t-4 border-r-4 border-[#8b7355] opacity-40" />

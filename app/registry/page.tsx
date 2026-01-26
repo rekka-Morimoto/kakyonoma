@@ -179,7 +179,7 @@ export default function Registry() {
     };
 
     return (
-        <div className="min-h-screen bg-[#faf9f6] text-stone-900 font-sans relative">
+        <div className="min-h-screen bg-[#faf9f6]/80 text-stone-900 font-sans relative backdrop-blur-sm">
             {/* Delete Modal */}
             {deletingId && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in duration-200">

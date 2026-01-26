@@ -27,7 +27,7 @@ export default function KakyoNoMa() {
     }, []);
 
     return (
-        <main className="fixed inset-0 bg-[#3e3b2e] overflow-hidden font-serif">
+        <main className="fixed inset-0 bg-[#3e3b2e]/80 backdrop-blur-sm overflow-hidden font-serif">
             {/* Header Overlay */}
             <div className="absolute top-0 left-0 right-0 z-50 p-6 flex flex-col md:flex-row justify-between items-start md:items-center pointer-events-none">
                 <div className="space-y-1 pointer-events-auto">
