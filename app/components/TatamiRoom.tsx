@@ -134,7 +134,7 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
     return (
         <div
             ref={containerRef}
-            className={`w-full h-full bg-[#3e3b2e] relative overflow-hidden cursor-${isDragging ? 'grabbing' : 'grab'}`}
+            className={`w-full h-full bg-transparent relative overflow-hidden cursor-${isDragging ? 'grabbing' : 'grab'}`}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}

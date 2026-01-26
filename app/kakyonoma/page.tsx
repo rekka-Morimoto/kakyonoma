@@ -27,7 +27,16 @@ export default function KakyoNoMa() {
     }, []);
 
     return (
-        <main className="fixed inset-0 bg-[#3e3b2e]/80 backdrop-blur-sm overflow-hidden font-serif">
+        <main className="fixed inset-0 bg-[#1a1812] overflow-hidden font-serif">
+            {/* Immersive Washitsu Background */}
+            <div className="absolute inset-0 z-0">
+                <img
+                    src="/washitsu-bg.png"
+                    alt="和室背景"
+                    className="w-full h-full object-cover opacity-60 mix-blend-luminosity grayscale-[20%]"
+                />
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+            </div>
             {/* Header Overlay */}
             <div className="absolute top-0 left-0 right-0 z-50 p-6 flex flex-col md:flex-row justify-between items-start md:items-center pointer-events-none">
                 <div className="space-y-1 pointer-events-auto">
