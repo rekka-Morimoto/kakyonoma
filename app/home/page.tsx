@@ -10,18 +10,18 @@ export default function Home() {
       <div className="absolute bottom-12 left-12 w-32 h-32 border-b-2 border-l-2 border-[#c9a64e]/40 pointer-events-none" />
       <div className="absolute bottom-12 right-12 w-32 h-32 border-b-2 border-r-2 border-[#c9a64e]/40 pointer-events-none" />
 
-      <div className="max-w-7xl w-full text-center space-y-20 relative z-10 pt-10 pb-20">
+      <div className="max-w-7xl w-full text-center space-y-16 relative z-10 pt-10 pb-20">
 
         {/* Header Section */}
-        <div className="space-y-10 relative">
+        <div className="space-y-12 relative">
 
-          {/* Illustration Banner */}
-          <div className="max-w-4xl mx-auto rounded-3xl overflow-hidden border-2 border-white/10 shadow-2xl bg-black/20 backdrop-blur-md">
+          {/* Illustration Banner with Window Frame */}
+          <div className="max-w-4xl mx-auto rounded-3xl overflow-hidden window-frame">
             <div className="relative min-h-[250px] flex items-center justify-center">
               <img
                 src="/banner.webp"
                 alt="かきょの間 バナー"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover relative z-0"
                 onError={(e) => {
                   const img = e.currentTarget;
                   if (img.src.endsWith('.webp')) {
@@ -39,9 +39,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Title with Strong Outline */}
+          {/* Title with Elegant Font */}
           <div className="space-y-4 px-4">
-            <h1 className="font-serif font-black text-white tracking-tight leading-none text-outline">
+            <h1 className="text-white tracking-tight leading-none text-outline title-elegant">
               <span className="block text-6xl md:text-8xl lg:text-9xl whitespace-nowrap drop-shadow-2xl mx-auto max-w-full">メゾン・ド・きょー</span>
             </h1>
             <div className="text-sm md:text-base tracking-[0.8em] text-[#c9a64e] font-serif uppercase font-bold drop-shadow-lg">
@@ -51,14 +51,14 @@ export default function Home() {
 
           {/* Description */}
           <div className="max-w-3xl mx-auto px-6">
-            <p className="text-xl md:text-3xl text-white font-serif leading-relaxed text-outline opacity-95">
+            <p className="text-xl md:text-2xl text-white font-serif leading-relaxed text-outline opacity-95">
               ようこそ、この古き良き集合住宅へ。<br />
               あなたの居場所を記録し、仲間たちと過ごす時間を。
             </p>
           </div>
         </div>
 
-        {/* Navigation Cards - Unified Grid Layout */}
+        {/* Navigation Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
 
           <Link href="/register" className="group">
@@ -99,8 +99,6 @@ export default function Home() {
               </div>
             </div>
           </Link>
-
-          {/* New Grid Row for the rest of the features */}
 
           <Link href="/songs" className="group">
             <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40">

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Tokumin:wght@400;500;700;800&display=swap');
 @import "tailwindcss";
 
 /* Retro Maison - Antique/Settled Color Palette */
@@ -109,4 +110,47 @@ body::before {
 
 .border-retro {
   border-color: var(--border-default);
+}
+
+.title-elegant {
+  font-family: 'Kaisei Tokumin', serif !important;
+  letter-spacing: 0.15em;
+  font-weight: 800;
+}
+
+.window-frame {
+  position: relative;
+  border: 16px solid #43341b;
+  /* Dark wood */
+  box-shadow:
+    inset 0 0 24px rgba(0, 0, 0, 0.9),
+    0 15px 50px rgba(0, 0, 0, 0.6);
+  background: #2d2418;
+  overflow: hidden;
+}
+
+.window-frame::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid #c9a64e;
+  /* Gold inner trim */
+  pointer-events: none;
+  z-index: 20;
+}
+
+.window-frame::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  bottom: 0;
+  background: rgba(201, 166, 78, 0.2);
+  /* Subtle vertical muntin */
+  z-index: 10;
+  pointer-events: none;
 }
