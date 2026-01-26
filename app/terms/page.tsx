@@ -58,176 +58,132 @@ export default function TermsPage() {
                             <h2 className="text-lg font-black text-[#a84032]">重要なお知らせ</h2>
                         </div>
                         <p className="text-[#43341b] leading-relaxed text-sm">
-                            本サイトは、佳鏡院さんご本人、および公式・運営関係者とは<span className="font-bold">一切関係がありません</span>。<br />
-                            サイトの企画・運営・管理は、すべて個人ファンによって行われています。
+                            免責事項
+                        </p>
+                        <p className="text-xs leading-relaxed">
+                            本サイトを通じて発生した個人間のやり取り、SNSでの交流、オフラインでの接触、および、それに伴って生じたトラブルについて、当サイトおよび管理人は一切の責任を負いません。
                         </p>
                     </div>
+                </div>
+            </section>
 
-                    {/* Terms Sections */}
-                    <div className="space-y-8">
-                        {/* Section 1 */}
-                        <section>
-                            <h3 className="text-xl font-black text-[#43341b] mb-4 flex items-center gap-2">
-                                <span className="text-[#c9a64e]">①</span>
-                                公式非関与について
-                            </h3>
-                            <div className="pl-6 space-y-3 text-[#6b5d4f]">
-                                <p className="leading-relaxed">
-                                    佳鏡院さんご本人、所属・関係団体は、本サイトの<span className="font-bold">運営・内容・掲載情報・トラブル</span>のいずれにも関与していません。
-                                </p>
-                                <div className="bg-[#fcf9f2] p-4 rounded border-l-4 border-[#c9a64e]">
-                                    <p className="text-sm font-bold text-[#43341b]">
-                                        👉 本サイトに関する問い合わせを、本人や公式へ行うことは絶対にお控えください。
-                                    </p>
-                                    <p className="text-xs mt-2 text-[#9a8b7a]">
-                                        これは本人を守るための一文として、とても大切です。
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-
-                        {/* Section 2 */}
-                        <section>
-                            <h3 className="text-xl font-black text-[#43341b] mb-4 flex items-center gap-2">
-                                <span className="text-[#c9a64e]">②</span>
-                                交流についての考え方
-                            </h3>
-                            <div className="pl-6 space-y-3 text-[#6b5d4f]">
-                                <p className="leading-relaxed">
-                                    本サイトは、ファン同士がゆるやかにつながる「きっかけ」を提供する場です。<br />
-                                    個人間の交流を<span className="font-bold">強制・推奨・斡旋すること</span>はありません。
-                                </p>
-                                <p className="text-sm italic">
-                                    「眺めるだけ」「登録だけ」も、立派な参加の形です。
-                                </p>
-                                <div className="bg-[#fcf9f2] p-4 rounded border-l-4 border-[#a84032]">
-                                    <p className="text-sm font-bold text-[#43341b] mb-2">
-                                        免責事項
-                                    </p>
-                                    <p className="text-xs leading-relaxed">
-                                        本サイトを通じて発生した個人間のやり取り、SNSでの交流、オフラインでの接触、および、それに伴って生じたトラブルについて、当サイトおよび管理人は一切の責任を負いません。
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-
-                        {/* Section 3 */}
-                        <section>
-                            <h3 className="text-xl font-black text-[#43341b] mb-4 flex items-center gap-2">
-                                <span className="text-[#c9a64e]">③</span>
-                                入力情報・個人情報について
-                            </h3>
-                            <div className="pl-6 space-y-3 text-[#6b5d4f]">
-                                <p className="leading-relaxed text-sm">
-                                    入力された情報は、サイト内での表示・集計以外の目的には利用しません。
-                                </p>
-                                <div className="bg-[#fcf9f2] p-4 rounded border-l-4 border-[#a84032]">
-                                    <p className="text-sm font-bold text-[#a84032] mb-2">
-                                        以下のような情報は、絶対に入力しないでください
-                                    </p>
-                                    <ul className="text-xs space-y-1 list-disc list-inside">
-                                        <li>本名</li>
-                                        <li>住所・居住地が特定できる情報</li>
-                                        <li>電話番号・メールアドレス</li>
-                                        <li>学校名・勤務先など、個人が特定される情報</li>
-                                    </ul>
-                                    <p className="text-xs mt-3 leading-relaxed">
-                                        SNSアカウント名についても、公開しても問題のない範囲での記載をお願いします。
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-
-                        {/* Section 4 */}
-                        <section>
-                            <h3 className="text-xl font-black text-[#43341b] mb-4 flex items-center gap-2">
-                                <span className="text-[#c9a64e]">④</span>
-                                未成年の方へ
-                            </h3>
-                            <div className="pl-6 space-y-3 text-[#6b5d4f]">
-                                <p className="leading-relaxed text-sm">
-                                    個人情報の取り扱いや他者との交流には十分注意してください。<br />
-                                    <span className="text-xs text-[#9a8b7a]">※ 管理人は年齢確認を行いません</span>
-                                </p>
-                            </div>
-                        </section>
-
-                        {/* Section 5 */}
-                        <section>
-                            <h3 className="text-xl font-black text-[#43341b] mb-4 flex items-center gap-2">
-                                <span className="text-[#c9a64e]">⑤</span>
-                                内容の変更・削除について
-                            </h3>
-                            <div className="pl-6 space-y-3 text-[#6b5d4f]">
-                                <p className="leading-relaxed text-sm">
-                                    管理人の判断により、以下を行う場合があります。
-                                </p>
-                                <ul className="text-sm space-y-1 list-disc list-inside">
-                                    <li>投稿内容の非表示・削除</li>
-                                    <li>サイト仕様の変更</li>
-                                    <li>サービスの停止・終了</li>
-                                </ul>
-                                <p className="text-xs text-[#9a8b7a]">
-                                    その際、個別の理由説明や事前告知を行わない場合があります。
-                                </p>
-                            </div>
-                        </section>
-
-                        {/* Closing Message */}
-                        <section className="bg-gradient-to-b from-[#fcf9f2] to-[#f5f1e8] p-6 rounded border-2 border-[#c9a64e]">
-                            <div className="text-center space-y-4">
-                                <p className="text-[#43341b] leading-relaxed">
-                                    この場所が、誰かにとって居心地のよい「となり」や<br />
-                                    静かに見守れる「距離」になることを願っています。
-                                </p>
-                                <p className="text-sm font-bold text-[#6b5d4f]">
-                                    推し方は人それぞれ。<br />
-                                    その違いを尊重できる方のみ、ご利用ください。
-                                </p>
-                            </div>
-                        </section>
+            {/* Section 3 */}
+            <section>
+                <h3 className="text-xl font-black text-[#43341b] mb-4 flex items-center gap-2">
+                    <span className="text-[#c9a64e]">③</span>
+                    入力情報・個人情報について
+                </h3>
+                <div className="pl-6 space-y-3 text-[#6b5d4f]">
+                    <p className="leading-relaxed text-sm">
+                        入力された情報は、サイト内での表示・集計以外の目的には利用しません。
+                    </p>
+                    <div className="bg-[#fcf9f2] p-4 rounded border-l-4 border-[#a84032]">
+                        <p className="text-sm font-bold text-[#a84032] mb-2">
+                            以下のような情報は、絶対に入力しないでください
+                        </p>
+                        <ul className="text-xs space-y-1 list-disc list-inside">
+                            <li>本名</li>
+                            <li>住所・居住地が特定できる情報</li>
+                            <li>電話番号・メールアドレス</li>
+                            <li>学校名・勤務先など、個人が特定される情報</li>
+                        </ul>
+                        <p className="text-xs mt-3 leading-relaxed">
+                            SNSアカウント名についても、公開しても問題のない範囲での記載をお願いします。
+                        </p>
                     </div>
                 </div>
+            </section>
 
-                {/* Agreement Checkbox */}
-                <div className="mt-8 bg-[#f5f1e8] border-4 border-[#8b7355] p-6">
-                    <label className="flex items-start gap-4 cursor-pointer group">
-                        <input
-                            type="checkbox"
-                            checked={agreed}
-                            onChange={(e) => setAgreed(e.target.checked)}
-                            className="mt-1 w-5 h-5 accent-[#c9a64e] cursor-pointer"
-                        />
-                        <span className="text-[#43341b] leading-relaxed flex-1">
-                            上記の内容を理解し、同意します
-                        </span>
-                    </label>
+            {/* Section 4 */}
+            <section>
+                <h3 className="text-xl font-black text-[#43341b] mb-4 flex items-center gap-2">
+                    <span className="text-[#c9a64e]">④</span>
+                    未成年の方へ
+                </h3>
+                <div className="pl-6 space-y-3 text-[#6b5d4f]">
+                    <p className="leading-relaxed text-sm">
+                        個人情報の取り扱いや他者との交流には十分注意してください。<br />
+                        <span className="text-xs text-[#9a8b7a]">※ 管理人は年齢確認を行いません</span>
+                    </p>
                 </div>
+            </section>
 
-                {/* Proceed Button */}
-                <div className="mt-6 text-center">
-                    <button
-                        onClick={handleProceed}
-                        disabled={!agreed}
-                        className={`px-12 py-4 font-bold text-lg transition-all duration-300 ${agreed
-                                ? 'bg-[#c9a64e] text-[#43341b] hover:bg-[#d4b05f] shadow-[4px_4px_0px_0px_rgba(67,52,27,0.2)] hover:shadow-[6px_6px_0px_0px_rgba(67,52,27,0.3)] cursor-pointer'
-                                : 'bg-[#d4c5b0] text-[#9a8b7a] cursor-not-allowed opacity-50'
-                            }`}
-                    >
-                        同意して進む →
-                    </button>
+            {/* Section 5 */}
+            <section>
+                <h3 className="text-xl font-black text-[#43341b] mb-4 flex items-center gap-2">
+                    <span className="text-[#c9a64e]">⑤</span>
+                    内容の変更・削除について
+                </h3>
+                <div className="pl-6 space-y-3 text-[#6b5d4f]">
+                    <p className="leading-relaxed text-sm">
+                        管理人の判断により、以下を行う場合があります。
+                    </p>
+                    <ul className="text-sm space-y-1 list-disc list-inside">
+                        <li>投稿内容の非表示・削除</li>
+                        <li>サイト仕様の変更</li>
+                        <li>サービスの停止・終了</li>
+                    </ul>
+                    <p className="text-xs text-[#9a8b7a]">
+                        その際、個別の理由説明や事前告知を行わない場合があります。
+                    </p>
                 </div>
+            </section>
 
-                {/* Footer */}
-                <div className="mt-12 text-center">
+            {/* Closing Message */}
+            <section className="bg-gradient-to-b from-[#fcf9f2] to-[#f5f1e8] p-6 rounded border-2 border-[#c9a64e]">
+                <div className="text-center space-y-4">
+                    <p className="text-[#43341b] leading-relaxed">
+                        この場所が、誰かにとって居心地のよい「となり」や<br />
+                        静かに見守れる「距離」になることを願っています。
+                    </p>
+                    <p className="text-sm font-bold text-[#6b5d4f]">
+                        推し方は人それぞれ。<br />
+                        その違いを尊重できる方のみ、ご利用ください。
+                    </p>
+                </div>
+            </section>
+        </div>
+                </div >
+
+        {/* Agreement Checkbox */ }
+        < div className = "mt-8 bg-[#f5f1e8] border-4 border-[#8b7355] p-6" >
+            <label className="flex items-start gap-4 cursor-pointer group">
+                <input
+                    type="checkbox"
+                    checked={agreed}
+                    onChange={(e) => setAgreed(e.target.checked)}
+                    className="mt-1 w-5 h-5 accent-[#c9a64e] cursor-pointer"
+                />
+                <span className="text-[#43341b] leading-relaxed flex-1">
+                    上記の内容を理解し、同意します
+                </span>
+            </label>
+                </div >
+
+        {/* Proceed Button */ }
+        < div className = "mt-6 text-center" >
+            <button
+                onClick={handleProceed}
+                disabled={!agreed}
+                className={`px-12 py-4 font-bold text-lg transition-all duration-300 ${agreed
+                    ? 'bg-[#c9a64e] text-[#43341b] hover:bg-[#d4b05f] shadow-[4px_4px_0px_0px_rgba(67,52,27,0.2)] hover:shadow-[6px_6px_0px_0px_rgba(67,52,27,0.3)] cursor-pointer'
+                    : 'bg-[#d4c5b0] text-[#9a8b7a] cursor-not-allowed opacity-50'
+                    }`}
+            >
+                同意して進む →
+            </button>
+                </div >
+
+        {/* Footer */ }
+        < div className = "mt-12 text-center" >
                     <div className="flex items-center justify-center gap-4 mb-4">
                         <div className="h-px bg-[#8b7355] w-16 opacity-40" />
                         <div className="text-[#c9a64e] text-sm opacity-60">✦</div>
                         <div className="h-px bg-[#8b7355] w-16 opacity-40" />
                     </div>
                     <p className="text-[#9a8b7a] text-xs tracking-[0.2em] font-serif">© 2026 Maison de Kyo</p>
-                </div>
-            </div>
-        </main>
+                </div >
+            </div >
+        </main >
     );
 }

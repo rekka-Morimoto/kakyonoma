@@ -216,19 +216,19 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
 
             {/* START SCREEN */}
             {step === 'start' && (
-                <div className="text-center space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full max-w-2xl">
-                    <div className="space-y-4">
-                        <span className="text-stone-400 font-bold tracking-[0.3em] uppercase block">Diagnosis</span>
-                        <h1 className="text-4xl md:text-5xl font-black mb-4">推しスタイル診断</h1>
-                        <p className="text-xl text-stone-500 leading-relaxed font-sans">
+                <div className="text-center space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full max-w-2xl px-4 py-10">
+                    <div className="space-y-6">
+                        <span className="text-[#c9a64e] font-black tracking-[0.4em] uppercase block drop-shadow-lg">Maison Diagnosis</span>
+                        <h1 className="text-5xl md:text-7xl font-black mb-6 text-white text-outline">推しスタイル診断</h1>
+                        <p className="text-xl md:text-3xl text-white/90 leading-relaxed font-serif text-outline opacity-90">
                             あなたの言葉や感覚から、<br />
-                            推しとの理想の距離感や関わり方を紐解きます。
+                            理想の距離感や関わり方を紐解きます。
                         </p>
                     </div>
 
                     <button
                         onClick={() => setStep('question')}
-                        className="bg-stone-900 text-white px-12 py-5 rounded-full font-bold text-xl hover:bg-stone-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 font-sans"
+                        className="bg-[#c9a64e] text-white px-16 py-6 rounded-2xl font-black text-2xl hover:brightness-110 transition-all shadow-2xl active:scale-95 text-outline"
                     >
                         診断を始める
                     </button>
@@ -237,38 +237,36 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
 
             {/* QUESTION SCREEN */}
             {step === 'question' && (
-                <div key={currentQuestion.id} className="w-full max-w-2xl space-y-10 animate-in fade-in slide-in-from-right-8 duration-500">
-                    <div className="text-center space-y-2">
-                        <span className="text-stone-400 font-sans font-bold tracking-widest text-sm">QUESTION {currentQuestion.id} / {QUESTIONS.length}</span>
-                        <div className="w-full bg-stone-200 h-1 rounded-full overflow-hidden">
+                <div key={currentQuestion.id} className="w-full max-w-3xl space-y-12 animate-in fade-in slide-in-from-right-8 duration-500">
+                    <div className="text-center space-y-4">
+                        <span className="text-[#d4c5b0] font-sans font-black tracking-widest text-sm drop-shadow-md uppercase">Question {currentQuestion.id} / {QUESTIONS.length}</span>
+                        <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden shadow-inner">
                             <div
-                                className="bg-stone-800 h-full transition-all duration-500 ease-out"
+                                className="bg-[#c9a64e] h-full transition-all duration-700 ease-out shadow-[0_0_10px_#c9a64e]"
                                 style={{ width: `${(currentQuestion.id / QUESTIONS.length) * 100}%` }}
                             />
                         </div>
                     </div>
 
-                    <h2 className="text-2xl md:text-4xl font-bold text-center leading-snug min-h-[120px] flex items-center justify-center">
+                    <h2 className="text-3xl md:text-5xl font-black text-center leading-snug min-h-[160px] flex items-center justify-center text-white text-outline">
                         {currentQuestion.text}
                     </h2>
 
-                    <div className="grid grid-cols-1 gap-6 font-sans">
+                    <div className="grid grid-cols-1 gap-6">
                         <button
                             onClick={() => handleAnswer('A')}
-                            className="group relative bg-white p-8 rounded-2xl border-2 border-stone-100 shadow-md hover:border-stone-400 hover:shadow-xl transition-all duration-300 text-left"
+                            className="glass-panel p-10 rounded-3xl border-2 border-white/5 hover:border-[#c9a64e]/40 transition-all duration-500 text-left active:scale-[0.98] group"
                         >
-                            <span className="absolute top-4 left-4 text-xs font-bold text-stone-300 group-hover:text-stone-500 transition-colors">A</span>
-                            <span className="text-lg font-bold text-stone-700 group-hover:text-stone-900 block pl-6">
+                            <span className="text-white text-xl font-bold leading-relaxed block pl-2 group-hover:text-[#c9a64e] transition-colors">
                                 {currentQuestion.optionA}
                             </span>
                         </button>
 
                         <button
                             onClick={() => handleAnswer('B')}
-                            className="group relative bg-white p-8 rounded-2xl border-2 border-stone-100 shadow-md hover:border-stone-400 hover:shadow-xl transition-all duration-300 text-left"
+                            className="glass-panel p-10 rounded-3xl border-2 border-white/5 hover:border-[#c9a64e]/40 transition-all duration-500 text-left active:scale-[0.98] group"
                         >
-                            <span className="absolute top-4 left-4 text-xs font-bold text-stone-300 group-hover:text-stone-500 transition-colors">B</span>
-                            <span className="text-lg font-bold text-stone-700 group-hover:text-stone-900 block pl-6">
+                            <span className="text-white text-xl font-bold leading-relaxed block pl-2 group-hover:text-[#c9a64e] transition-colors">
                                 {currentQuestion.optionB}
                             </span>
                         </button>
@@ -278,33 +276,37 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
 
             {/* RESULT SCREEN */}
             {step === 'result' && result && (
-                <div className="text-center w-full max-w-lg space-y-10 animate-in zoom-in-95 duration-700">
-                    <div className="space-y-2">
-                        <p className="text-stone-400 font-sans font-bold tracking-widest text-sm uppercase">Your Style</p>
-                        <div className={`w-32 h-32 mx-auto rounded-full bg-gradient-to-br ${result.color} flex items-center justify-center text-6xl shadow-2xl mb-6`}>
+                <div className="text-center w-full max-w-2xl space-y-12 animate-in zoom-in-95 duration-700">
+                    <div className="space-y-6">
+                        <p className="text-[#c9a64e] font-sans font-black tracking-widest text-sm uppercase drop-shadow-md">The Conclusion</p>
+                        <div className={`w-36 h-36 mx-auto rounded-full bg-gradient-to-br ${result.color} flex items-center justify-center text-7xl shadow-2xl mb-8 border-4 border-white/20`}>
                             {result.emoji}
                         </div>
-                        <h2 className="text-4xl md:text-6xl font-black text-stone-900 mb-6">
+                        <h2 className="text-5xl md:text-7xl font-black text-white mb-8 text-outline">
                             {result.title}
                         </h2>
-                        <p className="text-stone-600 font-sans leading-loose text-lg text-justify bg-white p-8 rounded-3xl shadow-lg border border-stone-100 whitespace-pre-wrap">
-                            {result.description}
-                        </p>
+                        <div className="glass-panel p-10 rounded-[3rem] border-white/10 shadow-2xl relative">
+                            <div className="absolute -top-4 -left-4 text-4xl opacity-40">📜</div>
+                            <div className="absolute -bottom-4 -right-4 text-4xl opacity-40 transform rotate-180">📜</div>
+                            <p className="text-white text-lg md:text-xl font-serif leading-loose whitespace-pre-wrap text-justify">
+                                {result.description}
+                            </p>
+                        </div>
                     </div>
 
                     {!embedded && (
-                        <div className="flex flex-col gap-4 font-sans">
+                        <div className="flex flex-col gap-6 pt-10">
                             <button
                                 onClick={resetDiagnosis}
-                                className="bg-stone-900 text-white px-8 py-4 rounded-full font-bold hover:bg-stone-800 transition-all shadow-lg hover:-translate-y-1"
+                                className="bg-[#c9a64e] text-white px-12 py-5 rounded-2xl font-black text-xl hover:brightness-110 transition-all shadow-2xl active:scale-95 text-outline"
                             >
                                 もう一度診断する
                             </button>
                             <Link
                                 href="/"
-                                className="text-stone-500 hover:text-stone-800 font-bold py-2 transition-colors"
+                                className="text-[#d4c5b0] hover:text-white font-bold py-2 transition-colors tracking-widest"
                             >
-                                トップへ戻る
+                                ← BACK TO ENTRANCE
                             </Link>
                         </div>
                     )}

@@ -179,36 +179,39 @@ export default function Registry() {
     };
 
     return (
-        <div className="min-h-screen bg-[#faf9f6]/80 text-stone-900 font-sans relative backdrop-blur-sm">
+        <div className="min-h-screen bg-transparent text-stone-100 font-sans relative">
+
+            {/* Immersive Overlay to dampen background slightly for registry readability */}
+            <div className="fixed inset-0 bg-black/40 z-[-1] pointer-events-none" />
+
             {/* Delete Modal */}
             {deletingId && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in duration-200">
-                    <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full space-y-6">
-                        <h3 className="text-xl font-bold text-stone-800 text-center">退去手続き（データ削除）</h3>
-                        <p className="text-sm text-stone-500 text-center">
-                            削除するには登録時のパスワードを入力してください。<br />
-                            <span className="text-xs text-stone-400">※古いデータなどパスワード未設定の場合はそのまま削除できます</span>
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100] backdrop-blur-md">
+                    <div className="glass-panel p-10 rounded-3xl shadow-2xl max-w-sm w-full space-y-8 border-[#a84032]/30">
+                        <h3 className="text-2xl font-bold text-white text-center text-outline">退去手続き</h3>
+                        <p className="text-sm text-[#d4c5b0] text-center">
+                            削除するにはパスワードを入力してください。
                         </p>
                         <input
                             type="password"
                             value={deletePassword}
                             onChange={(e) => setDeletePassword(e.target.value)}
-                            className="w-full p-3 border border-stone-300 rounded-lg text-lg"
-                            placeholder="Password"
+                            className="w-full p-4 bg-black/40 border border-white/10 rounded-xl text-xl text-white outline-none focus:border-[#c9a64e]/50 transition-all font-mono"
+                            placeholder="••••••"
                             autoFocus
                         />
                         <div className="flex gap-4">
                             <button
                                 onClick={closeDeleteModal}
-                                className="flex-1 py-3 bg-stone-200 rounded-lg font-bold hover:bg-stone-300 transition"
+                                className="flex-1 py-4 bg-white/10 rounded-xl font-bold hover:bg-white/20 transition text-stone-300"
                             >
-                                キャンセル
+                                戻る
                             </button>
                             <button
                                 onClick={executeDelete}
-                                className="flex-1 py-3 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 transition shadow-lg"
+                                className="flex-1 py-4 bg-[#a84032] text-white rounded-xl font-bold hover:brightness-110 transition shadow-lg"
                             >
-                                削除する
+                                削除
                             </button>
                         </div>
                     </div>
@@ -217,23 +220,21 @@ export default function Registry() {
 
             {/* View Certificate Modal */}
             {viewingId && (
-                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 animate-in fade-in duration-300 p-4" onClick={closeViewModal}>
-                    <div className="bg-white p-2 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-auto relative flex flex-col items-center justify-center" onClick={e => e.stopPropagation()}>
-
+                <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[100] p-4 backdrop-blur-xl" onClick={closeViewModal}>
+                    <div className="glass-panel p-2 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-auto relative border-white/20" onClick={e => e.stopPropagation()}>
                         {isGenerating ? (
-                            <div className="p-20 flex flex-col items-center">
-                                <div className="w-12 h-12 border-4 border-amber-200 border-t-amber-600 animate-spin rounded-full mb-4"></div>
-                                <p className="text-stone-500 font-bold animate-pulse">入居届を準備中...</p>
+                            <div className="p-24 flex flex-col items-center">
+                                <div className="w-16 h-16 border-4 border-amber-200/20 border-t-[#c9a64e] animate-spin rounded-full mb-6"></div>
+                                <p className="text-[#c9a64e] font-black text-xl animate-pulse text-outline">生成中...</p>
                             </div>
                         ) : (
                             generatedImage && (
-                                <img src={generatedImage} alt="入居届" className="w-full h-auto rounded-xl shadow-inner" />
+                                <img src={generatedImage} alt="入居届" className="w-full h-auto rounded-2xl shadow-inner" />
                             )
                         )}
-
                         <button
                             onClick={closeViewModal}
-                            className="absolute top-4 right-4 bg-stone-100 p-2 rounded-full hover:bg-stone-200 transition shadow-sm"
+                            className="absolute top-6 right-6 bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-black/70 transition shadow-xl border border-white/10 text-2xl"
                         >
                             ✕
                         </button>
@@ -242,40 +243,40 @@ export default function Registry() {
             )}
 
             {/* Header */}
-            <header className="bg-white border-b border-stone-200 py-12 px-6 shadow-sm relative overflow-hidden bg-[url('/noise.png')]">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
-                    <div className="text-center md:text-left">
-                        <h1 className="text-5xl md:text-6xl font-serif font-black tracking-tighter mb-4 text-stone-900">
+            <header className="py-20 px-8 relative overflow-hidden">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12 relative z-10 text-center md:text-left">
+                    <div className="space-y-4">
+                        <h1 className="text-6xl md:text-8xl font-serif font-black tracking-tight text-white text-outline">
                             入居者名簿
                         </h1>
-                        <p className="text-stone-500 font-bold tracking-[0.3em] uppercase text-sm">Resident Registry — Kakyo-no-ma</p>
+                        <p className="text-[#c9a64e] font-black tracking-[0.4em] uppercase text-sm md:text-base drop-shadow-lg">Resident Registry — Kakyo-no-ma</p>
                     </div>
 
-                    <div className="flex gap-4">
+                    <div className="flex gap-6">
                         <Link
                             href="/kakyonoma"
-                            className="bg-stone-900 text-white px-8 py-4 rounded-full font-bold hover:bg-stone-800 transition-all shadow-xl hover:shadow-2xl active:scale-95 text-lg"
+                            className="bg-[#c9a64e] text-white px-10 py-5 rounded-2xl font-black hover:brightness-110 transition-all shadow-2xl hover:shadow-[#c9a64e]/20 active:scale-95 text-xl text-outline"
                         >
-                            かきょの間へ
+                            和室へ進む
                         </Link>
                         <Link
                             href="/"
-                            className="border-2 border-stone-200 px-8 py-4 rounded-full font-bold hover:bg-stone-50 transition-all text-stone-600 text-lg"
+                            className="glass-panel text-white px-10 py-5 rounded-2xl font-bold hover:bg-white/10 transition-all text-xl border-white/20 border"
                         >
-                            トップへ
+                            トップ
                         </Link>
                     </div>
                 </div>
             </header>
 
-            <main className="max-w-7xl mx-auto p-6 md:p-12">
+            <main className="max-w-7xl mx-auto p-8 md:p-12">
                 {/* Admin Toolbar & Filters */}
-                <div className="mb-12 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="mb-20 flex flex-col md:flex-row justify-between items-center gap-10">
                     {/* Building Filter */}
-                    <div className="flex flex-wrap gap-2 justify-center">
+                    <div className="flex flex-wrap gap-4 justify-center bg-black/20 backdrop-blur-md p-3 rounded-3xl border border-white/10 shadow-xl">
                         <button
                             onClick={() => setSelectedBuilding(null)}
-                            className={`px-6 py-2 rounded-full font-bold transition-all shadow-sm ${!selectedBuilding ? 'bg-stone-800 text-white shadow-lg scale-105' : 'bg-white text-stone-500 hover:bg-stone-100'}`}
+                            className={`px-8 py-3 rounded-2xl font-bold transition-all ${!selectedBuilding ? 'bg-[#c9a64e] text-white shadow-xl scale-105' : 'text-stone-400 hover:text-white hover:bg-white/5'}`}
                         >
                             全て
                         </button>
@@ -283,9 +284,10 @@ export default function Registry() {
                             <button
                                 key={style.name}
                                 onClick={() => setSelectedBuilding(style.name)}
-                                className={`px-6 py-2 rounded-full font-bold transition-all shadow-sm ${selectedBuilding === style.name ? `bg-white text-stone-900 ring-2 ${style.ring} shadow-lg scale-105` : 'bg-white text-stone-500 hover:bg-stone-50'}`}
+                                className={`px-8 py-3 rounded-2xl font-bold transition-all flex items-center gap-2 ${selectedBuilding === style.name ? `bg-white/15 text-white ring-2 ring-[#c9a64e]/50 shadow-xl scale-105` : 'text-stone-400 hover:text-white hover:bg-white/5'}`}
                             >
-                                <span className="mr-2">{style.emoji}</span>{style.name}
+                                <span>{style.emoji}</span>
+                                <span>{style.name}</span>
                             </button>
                         ))}
                     </div>
@@ -293,7 +295,7 @@ export default function Registry() {
                     {isAdminMode && (
                         <button
                             onClick={handleBulkDelete}
-                            className="bg-red-600 text-white px-6 py-2 rounded-full font-bold shadow-lg hover:bg-red-700 transition text-sm"
+                            className="bg-[#a84032] text-white px-8 py-3 rounded-2xl font-black shadow-2xl hover:brightness-110 transition-all text-base text-outline"
                         >
                             ⚠️ 全データ一括削除
                         </button>
@@ -301,34 +303,35 @@ export default function Registry() {
                 </div>
 
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-40 space-y-8">
-                        <div className="w-20 h-20 border-4 border-amber-200 border-t-amber-800 animate-spin rounded-full"></div>
-                        <p className="text-stone-500 text-2xl font-serif italic">Loading Resident Data...</p>
+                    <div className="flex flex-col items-center justify-center py-56 space-y-10">
+                        <div className="w-24 h-24 border-4 border-white/5 border-t-[#c9a64e] animate-spin rounded-full"></div>
+                        <p className="text-[#c9a64e] text-3xl font-serif italic text-outline animate-pulse">読み込み中...</p>
                     </div>
                 ) : filteredResidents.length === 0 ? (
-                    <div className="bg-white border-2 border-dashed border-stone-200 rounded-[3rem] p-40 text-center">
-                        <span className="text-9xl mb-10 block">🛋️</span>
-                        <p className="text-stone-400 text-3xl font-serif italic">
-                            {selectedBuilding ? `${selectedBuilding}にはまだ誰もいません` : 'まだ入居者がいません'}
+                    <div className="glass-panel rounded-[3rem] p-48 text-center border-white/5">
+                        <span className="text-[10rem] mb-12 block drop-shadow-2xl">🏙️</span>
+                        <p className="text-[#d4c5b0] text-4xl font-serif italic drop-shadow-md">
+                            まだ誰もいないようです
                         </p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
                         {filteredResidents.map((resident) => {
                             const style = getBuildingStyle(resident.building);
 
                             return (
                                 <div
                                     key={resident.id}
-                                    className={`bg-white rounded-[2.5rem] shadow-xl overflow-hidden border-2 hover:shadow-2xl transition-all duration-500 group relative flex flex-col ${style.border}`}
+                                    className={`glass-panel rounded-[3rem] overflow-hidden border-2 hover:border-white/30 transition-all duration-700 group relative flex flex-col hover:-translate-y-3 shadow-2xl ${style.border === 'border-amber-400' ? 'border-[#c9a64e]/30' : 'border-white/10'}`}
                                 >
-                                    <div className={`h-2 bg-gradient-to-r ${style.gradient} opacity-80`} />
+                                    {/* Color Indicator Strip */}
+                                    <div className={`h-3 bg-gradient-to-r ${style.gradient} opacity-60 group-hover:opacity-100 transition-opacity`} />
 
-                                    <div className="p-10 flex flex-col flex-1">
+                                    <div className="p-12 flex flex-col flex-1">
                                         {/* Profile Area */}
-                                        <div className="flex flex-col items-center mb-8">
-                                            <div className="relative mb-6">
-                                                <div className={`w-40 h-40 rounded-full overflow-hidden ring-4 ${style.ring} ring-offset-4 shadow-2xl bg-stone-50 group-hover:scale-105 transition-transform duration-700`}>
+                                        <div className="flex flex-col items-center mb-10">
+                                            <div className="relative mb-8">
+                                                <div className={`w-44 h-44 rounded-full overflow-hidden ring-4 ${style.ring === 'ring-amber-400' ? 'ring-[#c9a64e]/40' : 'ring-white/20'} ring-offset-4 ring-offset-[#2d2418] shadow-2xl bg-black/40 group-hover:scale-105 transition-transform duration-700`}>
                                                     {(resident.icon || resident.image) ? (
                                                         <img
                                                             src={resident.icon || resident.image}
@@ -336,14 +339,13 @@ export default function Registry() {
                                                             className="w-full h-full object-cover"
                                                         />
                                                     ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-stone-200 text-8xl bg-stone-50">👤</div>
+                                                        <div className="w-full h-full flex items-center justify-center text-white/10 text-9xl">👤</div>
                                                     )}
                                                 </div>
 
                                                 {/* ID Tag */}
-                                                <div className="absolute -bottom-2 -right-2 bg-white text-stone-900 px-3 py-1 rounded-full text-sm font-bold border shadow-md flex items-center gap-1">
-                                                    <span className="text-xs text-stone-400">ID</span>
-                                                    <span>{resident.id}</span>
+                                                <div className="absolute -bottom-3 -right-3 bg-[#c9a64e] text-white px-4 py-1.5 rounded-full text-sm font-black shadow-2xl border border-white/10 text-outline leading-none">
+                                                    ID {resident.id}
                                                 </div>
 
                                                 {/* Delete Button */}
@@ -352,57 +354,56 @@ export default function Registry() {
                                                         e.stopPropagation();
                                                         openDeleteModal(resident.id);
                                                     }}
-                                                    className={`absolute -top-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center shadow-lg z-20 transition-all duration-300 ${isAdminMode ? 'bg-red-500 text-white opacity-100 scale-100' : 'bg-stone-100 text-stone-400 opacity-0 group-hover:opacity-100 hover:bg-red-100 hover:text-red-500'}`}
-                                                    title="削除する"
+                                                    className={`absolute -top-3 -right-3 w-12 h-12 rounded-full flex items-center justify-center shadow-2xl z-20 transition-all duration-300 ${isAdminMode ? 'bg-[#a84032] text-white opacity-100 scale-100' : 'bg-white/10 text-white/30 opacity-0 group-hover:opacity-100 hover:bg-[#a84032] hover:text-white'}`}
                                                 >
                                                     ✕
                                                 </button>
                                             </div>
 
-                                            <div className={`px-4 py-1 rounded-full text-xs font-bold mb-2 tracking-widest ${style.bg} ${style.text}`}>
-                                                {style.emoji} {style.name || '所属なし'}
+                                            <div className={`px-6 py-2 rounded-full text-[10px] font-black mb-4 tracking-[0.2em] shadow-lg text-outline ${style.bg === 'bg-amber-100' ? 'bg-[#c9a64e]' : 'bg-white/10'}`}>
+                                                {style.name || '所属なし'}
                                             </div>
 
-                                            <h2 className="text-3xl font-serif font-black text-stone-800 tracking-tight mb-2 text-center leading-snug">
+                                            <h2 className="text-4xl font-serif font-black text-white tracking-tight mb-3 text-center leading-snug text-outline">
                                                 {resident.name}
                                             </h2>
 
-                                            <div className="text-stone-400 text-sm font-bold tracking-widest uppercase">
-                                                Room {resident.roomNumber}
+                                            <div className="text-[#c9a64e] text-xs font-black tracking-[0.3em] uppercase opacity-80 drop-shadow-md">
+                                                ROOM {resident.roomNumber}
                                             </div>
                                         </div>
 
                                         {/* Information List */}
-                                        <div className="space-y-6 mb-8 pt-8 border-t border-dashed border-stone-200 flex-1">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-lg">🏠</div>
+                                        <div className="space-y-8 mb-10 pt-10 border-t border-dashed border-white/10 flex-1">
+                                            <div className="flex items-center gap-5 group/item">
+                                                <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl group-hover/item:bg-white/10 transition-colors shadow-inner">🏠</div>
                                                 <div className="flex flex-col">
-                                                    <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">Base Location</span>
-                                                    <span className="text-stone-700 font-bold">{resident.baseLocation || '未設定'}</span>
+                                                    <span className="text-[10px] text-stone-500 font-bold uppercase tracking-widest mb-1">Base Location</span>
+                                                    <span className="text-stone-100 font-bold text-lg drop-shadow-md">{resident.baseLocation || '---'}</span>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-lg">🐦</div>
+                                            <div className="flex items-center gap-5 group/item">
+                                                <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl group-hover/item:bg-white/10 transition-colors shadow-inner">🐦</div>
                                                 <div className="flex flex-col">
-                                                    <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">X (Twitter)</span>
-                                                    <span className="text-stone-700 font-bold truncate max-w-[180px]">{resident.xAccount ? `@${resident.xAccount}` : '未登録'}</span>
+                                                    <span className="text-[10px] text-stone-500 font-bold uppercase tracking-widest mb-1">X (Twitter)</span>
+                                                    <span className="text-stone-100 font-bold text-lg truncate max-w-[160px] drop-shadow-md">{resident.xAccount ? `@${resident.xAccount}` : '---'}</span>
                                                 </div>
                                             </div>
                                         </div>
 
                                         {/* Action Footer */}
-                                        <div className="pt-6 border-t border-stone-100 flex justify-center">
+                                        <div className="pt-8 border-t border-white/5 flex justify-center">
                                             <button
                                                 onClick={() => handleViewCertificate(resident)}
-                                                className={`w-full py-3 rounded-xl font-bold transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 hover:shadow-lg ${style.bg} ${style.text} hover:brightness-95`}
+                                                className={`w-full py-4 rounded-2xl font-black transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-3 hover:brightness-110 text-outline ${style.bg === 'bg-amber-100' ? 'bg-[#c9a64e] text-white' : 'bg-white/10 text-white border border-white/10'}`}
                                             >
                                                 <span>📄</span>
-                                                入居届を表示
+                                                入居届を確認
                                             </button>
                                         </div>
 
-                                        {/* Hidden Renderer for Generation */}
+                                        {/* Hidden Renderer */}
                                         <div className="fixed -top-[3000px] -left-[3000px] pointer-events-none">
                                             {viewingId === resident.id && (
                                                 <div id={`renderer-${resident.id}`}>
@@ -429,52 +430,52 @@ export default function Registry() {
                 )}
             </main>
 
-            <footer className="py-40 border-t border-stone-200 max-w-7xl mx-auto px-6 text-center">
-                <p className="text-stone-400 text-xl tracking-[0.4em] font-serif italic opacity-40 mb-4">
-                    — KAKYO-NO-MA RESIDENCE —
+            <footer className="py-48 border-t border-white/5 max-w-7xl mx-auto px-10 text-center">
+                <p className="text-[#c9a64e]/40 text-2xl tracking-[0.5em] font-serif italic mb-8 drop-shadow-md">
+                    — KAKYO-NO-MA —
                 </p>
 
                 {/* Admin Toggle */}
                 {!isAdminMode ? (
-                    <div className="flex flex-col items-center gap-2">
+                    <div className="flex flex-col items-center gap-4">
                         <button
                             onClick={() => setShowAdminInput(!showAdminInput)}
-                            className="text-stone-300 text-xs hover:text-stone-500 px-4 py-2"
+                            className="text-white/20 text-xs hover:text-white/40 px-6 py-3 transition-colors"
                         >
-                            管理者モード
+                            MANAGEMENT MODE
                         </button>
                         {showAdminInput && (
-                            <div className="flex gap-2 items-center animate-in fade-in slide-in-from-bottom-2">
+                            <div className="flex gap-3 items-center animate-in fade-in slide-in-from-bottom-4">
                                 <input
                                     type="password"
                                     value={adminPassword}
                                     onChange={(e) => setAdminPassword(e.target.value)}
-                                    placeholder="Password"
-                                    className="border border-stone-300 rounded px-2 py-1 text-sm bg-stone-50"
+                                    placeholder="Enter ID"
+                                    className="bg-black/40 border border-white/10 rounded-xl px-5 py-2 text-sm text-white outline-none focus:border-[#c9a64e]/40 transition-all font-mono"
                                     onKeyDown={(e) => e.key === 'Enter' && handleAdminLogin()}
                                 />
                                 <button
                                     onClick={handleAdminLogin}
-                                    className="bg-stone-800 text-white px-3 py-1 rounded text-sm font-bold"
+                                    className="bg-white/10 text-white px-5 py-2 rounded-xl text-sm font-black hover:bg-white/20 transition-all shadow-xl"
                                 >
-                                    Login
+                                    GO
                                 </button>
                             </div>
                         )}
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center gap-2">
-                        <div className="bg-red-100 text-red-800 px-4 py-2 rounded-full text-sm font-bold border border-red-200">
-                            管理モード中: 削除可能
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="bg-[#a84032]/20 text-[#a84032] px-8 py-3 rounded-full text-xs font-black border border-[#a84032]/30 text-outline">
+                            ADMIN MODE ACTIVE
                         </div>
                         <button
                             onClick={() => {
                                 setIsAdminMode(false);
                                 setAdminPassword('');
                             }}
-                            className="text-stone-400 text-xs underline"
+                            className="text-white/30 text-xs hover:underline"
                         >
-                            ログアウト
+                            LOGOUT
                         </button>
                     </div>
                 )}

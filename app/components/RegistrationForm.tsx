@@ -155,87 +155,87 @@ export default function RegistrationForm() {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center min-h-screen p-8 bg-gray-100 text-gray-900">
+        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center min-h-screen p-8 bg-transparent text-white">
             {/* Main Content Area */}
-            <div className="w-full lg:w-1/3 bg-white p-6 rounded-xl shadow-lg transition-all duration-500">
-                <h2 className="text-2xl font-bold mb-6 text-gray-800">入居手続き</h2>
+            <div className="w-full lg:w-1/3 glass-panel p-8 rounded-[2.5rem] transition-all duration-500 border-white/10 shadow-2xl">
+                <h2 className="text-3xl font-black mb-8 text-white text-outline">入居手続き</h2>
 
                 {/* STEP 1: FORM */}
                 {step === 'form' && (
-                    <div className="space-y-4 animate-in fade-in slide-in-from-left-4 duration-300">
+                    <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-300">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium mb-1">姓 (Sei)</label>
+                                <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">姓 (Sei)</label>
                                 <input
                                     type="text"
                                     value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded focus:border-blue-500 outline-none"
+                                    className="w-full p-3 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
                                     placeholder="例: 山田"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-1">名 (Mei)</label>
+                                <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">名 (Mei)</label>
                                 <input
                                     type="text"
                                     value={firstName}
                                     onChange={(e) => setFirstName(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded focus:border-blue-500 outline-none"
+                                    className="w-full p-3 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
                                     placeholder="例: 太郎"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1">呼び方 (Nickname)</label>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">呼び方 (Nickname)</label>
                             <input
                                 type="text"
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
-                                className="w-full p-2 border border-gray-300 rounded focus:border-blue-500 outline-none"
+                                className="w-full p-3 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
                                 placeholder="例: やまちゃん"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1">X (旧Twitter) ID</label>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">X (旧Twitter) ID</label>
                             <input
                                 type="text"
                                 value={xAccount}
                                 onChange={(e) => setXAccount(e.target.value)}
-                                className="w-full p-2 border border-gray-300 rounded focus:border-blue-500 outline-none"
+                                className="w-full p-3 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
                                 placeholder="@username"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">本拠地</label>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">本拠地</label>
                             <select
                                 value={baseLocation}
                                 onChange={(e) => setBaseLocation(e.target.value)}
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition outline-none text-gray-800 bg-white"
+                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white focus:border-[#c9a64e]/50 transition outline-none cursor-pointer"
                             >
-                                <option value="">選択してください</option>
+                                <option value="" className="bg-stone-900">選択してください</option>
                                 {locations.map((loc) => (
-                                    <option key={loc} value={loc}>{loc}</option>
+                                    <option key={loc} value={loc} className="bg-stone-900">{loc}</option>
                                 ))}
                             </select>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">YouTube チャンネル名</label>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">YouTube チャンネル名</label>
                             <input
                                 type="text"
                                 value={youtubeAccount}
                                 onChange={(e) => setYoutubeAccount(e.target.value)}
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition outline-none text-gray-800"
+                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white focus:border-[#c9a64e]/50 transition outline-none"
                                 placeholder="例: @YourChannel"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">
-                                削除用パスワード <span className="text-red-500">*</span>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">
+                                削除用パスワード <span className="text-[#a84032]">*</span>
                             </label>
                             <input
                                 type="password"
@@ -243,48 +243,46 @@ export default function RegistrationForm() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                                 maxLength={8}
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition outline-none text-gray-800 bg-stone-50"
-                                placeholder="数字や英字で自由に設定"
+                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white focus:border-[#c9a64e]/50 transition outline-none font-mono"
+                                placeholder="数字や英字"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">自由記載欄</label>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">自由記載欄</label>
                             <textarea
                                 value={freeText}
                                 onChange={(e) => setFreeText(e.target.value)}
                                 maxLength={200}
                                 rows={3}
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition outline-none text-gray-800 resize-none"
-                                placeholder="自己紹介や一言メッセージなど（200文字まで）"
+                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white focus:border-[#c9a64e]/50 transition outline-none resize-none"
+                                placeholder="自己紹介など"
                             />
                         </div>
 
-                        <div className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-4 text-center">アイコン画像をアップロード</label>
-                                <div className="flex flex-col items-center space-y-4">
-                                    <label className="cursor-pointer group">
-                                        <div className="w-40 h-40 rounded-full border-4 border-dashed border-stone-300 group-hover:border-indigo-400 flex flex-col items-center justify-center transition overflow-hidden bg-stone-50 shadow-inner">
-                                            {image ? (
-                                                <img src={image} alt="Upload Preview" className="w-full h-full object-cover" />
-                                            ) : (
-                                                <div className="text-center">
-                                                    <span className="text-4xl">📸</span>
-                                                    <p className="text-xs text-stone-400 mt-1">Click to Upload</p>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-                                    </label>
-                                </div>
+                        <div>
+                            <label className="block text-sm font-bold mb-4 text-center text-[#d4c5b0] uppercase tracking-widest">アイコンをアップロード</label>
+                            <div className="flex flex-col items-center">
+                                <label className="cursor-pointer group">
+                                    <div className="w-40 h-40 rounded-full border-2 border-dashed border-white/20 group-hover:border-[#c9a64e]/50 flex flex-col items-center justify-center transition overflow-hidden bg-white/5 shadow-inner">
+                                        {image ? (
+                                            <img src={image} alt="Upload Preview" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="text-center">
+                                                <span className="text-5xl opacity-30">📸</span>
+                                                <p className="text-[10px] text-white/40 mt-2 font-bold tracking-tighter">U P L O A D</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                                </label>
                             </div>
                         </div>
 
                         <button
                             onClick={handleFormNext}
                             disabled={!firstName || !lastName || !password}
-                            className={`w-full py-3 rounded-lg font-bold text-white transition-colors ${!firstName || !lastName ? 'bg-gray-400 cursor-not-allowed' : 'bg-stone-800 hover:bg-stone-900'}`}
+                            className={`w-full py-4 rounded-2xl font-black text-xl text-white transition-all shadow-2xl text-outline ${!firstName || !lastName || !password ? 'bg-white/5 cursor-not-allowed text-white/20' : 'bg-[#c9a64e] hover:brightness-110 active:scale-95'}`}
                         >
                             次へ（入居審査）
                         </button>
@@ -294,13 +292,13 @@ export default function RegistrationForm() {
                 {/* STEP 2: DIAGNOSIS */}
                 {step === 'diagnosis' && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-                        <div className="mb-4">
-                            <button onClick={() => setStep('form')} className="text-sm text-stone-500 hover:underline">← フォームに戻る</button>
+                        <div className="mb-6">
+                            <button onClick={() => setStep('form')} className="text-sm text-[#d4c5b0] hover:text-white transition-colors">← フォームに戻る</button>
                         </div>
-                        <h3 className="text-xl font-bold mb-4 text-stone-800">入居審査：推しタイプ診断</h3>
-                        <p className="text-sm text-stone-500 mb-6">あなたのタイプに合わせて入居する棟（あこがれびと・みまもりびと・となりびと・あゆみびと）を決定します。</p>
+                        <h3 className="text-2xl font-black mb-4 text-white text-outline">推しタイプ診断</h3>
+                        <p className="text-base text-[#d4c5b0] mb-8 leading-relaxed">あなたのタイプに合わせて入居する棟を決定します。</p>
 
-                        <div className="bg-stone-50 p-4 rounded-xl border border-stone-200">
+                        <div className="bg-black/20 p-6 rounded-3xl border border-white/5 shadow-inner">
                             <DiagnosisFlow onComplete={handleDiagnosisComplete} embedded={true} />
                         </div>
                     </div>
@@ -308,39 +306,41 @@ export default function RegistrationForm() {
 
                 {/* STEP 3: CONFIRM */}
                 {step === 'confirm' && diagnosisResult && (
-                    <div className="space-y-8 animate-in zoom-in-95 duration-300 text-center">
+                    <div className="space-y-10 animate-in zoom-in-95 duration-300 text-center">
                         <div>
-                            <h3 className="text-xl font-bold text-stone-800">診断結果</h3>
-                            <div className={`mt-4 w-24 h-24 mx-auto rounded-full bg-gradient-to-br ${DIAGNOSIS_RESULTS[diagnosisResult].color} flex items-center justify-center text-4xl shadow-xl`}>
+                            <h3 className="text-2xl font-black text-white text-outline">診断結果</h3>
+                            <div className={`mt-6 w-32 h-32 mx-auto rounded-full bg-gradient-to-br ${DIAGNOSIS_RESULTS[diagnosisResult].color} flex items-center justify-center text-5xl shadow-2xl border-4 border-white/20`}>
                                 {DIAGNOSIS_RESULTS[diagnosisResult].emoji}
                             </div>
-                            <h4 className="text-2xl font-black mt-4 text-stone-900">{diagnosisResult}</h4>
-                            <p className="text-stone-600 mt-2 text-sm leading-relaxed px-4 whitespace-pre-wrap">
+                            <h4 className="text-4xl font-black mt-6 text-white text-outline">{diagnosisResult}</h4>
+                            <p className="text-[#d4c5b0] mt-4 text-base leading-relaxed px-4 whitespace-pre-wrap drop-shadow-md">
                                 {DIAGNOSIS_RESULTS[diagnosisResult].description}
                             </p>
-                            <p className="text-stone-500 text-xs mt-4">
-                                あなたは<span className="font-bold text-stone-800">「{diagnosisResult}棟」</span>に入居します。
+                            <p className="text-[#c9a64e] text-sm mt-6 font-bold tracking-widest leading-loose">
+                                おめでとうございます。<br />あなたは<span className="text-white text-lg">「{diagnosisResult}棟」</span>に入居します。
                             </p>
                         </div>
 
-                        <button
-                            onClick={handleSubmit}
-                            disabled={loading}
-                            className={`w-full py-4 rounded-lg font-bold text-white text-xl shadow-lg transition-colors ${loading ? 'bg-gray-400' : 'bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-700 hover:to-stone-800'}`}
-                        >
-                            {loading ? '入居手続き中...' : '決定して入居する'}
-                        </button>
+                        <div className="space-y-4">
+                            <button
+                                onClick={handleSubmit}
+                                disabled={loading}
+                                className={`w-full py-5 rounded-2xl font-black text-white text-2xl shadow-2xl transition-all text-outline active:scale-95 ${loading ? 'bg-white/5' : 'bg-[#c9a64e] hover:brightness-110'}`}
+                            >
+                                {loading ? '準備中...' : '決定して入居する'}
+                            </button>
 
-                        <button onClick={() => setStep('diagnosis')} className="text-sm text-stone-400 underline">
-                            診断をやり直す
-                        </button>
+                            <button onClick={() => setStep('diagnosis')} className="text-sm text-[#d4c5b0] hover:text-white transition-colors underline decoration-[#d4c5b0]">
+                                診断をやり直す
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
 
             {/* Preview Section */}
-            <div className="w-full lg:w-auto overflow-auto flex justify-center bg-gray-200 p-8 border border-gray-300 rounded-xl shadow-inner">
-                <div className="scale-[0.6] origin-top md:scale-95 lg:scale-100 transition-transform">
+            <div className="w-full lg:w-auto overflow-auto flex justify-center bg-black/30 p-10 border border-white/5 rounded-[3rem] shadow-2xl backdrop-blur-sm">
+                <div className="scale-[0.55] sm:scale-[0.7] md:scale-90 lg:scale-100 transition-transform origin-top">
                     <TennyuTodoke
                         name={`${lastName} ${firstName}`}
                         firstName={firstName}
