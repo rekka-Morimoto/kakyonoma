@@ -100,6 +100,20 @@ export default function Home() {
             </div>
           </Link>
 
+          {/* Kyo's Song Card - New */}
+          <Link href="/songs" className="group">
+            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-white/30">
+              <div className="text-7xl mb-8 group-hover:rotate-12 transition-transform">🎵</div>
+              <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">きょーの一曲</h3>
+              <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
+                オリジナルやカバーの中から、今のあなたにぴったりの一曲を。
+              </p>
+              <div className="text-white font-bold text-xl border-b-2 border-transparent group-hover:border-white transition-all pb-1 uppercase tracking-widest">
+                Listen →
+              </div>
+            </div>
+          </Link>
+
           {/* Diagnosis Card - Restored */}
           <Link href="/diagnosis" className="group lg:col-start-1 lg:col-end-3">
             <div className="glass-panel p-12 h-full flex flex-col md:flex-row items-center gap-10 hover:scale-[1.01] transition-all duration-500 rounded-[2.5rem] group-hover:border-white/30">
