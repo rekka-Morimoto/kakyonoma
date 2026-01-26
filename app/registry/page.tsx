@@ -257,7 +257,7 @@ export default function Registry() {
                             href="/kakyonoma"
                             className="bg-[#c9a64e] text-white px-10 py-5 rounded-2xl font-black hover:brightness-110 transition-all shadow-2xl hover:shadow-[#c9a64e]/20 active:scale-95 text-xl text-outline"
                         >
-                            和室へ進む
+                            かきょの間へ
                         </Link>
                         <Link
                             href="/"
