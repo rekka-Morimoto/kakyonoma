@@ -43,7 +43,7 @@ export default function SongsPage() {
                         リストから一曲、ランダムでお届けします。
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-10">
 
                         <button
                             onClick={() => handleSongClick('original')}
@@ -66,6 +66,18 @@ export default function SongsPage() {
                             <h3 className="text-2xl font-black text-white font-serif mb-4 text-outline">カバー曲</h3>
                             <div className="text-[#c9a64e] font-bold text-sm tracking-widest">
                                 {loading === 'cover' ? '選曲中...' : 'LISTEN →'}
+                            </div>
+                        </button>
+
+                        <button
+                            onClick={() => handleSongClick('stream')}
+                            disabled={!!loading}
+                            className="glass-panel p-8 rounded-[2rem] border-white/5 hover:border-[#c9a64e]/40 transition-all duration-500 group group-hover:bg-white/5"
+                        >
+                            <div className="text-6xl mb-6 group-hover:scale-110 transition-transform">📻</div>
+                            <h3 className="text-2xl font-black text-white font-serif mb-4 text-outline">きょーの歌枠</h3>
+                            <div className="text-[#c9a64e] font-bold text-sm tracking-widest">
+                                {loading === 'stream' ? '選曲中...' : 'LISTEN →'}
                             </div>
                         </button>
 
