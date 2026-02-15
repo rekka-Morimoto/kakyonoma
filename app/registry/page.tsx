@@ -437,6 +437,7 @@ export default function Registry() {
                                                         roomNumber={resident.roomNumber}
                                                         image={resident.icon || resident.image || ''}
                                                         freeText={resident.freeText}
+                                                        residentId={resident.id}
                                                         captureMode={true}
                                                     />
                                                 </div>
