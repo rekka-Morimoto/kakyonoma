@@ -199,13 +199,19 @@ export default function RegistrationForm() {
 
                         <div>
                             <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">X (旧Twitter) ID</label>
-                            <input
-                                type="text"
-                                value={xAccount}
-                                onChange={(e) => setXAccount(e.target.value)}
-                                className="w-full p-3 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
-                                placeholder="@username"
-                            />
+                            <div className="relative">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 font-bold select-none">@</span>
+                                <input
+                                    type="text"
+                                    value={xAccount}
+                                    onChange={(e) => {
+                                        const value = e.target.value.replace(/^@/, '');
+                                        setXAccount(value);
+                                    }}
+                                    className="w-full p-3 pl-8 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
+                                    placeholder="username"
+                                />
+                            </div>
                         </div>
 
                         <div>
@@ -254,9 +260,9 @@ export default function RegistrationForm() {
                                 value={freeText}
                                 onChange={(e) => setFreeText(e.target.value)}
                                 maxLength={200}
-                                rows={3}
+                                rows={5}
                                 className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white focus:border-[#c9a64e]/50 transition outline-none resize-none"
-                                placeholder="自己紹介など"
+                                placeholder="自己紹介やきょーちゃんへのメッセージなど"
                             />
                         </div>
 

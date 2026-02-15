@@ -4,6 +4,7 @@ export type BuildingType = 'あこがれびと' | 'みまもりびと' | 'とな
 export interface BuildingStyle {
     name: BuildingType;
     emoji: string;
+    iconPath?: string;
     gradient: string;
     border: string;
     text: string;
@@ -16,6 +17,7 @@ export const BUILDING_STYLES: Record<BuildingType, BuildingStyle> = {
     'あこがれびと': {
         name: 'あこがれびと',
         emoji: '✨',
+        iconPath: '/あこがれびと.webp',
         gradient: 'from-purple-500 to-indigo-600',
         border: 'border-purple-200',
         text: 'text-purple-700',
@@ -26,6 +28,7 @@ export const BUILDING_STYLES: Record<BuildingType, BuildingStyle> = {
     'みまもりびと': {
         name: 'みまもりびと',
         emoji: '🕊️',
+        iconPath: '/みまもりびと.webp',
         gradient: 'from-emerald-500 to-teal-600',
         border: 'border-emerald-200',
         text: 'text-emerald-700',
@@ -36,6 +39,7 @@ export const BUILDING_STYLES: Record<BuildingType, BuildingStyle> = {
     'となりびと': {
         name: 'となりびと',
         emoji: '🔥',
+        iconPath: '/となりびと.webp',
         gradient: 'from-orange-500 to-red-600',
         border: 'border-orange-200',
         text: 'text-orange-700',
@@ -46,6 +50,7 @@ export const BUILDING_STYLES: Record<BuildingType, BuildingStyle> = {
     'あゆみびと': {
         name: 'あゆみびと',
         emoji: '🤝',
+        iconPath: '/あゆみびと.webp',
         gradient: 'from-blue-500 to-cyan-600',
         border: 'border-blue-200',
         text: 'text-blue-700',

@@ -19,7 +19,7 @@ interface Question {
     optionB: string;
 }
 
-export const DIAGNOSIS_RESULTS: Record<ResultType, { title: string; description: string; emoji: string; color: string }> = {
+export const DIAGNOSIS_RESULTS: Record<ResultType, { title: string; description: string; emoji: string; iconPath?: string; color: string }> = {
     'あこがれびと': {
         title: 'あこがれびと',
         description: `あなたのタイプは「あこがれびと」です。
@@ -29,6 +29,7 @@ export const DIAGNOSIS_RESULTS: Record<ResultType, { title: string; description:
 遠くから見上げるその背中が、日常を少しだけ明るく照らしてくれる。
 そんな純粋な憧れを大切にするあなたに、「あこがれびと」の名前を授けます。`,
         emoji: '✨',
+        iconPath: '/あこがれびと.webp',
         color: 'from-purple-500 to-indigo-600'
     },
     'みまもりびと': {
@@ -39,6 +40,7 @@ export const DIAGNOSIS_RESULTS: Record<ResultType, { title: string; description:
 推しが選んだ道を尊重し、その歩みを少し後ろから見届けることに安心を感じるタイプです。
 干渉せず、期待を押しつけず、ただ変わらぬまなざしを向け続けるあなたに、「みまもりびと」の名前を授けます。`,
         emoji: '🕊️',
+        iconPath: '/みまもりびと.webp',
         color: 'from-emerald-500 to-teal-600'
     },
     'となりびと': {
@@ -50,6 +52,7 @@ export const DIAGNOSIS_RESULTS: Record<ResultType, { title: string; description:
 推しは遠い存在ではなく、同じ景色を見ている誰か。
 そんな距離感で寄り添うあなたに、「となりびと」の名前を授けます。`,
         emoji: '🔥',
+        iconPath: '/となりびと.webp',
         color: 'from-orange-500 to-red-600'
     },
     'あゆみびと': {
@@ -60,6 +63,7 @@ export const DIAGNOSIS_RESULTS: Record<ResultType, { title: string; description:
 それを口に出して説明できるほど細やかに捉えようとするあなたにとって、推しの存在は自分の少し前を歩く憧れの人です。
 頑張る推しの姿に甘えず、自分もまたともに険しい道を歩もうとするあなたに、「あゆみびと」の名前を授けます。`,
         emoji: '🤝',
+        iconPath: '/あゆみびと.webp',
         color: 'from-blue-500 to-cyan-600'
     }
 };
@@ -279,8 +283,12 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
                 <div className="text-center w-full max-w-2xl space-y-12 animate-in zoom-in-95 duration-700">
                     <div className="space-y-6">
                         <p className="text-[#c9a64e] font-sans font-black tracking-widest text-sm uppercase drop-shadow-md">The Conclusion</p>
-                        <div className={`w-36 h-36 mx-auto rounded-full bg-gradient-to-br ${result.color} flex items-center justify-center text-7xl shadow-2xl mb-8 border-4 border-white/20`}>
-                            {result.emoji}
+                        <div className={`w-36 h-36 mx-auto rounded-full bg-gradient-to-br ${result.color} flex items-center justify-center shadow-2xl mb-8 border-4 border-white/20 overflow-hidden`}>
+                            {result.iconPath ? (
+                                <img src={result.iconPath} alt={result.title} className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="text-7xl">{result.emoji}</span>
+                            )}
                         </div>
                         <h2 className="text-5xl md:text-7xl font-black text-white mb-8 text-outline">
                             {result.title}

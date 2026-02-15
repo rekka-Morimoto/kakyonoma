@@ -138,7 +138,7 @@ export default function TennyuTodoke({
                 </div>
 
                 {/* Right: Personal Information */}
-                <div className="flex-1 space-y-6">
+                <div className="flex-1 space-y-4">
                     {/* Name Block: Sei and Mei */}
                     <div className="grid grid-cols-2 gap-8">
                         <div className="relative pb-2">
@@ -192,7 +192,7 @@ export default function TennyuTodoke({
 
                             <span className="absolute -top-5 left-0 text-[10px] font-bold tracking-widest text-[#a8a29e]">連絡先</span>
 
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-2">
                                 <div className="flex items-center">
                                     <span className="w-20 text-[10px] font-bold tracking-widest shrink-0 text-[#a8a29e]">X</span>
                                     <div className="text-base font-sans font-bold pl-2 truncate">
@@ -210,10 +210,10 @@ export default function TennyuTodoke({
                     </div>
 
                     {/* Free Text Field - Always reserve space */}
-                    <div className="pt-3">
+                    <div className="pt-2">
                         <div className="relative pb-1">
                             <span className="absolute -top-4 left-0 text-[10px] font-bold tracking-widest text-[#78716c]">自由記載</span>
-                            <div className="text-xs pl-2 leading-relaxed h-[50px] overflow-hidden">
+                            <div className="text-xs pl-2 leading-relaxed h-[80px] overflow-hidden whitespace-pre-wrap">
                                 {freeText || ''}
                             </div>
                             <div className="absolute bottom-0 left-0 w-full h-px bg-black/30" />
@@ -226,9 +226,9 @@ export default function TennyuTodoke({
             <div className="absolute bottom-6 left-0 w-full px-12">
                 <div className="pt-6 flex justify-between items-end relative">
                     <div className="absolute top-0 w-full h-px bg-black/10" />
-                    <div className="space-y-1">
-                        <p className="text-sm tracking-widest whitespace-nowrap">上記のとおり入居したことを届け出ます。</p>
-                        <p className="font-bold text-2xl tracking-[0.2em] font-serif whitespace-nowrap">メゾン・ド・きょー管理委員会</p>
+                    <div className="space-y-0.5">
+                        <p className="text-[12px] tracking-widest whitespace-nowrap opacity-80">上記のとおり入居したことを届け出ます。</p>
+                        <p className="font-bold text-xl tracking-[0.2em] font-serif whitespace-nowrap">メゾン・ド・きょー管理委員会</p>
                     </div>
                 </div>
             </div>

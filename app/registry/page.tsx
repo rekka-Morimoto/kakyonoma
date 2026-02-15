@@ -286,7 +286,13 @@ export default function Registry() {
                                 onClick={() => setSelectedBuilding(style.name)}
                                 className={`px-8 py-3 rounded-2xl font-bold transition-all flex items-center gap-2 ${selectedBuilding === style.name ? `bg-white/15 text-white ring-2 ring-[#c9a64e]/50 shadow-xl scale-105` : 'text-stone-400 hover:text-white hover:bg-white/5'}`}
                             >
-                                <span>{style.emoji}</span>
+                                <span>
+                                    {style.iconPath ? (
+                                        <img src={style.iconPath} alt="" className="w-6 h-6 object-contain" />
+                                    ) : (
+                                        style.emoji
+                                    )}
+                                </span>
                                 <span>{style.name}</span>
                             </button>
                         ))}
@@ -360,8 +366,11 @@ export default function Registry() {
                                                 </button>
                                             </div>
 
-                                            <div className={`px-6 py-2 rounded-full text-[10px] font-black mb-4 tracking-[0.2em] shadow-lg text-outline ${style.bg === 'bg-amber-100' ? 'bg-[#c9a64e]' : 'bg-white/10'}`}>
-                                                {style.name || '所属なし'}
+                                            <div className={`px-6 py-2 rounded-full text-[10px] font-black mb-4 tracking-[0.2em] shadow-lg text-outline flex items-center gap-2 ${style.bg === 'bg-amber-100' ? 'bg-[#c9a64e]' : 'bg-white/10'}`}>
+                                                {style.iconPath && (
+                                                    <img src={style.iconPath} alt="" className="w-4 h-4 object-contain" />
+                                                )}
+                                                <span>{style.name || '所属なし'}</span>
                                             </div>
 
                                             <h2 className="text-4xl font-serif font-black text-white tracking-tight mb-3 text-center leading-snug text-outline">
