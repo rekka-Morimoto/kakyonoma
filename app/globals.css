@@ -83,6 +83,11 @@ body::before {
     0px 4px 10px rgba(0, 0, 0, 0.8);
 }
 
+.text-outline-heavy {
+  text-shadow: -4px -4px 0 #000, 4px -4px 0 #000, -4px 4px 0 #000, 4px 4px 0 #000,
+    0 8px 15px rgba(0, 0, 0, 0.5);
+}
+
 .text-glow {
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 0 2px 5px rgba(0, 0, 0, 0.5);
 }

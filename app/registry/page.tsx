@@ -273,10 +273,10 @@ export default function Registry() {
                 {/* Admin Toolbar & Filters */}
                 <div className="mb-20 flex flex-col md:flex-row justify-between items-center gap-10">
                     {/* Building Filter */}
-                    <div className="flex flex-wrap gap-4 justify-center bg-black/20 backdrop-blur-md p-3 rounded-3xl border border-white/10 shadow-xl">
+                    <div className="flex flex-wrap justify-center gap-6 mb-16 max-w-7xl mx-auto px-4">
                         <button
                             onClick={() => setSelectedBuilding(null)}
-                            className={`px-8 py-3 rounded-2xl font-bold transition-all ${!selectedBuilding ? 'bg-[#c9a64e] text-white shadow-xl scale-105' : 'text-stone-400 hover:text-white hover:bg-white/5'}`}
+                            className={`px-10 py-6 rounded-[2rem] font-black text-xl transition-all shadow-2xl ${selectedBuilding === null ? 'bg-[#c9a64e] text-white ring-4 ring-white/30 scale-110' : 'bg-black/40 text-stone-400 hover:text-white hover:bg-black/60 border border-white/10'}`}
                         >
                             全て
                         </button>
@@ -284,16 +284,16 @@ export default function Registry() {
                             <button
                                 key={style.name}
                                 onClick={() => setSelectedBuilding(style.name)}
-                                className={`px-8 py-3 rounded-2xl font-bold transition-all flex items-center gap-2 ${selectedBuilding === style.name ? `bg-white/15 text-white ring-2 ring-[#c9a64e]/50 shadow-xl scale-105` : 'text-stone-400 hover:text-white hover:bg-white/5'}`}
+                                className={`px-8 py-6 rounded-[2rem] font-black transition-all flex flex-col items-center gap-4 min-w-[160px] shadow-2xl ${selectedBuilding === style.name ? `bg-gradient-to-br ${style.gradient} text-white ring-4 ring-[#c9a64e]/50 scale-110` : 'bg-black/40 text-stone-400 hover:text-white hover:bg-black/60 border border-white/10'}`}
                             >
-                                <span>
+                                <div className={`p-2 rounded-2xl bg-white/10 backdrop-blur-sm shadow-inner group-hover:scale-110 transition-transform`}>
                                     {style.iconPath ? (
-                                        <img src={style.iconPath} alt="" className="w-10 h-10 object-contain" />
+                                        <img src={style.iconPath} alt="" className="w-24 h-24 object-contain" />
                                     ) : (
-                                        <span className="text-2xl">{style.emoji}</span>
+                                        <span className="text-5xl block leading-none">{style.emoji}</span>
                                     )}
-                                </span>
-                                <span className="text-xs font-black">{style.name}</span>
+                                </div>
+                                <span className="text-sm tracking-widest">{style.name}</span>
                             </button>
                         ))}
                     </div>

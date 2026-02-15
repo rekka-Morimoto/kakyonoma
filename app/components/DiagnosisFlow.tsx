@@ -283,15 +283,15 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
                 <div className="text-center w-full max-w-2xl space-y-12 animate-in zoom-in-95 duration-700">
                     <div className="space-y-6">
                         <p className="text-[#c9a64e] font-sans font-black tracking-widest text-sm uppercase drop-shadow-md">The Conclusion</p>
-                        <div className={`w-80 h-80 mx-auto rounded-full bg-gradient-to-br ${result.color} flex items-center justify-center shadow-2xl mb-8 border-8 border-white/20 overflow-hidden relative group`}>
+                        <div className={`w-64 h-64 md:w-[450px] md:h-[450px] mx-auto rounded-full bg-gradient-to-br ${result.color} flex items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.3)] mb-0 border-[12px] border-white/20 overflow-hidden relative group z-0`}>
                             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                             {result.iconPath ? (
-                                <img src={result.iconPath} alt={result.title} className="w-full h-full object-cover transform scale-110" />
+                                <img src={result.iconPath} alt={result.title} className="w-full h-full object-cover transform scale-105" />
                             ) : (
-                                <span className="text-[10rem]">{result.emoji}</span>
+                                <span className="text-[12rem] md:text-[18rem]">{result.emoji}</span>
                             )}
                         </div>
-                        <h2 className="text-5xl md:text-7xl font-black text-white mb-8 text-outline">
+                        <h2 className="text-6xl md:text-9xl font-black text-white -mt-12 md:-mt-20 relative z-10 text-outline-heavy tracking-tighter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
                             {result.title}
                         </h2>
                         <div className="glass-panel p-10 rounded-[3rem] border-white/10 shadow-2xl relative">
