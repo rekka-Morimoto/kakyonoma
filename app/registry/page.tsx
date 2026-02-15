@@ -288,12 +288,12 @@ export default function Registry() {
                             >
                                 <span>
                                     {style.iconPath ? (
-                                        <img src={style.iconPath} alt="" className="w-6 h-6 object-contain" />
+                                        <img src={style.iconPath} alt="" className="w-10 h-10 object-contain" />
                                     ) : (
-                                        style.emoji
+                                        <span className="text-2xl">{style.emoji}</span>
                                     )}
                                 </span>
-                                <span>{style.name}</span>
+                                <span className="text-xs font-black">{style.name}</span>
                             </button>
                         ))}
                     </div>
@@ -366,17 +366,8 @@ export default function Registry() {
                                                 </button>
                                             </div>
 
-                                            <div className="relative mb-6">
-                                                <div className={`w-36 h-36 mx-auto rounded-full flex items-center justify-center shadow-xl border-4 ${style.border === 'border-amber-400' ? 'border-[#c9a64e]/50' : 'border-white/20'} overflow-hidden bg-gradient-to-br ${style.gradient} relative group-hover:scale-105 transition-transform duration-700`}>
-                                                    {style.iconPath ? (
-                                                        <img src={style.iconPath} alt="" className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <span className="text-6xl">{style.emoji}</span>
-                                                    )}
-                                                </div>
-                                                <div className={`absolute -bottom-2 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-black tracking-[0.2em] shadow-lg text-outline whitespace-nowrap ${style.bg === 'bg-amber-100' ? 'bg-[#c9a64e]' : 'bg-white/10'}`}>
-                                                    {style.name || '所属なし'}
-                                                </div>
+                                            <div className={`px-6 py-2 rounded-full text-[10px] font-black mb-6 tracking-[0.2em] shadow-lg text-outline ${style.bg === 'bg-amber-100' ? 'bg-[#c9a64e]' : 'bg-white/10'}`}>
+                                                {style.name || '所属なし'}
                                             </div>
 
                                             <h2 className="text-4xl font-serif font-black text-white tracking-tight mb-3 text-center leading-snug text-outline">
