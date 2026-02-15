@@ -66,7 +66,8 @@ export default function Home() {
               <div className="text-7xl mb-8 group-hover:rotate-12 transition-transform">✍️</div>
               <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">入居届</h3>
               <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                自分だけのプロフィールを作成し、この場所の一員として登録します。
+                自分だけのプロフィールを作成し、<br className="hidden md:block" />
+                この場所の一員として登録します。
               </p>
               <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
                 Check In →
@@ -79,7 +80,8 @@ export default function Home() {
               <div className="text-7xl mb-8 group-hover:-rotate-12 transition-transform">📮</div>
               <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">住人名簿</h3>
               <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                ここに住まう仲間たちの記録。いつでも誰でも閲覧できます。
+                ここに住まう仲間たちの記録。<br className="hidden md:block" />
+                いつでも誰でも閲覧できます。
               </p>
               <div className="text-white font-bold text-xl border-b-2 border-transparent group-hover:border-white transition-all pb-1 uppercase tracking-widest">
                 Registry →
@@ -92,7 +94,8 @@ export default function Home() {
               <div className="text-7xl mb-8 group-hover:scale-110 transition-transform">🏮</div>
               <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">かきょの間</h3>
               <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                和の空気漂う憩いの場。皆の存在が畳となって広がります。
+                和の空気漂う憩いの場。<br className="hidden md:block" />
+                皆の存在が畳となって広がります。
               </p>
               <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
                 Explore →
@@ -105,7 +108,8 @@ export default function Home() {
               <div className="text-7xl mb-8 group-hover:rotate-12 transition-transform">🎵</div>
               <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">きょーの一曲</h3>
               <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                オリジナルやカバーの中から、今のあなたにぴったりの一曲を。
+                オリジナルやカバーの中から、<br className="hidden md:block" />
+                今のあなたにぴったりの一曲を。
               </p>
               <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
                 Listen →
@@ -118,7 +122,8 @@ export default function Home() {
               <div className="text-7xl mb-8 group-hover:scale-110 transition-transform">🔮</div>
               <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">推しタイプ診断</h3>
               <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                質問に答えて、あなたの推しへの向き合い方を診断します。
+                質問に答えて、あなたの<br className="hidden md:block" />
+                推しへの向き合い方を診断します。
               </p>
               <div className="text-white font-bold text-xl border-b-2 border-transparent group-hover:border-white transition-all pb-1 uppercase tracking-widest">
                 Start →
@@ -131,7 +136,8 @@ export default function Home() {
               <div className="text-7xl mb-8 group-hover:translate-x-2 transition-transform">👤</div>
               <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">管理人から</h3>
               <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                本サイトの立ち上げへの想いと、皆様へのメッセージです。
+                本サイトの立ち上げへの想いと、<br className="hidden md:block" />
+                皆様へのメッセージです。
               </p>
               <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
                 Message →
