@@ -283,11 +283,12 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
                 <div className="text-center w-full max-w-2xl space-y-12 animate-in zoom-in-95 duration-700">
                     <div className="space-y-6">
                         <p className="text-[#c9a64e] font-sans font-black tracking-widest text-sm uppercase drop-shadow-md">The Conclusion</p>
-                        <div className={`w-36 h-36 mx-auto rounded-full bg-gradient-to-br ${result.color} flex items-center justify-center shadow-2xl mb-8 border-4 border-white/20 overflow-hidden`}>
+                        <div className={`w-64 h-64 mx-auto rounded-full bg-gradient-to-br ${result.color} flex items-center justify-center shadow-2xl mb-8 border-8 border-white/20 overflow-hidden relative group`}>
+                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                             {result.iconPath ? (
-                                <img src={result.iconPath} alt={result.title} className="w-full h-full object-cover" />
+                                <img src={result.iconPath} alt={result.title} className="w-full h-full object-cover transform scale-110" />
                             ) : (
-                                <span className="text-7xl">{result.emoji}</span>
+                                <span className="text-9xl">{result.emoji}</span>
                             )}
                         </div>
                         <h2 className="text-5xl md:text-7xl font-black text-white mb-8 text-outline">
