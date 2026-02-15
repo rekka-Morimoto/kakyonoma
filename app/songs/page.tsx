@@ -95,6 +95,19 @@ export default function SongsPage() {
 
                     </div>
 
+                    <div className="pt-12">
+                        <a
+                            href="/song_list.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="glass-panel px-12 py-8 rounded-[2rem] border-white/10 hover:border-[#c9a64e]/50 transition-all duration-500 group inline-flex flex-col items-center gap-2 hover:bg-white/5 min-w-[320px]"
+                        >
+                            <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">📋</div>
+                            <span className="text-xl font-black text-white font-serif text-outline">歌枠セトリ一覧を見る</span>
+                            <span className="text-[#c9a64e] font-bold text-xs tracking-widest opacity-60 group-hover:opacity-100 transition-opacity uppercase font-sans">View Full Setlist</span>
+                        </a>
+                    </div>
+
                     <footer className="pt-12 opacity-40">
                         <p className="text-white text-sm font-serif italic">今日の出会いが、あなたにとって特別なものになりますように。</p>
                     </footer>
