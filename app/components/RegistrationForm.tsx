@@ -136,6 +136,7 @@ export default function RegistrationForm() {
                     password: password,
                     building: diagnosisResult,
                     answers: diagnosisAnswers,
+                    freeText: freeText,
                 }),
             });
 

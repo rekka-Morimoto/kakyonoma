@@ -195,13 +195,13 @@ export default function TennyuTodoke({
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center">
                                     <span className="w-20 text-[10px] font-bold tracking-widest shrink-0 text-[#a8a29e]">X</span>
-                                    <div className="text-base font-sans font-bold pl-2 truncate">
+                                    <div className="text-base font-sans font-bold pl-2">
                                         {xAccount ? `@${xAccount}` : '未登録'}
                                     </div>
                                 </div>
                                 <div className="flex items-center">
                                     <span className="w-20 text-[10px] font-bold tracking-widest shrink-0 text-[#a8a29e]">YouTube</span>
-                                    <div className="text-base font-sans font-bold pl-2 truncate">
+                                    <div className="text-base font-sans font-bold pl-2">
                                         {youtubeAccount || '未登録'}
                                     </div>
                                 </div>

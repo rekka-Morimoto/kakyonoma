@@ -17,6 +17,7 @@ interface Resident {
   icon: string;  // URL または Base64
   password?: string;
   createdAt: string;
+  freeText?: string;
 }
 
 const ADMIN_PASSWORD = '5226ms';
@@ -67,7 +68,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const {
       name, firstName, lastName, nickname,
-      xAccount, youtubeAccount, baseLocation, image, icon, password, building
+      xAccount, youtubeAccount, baseLocation, image, icon, password, building,
+      freeText
     } = body;
 
     const hasName = name || (firstName && lastName);
@@ -125,6 +127,7 @@ export async function POST(request: Request) {
       icon: iconUrl,
       password: password || '',
       createdAt: new Date().toISOString(),
+      freeText: freeText || '',
     };
 
     const pipeline = kv.pipeline();

@@ -18,6 +18,7 @@ interface Resident {
     icon?: string;  // This is the original avatar
     roomNumber: number;
     building?: string;
+    freeText?: string;
 }
 
 export default function Registry() {
@@ -435,6 +436,7 @@ export default function Registry() {
                                                         baseLocation={resident.baseLocation || ''}
                                                         roomNumber={resident.roomNumber}
                                                         image={resident.icon || resident.image || ''}
+                                                        freeText={resident.freeText}
                                                         captureMode={true}
                                                     />
                                                 </div>
