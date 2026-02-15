@@ -273,27 +273,39 @@ export default function Registry() {
                 {/* Admin Toolbar & Filters */}
                 <div className="mb-20 flex flex-col md:flex-row justify-between items-center gap-10">
                     {/* Building Filter */}
-                    <div className="flex flex-wrap justify-center gap-6 mb-16 max-w-7xl mx-auto px-4">
+                    <div className="flex flex-wrap justify-center gap-8 mb-16 max-w-7xl mx-auto px-6">
                         <button
                             onClick={() => setSelectedBuilding(null)}
-                            className={`px-10 py-6 rounded-[2rem] font-black text-xl transition-all shadow-2xl ${selectedBuilding === null ? 'bg-[#c9a64e] text-white ring-4 ring-white/30 scale-110' : 'bg-black/40 text-stone-400 hover:text-white hover:bg-black/60 border border-white/10'}`}
+                            className={`group px-10 py-6 rounded-3xl font-serif font-black text-xl transition-all relative overflow-hidden flex items-center justify-center min-w-[140px] shadow-2xl border-2 ${selectedBuilding === null ? 'bg-[#c9a64e] text-white border-amber-200 scale-105 shadow-amber-900/40' : 'bg-black/60 text-stone-400 border-white/10 hover:border-[#c9a64e]/40 hover:text-white'}`}
                         >
-                            全て
+                            <span className="relative z-10">全て</span>
+                            {selectedBuilding === null && <div className="absolute inset-0 bg-gradient-to-tr from-amber-600/20 to-transparent animate-pulse" />}
                         </button>
                         {Object.values(BUILDING_STYLES).map((style) => (
                             <button
                                 key={style.name}
                                 onClick={() => setSelectedBuilding(style.name)}
-                                className={`px-8 py-6 rounded-[2rem] font-black transition-all flex flex-col items-center gap-4 min-w-[160px] shadow-2xl ${selectedBuilding === style.name ? `bg-gradient-to-br ${style.gradient} text-white ring-4 ring-[#c9a64e]/50 scale-110` : 'bg-black/40 text-stone-400 hover:text-white hover:bg-black/60 border border-white/10'}`}
+                                className={`group p-1 rounded-[2.5rem] transition-all relative overflow-hidden shadow-2xl ${selectedBuilding === style.name ? 'scale-110 z-10' : 'scale-100 opacity-80 hover:opacity-100 hover:scale-105'}`}
                             >
-                                <div className={`p-2 rounded-2xl bg-white/10 backdrop-blur-sm shadow-inner group-hover:scale-110 transition-transform`}>
-                                    {style.iconPath ? (
-                                        <img src={style.iconPath} alt="" className="w-24 h-24 object-contain" />
-                                    ) : (
-                                        <span className="text-5xl block leading-none">{style.emoji}</span>
-                                    )}
+                                <div className={`px-8 py-6 rounded-[2.4rem] flex flex-col items-center gap-4 min-w-[180px] border-2 transition-all duration-500 ${selectedBuilding === style.name ? `bg-gradient-to-b ${style.gradient} border-white/40 shadow-inner` : 'bg-black/60 border-white/10 hover:border-[#c9a64e]/50'}`}>
+                                    <div className={`relative w-28 h-28 flex items-center justify-center rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl group-hover:rotate-3 transition-transform duration-500`}>
+                                        {style.iconPath ? (
+                                            <img src={style.iconPath} alt="" className="w-24 h-24 object-contain" />
+                                        ) : (
+                                            <span className="text-6xl">{style.emoji}</span>
+                                        )}
+                                        <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <span className={`text-[10px] uppercase tracking-[0.3em] mb-1 font-sans font-black ${selectedBuilding === style.name ? 'text-white/70' : 'text-[#c9a64e]'}`}>Type</span>
+                                        <span className={`text-base font-serif font-black tracking-widest ${selectedBuilding === style.name ? 'text-white text-glow' : 'text-stone-300'}`}>
+                                            {style.name}
+                                        </span>
+                                    </div>
                                 </div>
-                                <span className="text-sm tracking-widest">{style.name}</span>
+                                {selectedBuilding === style.name && (
+                                    <div className="absolute inset-0 border-4 border-[#c9a64e] rounded-[2.5rem] pointer-events-none animate-pulse opacity-50" />
+                                )}
                             </button>
                         ))}
                     </div>

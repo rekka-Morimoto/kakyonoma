@@ -291,7 +291,7 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
                                 <span className="text-[12rem] md:text-[18rem]">{result.emoji}</span>
                             )}
                         </div>
-                        <h2 className="text-6xl md:text-9xl font-black text-white -mt-12 md:-mt-20 relative z-10 text-outline-heavy tracking-tighter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
+                        <h2 className="text-5xl md:text-7xl font-black text-white -mt-8 md:-mt-12 relative z-10 text-outline-heavy tracking-wider drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
                             {result.title}
                         </h2>
                         <div className="glass-panel p-10 rounded-[3rem] border-white/10 shadow-2xl relative">
