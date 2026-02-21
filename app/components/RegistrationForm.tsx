@@ -8,8 +8,7 @@ import DiagnosisFlow, { ResultType, DIAGNOSIS_RESULTS } from './DiagnosisFlow';
 
 export default function RegistrationForm() {
     const [step, setStep] = useState<'form' | 'diagnosis' | 'confirm'>('form');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+    const [name, setName] = useState('');
     const [nickname, setNickname] = useState('');
     const [xAccount, setXAccount] = useState('');
     const [youtubeAccount, setYoutubeAccount] = useState('');
@@ -95,7 +94,7 @@ export default function RegistrationForm() {
     };
 
     const handleFormNext = () => {
-        if (!firstName || !lastName || !password) {
+        if (!name || !password) {
             alert('必須項目を入力してください');
             return;
         }
@@ -124,9 +123,7 @@ export default function RegistrationForm() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    firstName,
-                    lastName,
-                    name: `${lastName} ${firstName}`,
+                    name,
                     nickname,
                     xAccount,
                     youtubeAccount,
@@ -159,32 +156,25 @@ export default function RegistrationForm() {
         <div className="flex flex-col lg:flex-row gap-8 items-start justify-center min-h-screen p-8 bg-transparent text-white">
             {/* Main Content Area */}
             <div className="w-full lg:w-1/3 glass-panel p-8 rounded-[2.5rem] transition-all duration-500 border-white/10 shadow-2xl">
+                <div className="mb-6 p-4 bg-amber-900/40 border border-[#c9a64e]/30 rounded-2xl text-xs text-[#fcf9f2] leading-relaxed">
+                    <p className="font-bold text-[#c9a64e] mb-1">【重要】登録に関する注意</p>
+                    <p>※ご本人のアカウントのみ登録をお願いします。</p>
+                    <p>※個人情報に繋がる内容は記入しないでください。</p>
+                </div>
                 <h2 className="text-3xl font-black mb-8 text-white text-outline">入居手続き</h2>
 
                 {/* STEP 1: FORM */}
                 {step === 'form' && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-300">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">姓 (Sei)</label>
-                                <input
-                                    type="text"
-                                    value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)}
-                                    className="w-full p-3 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
-                                    placeholder="例: 山田"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">名 (Mei)</label>
-                                <input
-                                    type="text"
-                                    value={firstName}
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                    className="w-full p-3 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
-                                    placeholder="例: 太郎"
-                                />
-                            </div>
+                        <div>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">なまえ (Name)</label>
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="w-full p-3 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
+                                placeholder="例: 山田太郎"
+                            />
                         </div>
 
                         <div>
@@ -288,8 +278,8 @@ export default function RegistrationForm() {
 
                         <button
                             onClick={handleFormNext}
-                            disabled={!firstName || !lastName || !password}
-                            className={`w-full py-4 rounded-2xl font-black text-xl text-white transition-all shadow-2xl text-outline ${!firstName || !lastName || !password ? 'bg-white/5 cursor-not-allowed text-white/20' : 'bg-[#c9a64e] hover:brightness-110 active:scale-95'}`}
+                            disabled={!name || !password}
+                            className={`w-full py-4 rounded-2xl font-black text-xl text-white transition-all shadow-2xl text-outline ${!name || !password ? 'bg-white/5 cursor-not-allowed text-white/20' : 'bg-[#c9a64e] hover:brightness-110 active:scale-95'}`}
                         >
                             次へ（入居審査）
                         </button>
@@ -349,9 +339,7 @@ export default function RegistrationForm() {
             <div className="w-full lg:w-auto overflow-auto flex justify-center bg-black/30 p-10 border border-white/5 rounded-[3rem] shadow-2xl backdrop-blur-sm">
                 <div className="scale-[0.55] sm:scale-[0.7] md:scale-90 lg:scale-100 transition-transform origin-top">
                     <TennyuTodoke
-                        name={`${lastName} ${firstName}`}
-                        firstName={firstName}
-                        lastName={lastName}
+                        name={name}
                         nickname={nickname}
                         xAccount={xAccount}
                         youtubeAccount={youtubeAccount}

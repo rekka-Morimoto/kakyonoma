@@ -114,9 +114,9 @@ export async function POST(request: Request) {
 
     const newResident: Resident = {
       id: newId,
-      name: name || `${lastName} ${firstName}`,
-      firstName: firstName || '',
-      lastName: lastName || '',
+      name: name || '',
+      firstName: '',
+      lastName: '',
       nickname: nickname || '',
       xAccount: xAccount || '',
       youtubeAccount: youtubeAccount || '',

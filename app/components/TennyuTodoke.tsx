@@ -139,22 +139,13 @@ export default function TennyuTodoke({
 
                 {/* Right: Personal Information */}
                 <div className="flex-1 space-y-4">
-                    {/* Name Block: Sei and Mei */}
-                    <div className="grid grid-cols-2 gap-8">
-                        <div className="relative pb-2">
-                            <span className="absolute -top-4 left-0 text-[10px] font-bold tracking-widest text-[#78716c]">姓</span>
-                            <div className="text-2xl pl-4 font-black h-8 flex items-end">
-                                {lastName || (name ? name.split(' ')[0] : '　')}
-                            </div>
-                            <div className="absolute bottom-0 left-0 w-full h-[2px] bg-black" />
+                    {/* Name Block: Single Column for unified name */}
+                    <div className="relative pb-2">
+                        <span className="absolute -top-4 left-0 text-[10px] font-bold tracking-widest text-[#78716c]">なまえ</span>
+                        <div className="text-3xl pl-4 font-black h-10 flex items-end">
+                            {name || '　'}
                         </div>
-                        <div className="relative pb-2">
-                            <span className="absolute -top-4 left-0 text-[10px] font-bold tracking-widest text-[#78716c]">名</span>
-                            <div className="text-2xl pl-4 font-black h-8 flex items-end">
-                                {firstName || (name && name.includes(' ') ? name.split(' ').slice(1).join(' ') : '　')}
-                            </div>
-                            <div className="absolute bottom-0 left-0 w-full h-[2px] bg-black" />
-                        </div>
+                        <div className="absolute bottom-0 left-0 w-full h-[2px] bg-black" />
                     </div>
 
                     {/* Nickname (Yobikata) */}
