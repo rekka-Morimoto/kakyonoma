@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "かきょの間 (Kakyo-no-ma)",
-  description: "レトロなメゾンの住人名簿",
+  description: "メゾン・ド・きょー公式サイト",
 };
 
 export default function RootLayout({

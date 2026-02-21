@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>きょーの一曲 - メゾン・ド・きょー (Standalone)</title>
+    <title>プレきょーの一曲 - かきょの間</title>
+    <meta name="description" content="今日の気分に合わせて選曲をお届けします（プレリリース版）。">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -88,12 +90,15 @@
         }
     </style>
 </head>
+
 <body class="p-8 md:p-20 flex flex-col items-center">
     <div class="max-w-4xl w-full space-y-12 relative z-10">
         <div class="glass-panel p-10 md:p-20 rounded-[3rem] border-white/10 shadow-2xl space-y-12 text-center">
             <header class="border-b border-white/10 pb-10">
-                <h1 class="text-5xl md:text-7xl font-serif font-black text-white mb-4 text-outline title-elegant">きょーの一曲</h1>
-                <p class="text-[#c9a64e] tracking-[0.5em] font-sans font-black uppercase text-sm drop-shadow-md">Random Song Selection</p>
+                <h1 class="text-5xl md:text-7xl font-serif font-black text-white mb-4 text-outline title-elegant">きょーの一曲
+                </h1>
+                <p class="text-[#c9a64e] tracking-[0.5em] font-sans font-black uppercase text-sm drop-shadow-md">Random
+                    Song Selection</p>
             </header>
 
             <p class="text-white text-xl font-serif leading-loose text-outline max-w-2xl mx-auto opacity-90">
@@ -136,13 +141,16 @@
                     class="glass-panel px-12 py-8 rounded-[2rem] border-white/10 hover:border-[#c9a64e]/50 transition-all duration-500 group inline-flex flex-col items-center gap-2 hover:bg-white/5 min-w-[320px]">
                     <div class="text-4xl mb-2 group-hover:scale-110 transition-transform">📋</div>
                     <span class="text-xl font-black text-white font-serif text-outline">歌枠セトリ一覧を見る</span>
-                    <span class="text-[#c9a64e] font-bold text-xs tracking-widest opacity-60 group-hover:opacity-100 transition-opacity uppercase font-sans">View Full Setlist</span>
+                    <span
+                        class="text-[#c9a64e] font-bold text-xs tracking-widest opacity-60 group-hover:opacity-100 transition-opacity uppercase font-sans">View
+                        Full Setlist</span>
                 </a>
             </div>
 
             <footer class="pt-12 opacity-40 border-t border-white/10">
                 <p class="text-white text-sm font-serif italic">今日の出会いが、あなたにとって特別なものになりますように。</p>
-                <p class="text-[#c9a64e] text-[10px] mt-4 tracking-widest opacity-60">© 2026 KAKYO-NO-MA • STANDALONE STATIC VERSION</p>
+                <p class="text-[#c9a64e] text-[10px] mt-4 tracking-widest opacity-60">© 2026 KAKYO-NO-MA • STANDALONE
+                    STATIC VERSION</p>
             </footer>
         </div>
     </div>
@@ -172,11 +180,12 @@
                 } else {
                     alert('曲が見つかりませんでした。');
                 }
-                
+
                 btn.classList.remove('btn-loading');
                 label.innerText = originalText;
             }, 800);
         }
     </script>
 </body>
+
 </html>
