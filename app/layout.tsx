@@ -15,6 +15,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "かきょの間 (Kakyo-no-ma)",
   description: "メゾン・ド・きょー公式サイト",
+  openGraph: {
+    title: "かきょの間 (Kakyo-no-ma)",
+    description: "メゾン・ド・きょー公式サイト",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "かきょの間 (Kakyo-no-ma)",
+    description: "メゾン・ド・きょー公式サイト",
+  },
 };
 
 export default function RootLayout({

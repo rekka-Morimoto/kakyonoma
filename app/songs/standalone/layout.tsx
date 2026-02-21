@@ -3,6 +3,16 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
     title: "プレきょーの一曲 - かきょの間",
     description: "今日の気分に合わせて選曲をお届けします。",
+    openGraph: {
+        title: "プレきょーの一曲 - かきょの間",
+        description: "今日の気分に合わせて選曲をお届けします。",
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "プレきょーの一曲 - かきょの間",
+        description: "今日の気分に合わせて選曲をお届けします。",
+    },
 };
 
 export default function StandaloneSongsLayout({
