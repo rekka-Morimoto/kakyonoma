@@ -286,7 +286,7 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
                         <div className={`w-64 h-64 md:w-[450px] md:h-[450px] mx-auto rounded-full bg-gradient-to-br ${result.color} flex items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.3)] mb-0 border-[12px] border-white/20 overflow-hidden relative group z-0`}>
                             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                             {result.iconPath ? (
-                                <img src={result.iconPath} alt={result.title} className="w-full h-full object-cover transform scale-105" />
+                                <img src={result.iconPath} alt={result.title} className="w-full h-full object-contain p-4" />
                             ) : (
                                 <span className="text-[12rem] md:text-[18rem]">{result.emoji}</span>
                             )}
