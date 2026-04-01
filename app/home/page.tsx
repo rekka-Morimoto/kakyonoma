@@ -62,97 +62,109 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
 
           <Link href="/register" className="group">
-            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40">
-              <div className="mb-8 group-hover:rotate-12 transition-transform h-20 w-20 flex items-center justify-center">
-                <img src="/入居届.webp" alt="入居届" className="w-full h-full object-contain drop-shadow-lg" />
+            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
+              <div className="mb-0 group-hover:rotate-6 transition-transform h-48 w-48 flex items-center justify-center absolute -top-4 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
+                <img src="/入居届.webp" alt="入居届" className="w-full h-full object-contain drop-shadow-2xl" />
               </div>
-              <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">入居届</h3>
-              <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                自分だけのプロフィールを作成し、<br className="hidden md:block" />
-                この場所の一員として登録します。
-              </p>
-              <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
-                Check In →
+              <div className="relative z-10 mt-36 flex flex-col items-center">
+                <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">入居届</h3>
+                <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
+                  自分だけのプロフィールを作成し、<br className="hidden md:block" />
+                  この場所の一員として登録します。
+                </p>
+                <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
+                  Check In →
+                </div>
               </div>
             </div>
           </Link>
 
           <Link href="/registry" className="group">
-            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-white/30">
-              <div className="mb-8 group-hover:-rotate-12 transition-transform h-20 w-20 flex items-center justify-center">
-                <img src="/住人名簿.webp" alt="住人名簿" className="w-full h-full object-contain drop-shadow-lg" />
+            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-white/30 relative overflow-hidden">
+              <div className="mb-0 group-hover:-rotate-6 transition-transform h-48 w-48 flex items-center justify-center absolute -top-4 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
+                <img src="/住人名簿.webp" alt="住人名簿" className="w-full h-full object-contain drop-shadow-2xl" />
               </div>
-              <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">住人名簿</h3>
-              <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                ここに住まう仲間たちの記録。<br className="hidden md:block" />
-                いつでも誰でも閲覧できます。
-              </p>
-              <div className="text-white font-bold text-xl border-b-2 border-transparent group-hover:border-white transition-all pb-1 uppercase tracking-widest">
-                Registry →
+              <div className="relative z-10 mt-36 flex flex-col items-center">
+                <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">住人名簿</h3>
+                <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
+                  ここに住まう仲間たちの記録。<br className="hidden md:block" />
+                  いつでも誰でも閲覧できます。
+                </p>
+                <div className="text-white font-bold text-xl border-b-2 border-transparent group-hover:border-white transition-all pb-1 uppercase tracking-widest">
+                  Registry →
+                </div>
               </div>
             </div>
           </Link>
 
           <Link href="/kakyonoma" className="group">
-            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40">
-              <div className="mb-8 group-hover:scale-110 transition-transform h-20 w-20 flex items-center justify-center">
-                <img src="/かきょの間.webp" alt="かきょの間" className="w-full h-full object-contain drop-shadow-lg" />
+            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
+              <div className="mb-0 group-hover:scale-110 transition-transform h-48 w-48 flex items-center justify-center absolute -top-4 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
+                <img src="/かきょの間.webp" alt="かきょの間" className="w-full h-full object-contain drop-shadow-2xl" />
               </div>
-              <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">かきょの間</h3>
-              <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                和の空気漂う憩いの場。<br className="hidden md:block" />
-                皆の存在が畳となって広がります。
-              </p>
-              <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
-                Explore →
+              <div className="relative z-10 mt-36 flex flex-col items-center">
+                <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">かきょの間</h3>
+                <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
+                  和の空気漂う憩いの場。<br className="hidden md:block" />
+                  皆の存在が畳となって広がります。
+                </p>
+                <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
+                  Explore →
+                </div>
               </div>
             </div>
           </Link>
 
           <Link href="/songs" className="group">
-            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40">
-              <div className="mb-8 group-hover:rotate-12 transition-transform h-20 w-20 flex items-center justify-center">
-                <img src="/きょーの一曲.webp" alt="きょーの一曲" className="w-full h-full object-contain drop-shadow-lg" />
+            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
+              <div className="mb-0 group-hover:rotate-6 transition-transform h-48 w-48 flex items-center justify-center absolute -top-4 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
+                <img src="/きょーの一曲.webp" alt="きょーの一曲" className="w-full h-full object-contain drop-shadow-2xl" />
               </div>
-              <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">きょーの一曲</h3>
-              <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                オリジナルやカバーの中から、<br className="hidden md:block" />
-                今のあなたにぴったりの一曲を。
-              </p>
-              <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
-                Listen →
+              <div className="relative z-10 mt-36 flex flex-col items-center">
+                <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">きょーの一曲</h3>
+                <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
+                  オリジナルやカバーの中から、<br className="hidden md:block" />
+                  今のあなたにぴったりの一曲を。
+                </p>
+                <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
+                  Listen →
+                </div>
               </div>
             </div>
           </Link>
 
           <Link href="/diagnosis" className="group">
-            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-white/30">
-              <div className="mb-8 group-hover:scale-110 transition-transform h-20 w-20 flex items-center justify-center">
-                <img src="/推しタイプ診断.webp" alt="推しタイプ診断" className="w-full h-full object-contain drop-shadow-lg" />
+            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-white/30 relative overflow-hidden">
+              <div className="mb-0 group-hover:scale-110 transition-transform h-48 w-48 flex items-center justify-center absolute -top-4 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
+                <img src="/推しタイプ診断.webp" alt="推しタイプ診断" className="w-full h-full object-contain drop-shadow-2xl" />
               </div>
-              <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">推しタイプ診断</h3>
-              <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                質問に答えて、あなたの<br className="hidden md:block" />
-                推しへの向き合い方を診断します。
-              </p>
-              <div className="text-white font-bold text-xl border-b-2 border-transparent group-hover:border-white transition-all pb-1 uppercase tracking-widest">
-                Start →
+              <div className="relative z-10 mt-36 flex flex-col items-center">
+                <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">推しタイプ診断</h3>
+                <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
+                  質問に答えて、あなたの<br className="hidden md:block" />
+                  推しへの向き合い方を診断します。
+                </p>
+                <div className="text-white font-bold text-xl border-b-2 border-transparent group-hover:border-white transition-all pb-1 uppercase tracking-widest">
+                  Start →
+                </div>
               </div>
             </div>
           </Link>
 
           <Link href="/greeting" className="group">
-            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40">
-              <div className="mb-8 group-hover:translate-x-2 transition-transform h-20 w-20 flex items-center justify-center">
-                <img src="/管理人から.webp" alt="管理人から" className="w-full h-full object-contain drop-shadow-lg" />
+            <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
+              <div className="mb-0 group-hover:translate-x-2 transition-transform h-48 w-48 flex items-center justify-center absolute -top-4 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
+                <img src="/管理人から.webp" alt="管理人から" className="w-full h-full object-contain drop-shadow-2xl" />
               </div>
-              <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">管理人から</h3>
-              <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                本サイトの立ち上げへの想いと、<br className="hidden md:block" />
-                皆様へのメッセージです。
-              </p>
-              <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
-                Message →
+              <div className="relative z-10 mt-36 flex flex-col items-center">
+                <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">管理人から</h3>
+                <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
+                  本サイトの立ち上げへの想いと、<br className="hidden md:block" />
+                  皆様へのメッセージです。
+                </p>
+                <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
+                  Message →
+                </div>
               </div>
             </div>
           </Link>
