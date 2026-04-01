@@ -40,19 +40,18 @@ export default function Home() {
           </div>
 
           <div className="space-y-4 px-4 overflow-hidden">
-            <h1 className="text-white tracking-tight leading-none text-outline title-elegant flex justify-center">
-              <span className="block text-5xl xs:text-6xl md:text-8xl lg:text-9xl whitespace-nowrap drop-shadow-2xl mx-auto max-w-full">メゾン・ド・きょー</span>
+            <h1 className="text-white tracking-tight leading-none text-outline title-elegant flex justify-center w-full">
+              <span className="block text-4xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl whitespace-pre-wrap md:whitespace-nowrap drop-shadow-2xl mx-auto max-w-full break-keep overflow-anywhere">メゾン・ド・きょー</span>
             </h1>
             <div className="text-xs md:text-base tracking-[0.6em] md:tracking-[0.8em] text-[#c9a64e] font-serif uppercase font-bold drop-shadow-lg">
               Maison de Kyo
             </div>
           </div>
 
-          {/* Description */}
           <div className="max-w-3xl mx-auto px-6">
-            <p className="text-xl md:text-2xl text-white font-serif leading-relaxed text-outline opacity-95">
+            <p className="text-lg md:text-2xl text-white font-serif leading-relaxed text-outline opacity-95 break-keep">
               ようこそ、この古き良き集合住宅へ。<br />
-              あなたの居場所を記録し、仲間たちと過ごす時間を。
+              あなたの居場所を記録し、<br className="md:hidden" />仲間たちと過ごす時間を。
             </p>
           </div>
         </div>

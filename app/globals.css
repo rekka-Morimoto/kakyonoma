@@ -83,6 +83,15 @@ body::before {
     0px 4px 10px rgba(0, 0, 0, 0.8);
 }
 
+.break-keep {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.overflow-anywhere {
+  overflow-wrap: anywhere;
+}
+
 .text-outline-heavy {
   text-shadow: -4px -4px 0 #000, 4px -4px 0 #000, -4px 4px 0 #000, 4px 4px 0 #000,
     0 8px 15px rgba(0, 0, 0, 0.5);

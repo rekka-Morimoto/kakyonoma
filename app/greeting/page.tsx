@@ -25,11 +25,11 @@ export default async function GreetingPage() {
 
                 <div className="glass-panel p-12 md:p-20 rounded-[3rem] border-white/10 shadow-2xl space-y-12">
                     <header className="border-b border-white/10 pb-10 text-center">
-                        <h1 className="text-5xl md:text-7xl font-serif font-black text-white mb-4 text-outline title-elegant">ご挨拶</h1>
+                        <h1 className="text-3xl md:text-7xl font-serif font-black text-white mb-4 text-outline title-elegant break-keep">ご挨拶</h1>
                         <p className="text-[#c9a64e] tracking-[0.5em] font-sans font-black uppercase text-sm drop-shadow-md">A Message from the Manager</p>
                     </header>
 
-                    <article className="prose prose-invert prose-stone max-w-none space-y-10 font-serif leading-loose text-white/90 text-xl text-justify">
+                    <article className="prose prose-invert prose-stone max-w-none space-y-10 font-serif leading-loose text-white/90 text-lg md:text-xl text-justify break-keep">
                         {paragraphs.map((para, idx) => (
                             <p key={idx} className="text-outline opacity-90 whitespace-pre-wrap">
                                 {para}
