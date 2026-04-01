@@ -41,7 +41,7 @@ export default function Home() {
 
           <div className="space-y-4 px-4 overflow-hidden">
             <h1 className="text-white tracking-tight leading-none text-outline title-elegant flex justify-center w-full">
-              <span className="block text-4xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl whitespace-pre-wrap md:whitespace-nowrap drop-shadow-2xl mx-auto max-w-full break-keep overflow-anywhere">メゾン・ド・きょー</span>
+              <span className="block text-3xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl whitespace-nowrap drop-shadow-2xl mx-auto max-w-full break-keep overflow-anywhere tracking-tight md:tracking-normal">メゾン・ド・きょー</span>
             </h1>
             <div className="text-xs md:text-base tracking-[0.6em] md:tracking-[0.8em] text-[#c9a64e] font-serif uppercase font-bold drop-shadow-lg">
               Maison de Kyo

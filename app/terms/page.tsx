@@ -32,7 +32,7 @@ export default async function TermsPage() {
 
                 <div className="glass-panel p-10 md:p-20 rounded-[3rem] border-white/10 shadow-2xl space-y-12">
                     <header className="border-b border-white/10 pb-10 text-center">
-                        <h1 className="text-5xl md:text-7xl font-serif font-black text-white mb-4 text-outline title-elegant">ご利用案内</h1>
+                        <h1 className="text-3xl md:text-7xl font-serif font-black text-white mb-4 text-outline title-elegant break-keep">ご利用案内</h1>
                         <p className="text-[#c9a64e] tracking-[0.5em] font-sans font-black uppercase text-sm drop-shadow-md">Terms & Guidelines</p>
                     </header>
 
