@@ -63,7 +63,9 @@ export default function Home() {
 
           <Link href="/register" className="group">
             <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40">
-              <div className="text-7xl mb-8 group-hover:rotate-12 transition-transform">✍️</div>
+              <div className="mb-8 group-hover:rotate-12 transition-transform h-20 w-20 flex items-center justify-center">
+                <img src="/入居届.webp" alt="入居届" className="w-full h-full object-contain drop-shadow-lg" />
+              </div>
               <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">入居届</h3>
               <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
                 自分だけのプロフィールを作成し、<br className="hidden md:block" />
@@ -77,7 +79,9 @@ export default function Home() {
 
           <Link href="/registry" className="group">
             <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-white/30">
-              <div className="text-7xl mb-8 group-hover:-rotate-12 transition-transform">📮</div>
+              <div className="mb-8 group-hover:-rotate-12 transition-transform h-20 w-20 flex items-center justify-center">
+                <img src="/住人名簿.webp" alt="住人名簿" className="w-full h-full object-contain drop-shadow-lg" />
+              </div>
               <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">住人名簿</h3>
               <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
                 ここに住まう仲間たちの記録。<br className="hidden md:block" />
@@ -91,7 +95,9 @@ export default function Home() {
 
           <Link href="/kakyonoma" className="group">
             <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40">
-              <div className="text-7xl mb-8 group-hover:scale-110 transition-transform">🏮</div>
+              <div className="mb-8 group-hover:scale-110 transition-transform h-20 w-20 flex items-center justify-center">
+                <img src="/かきょの間.webp" alt="かきょの間" className="w-full h-full object-contain drop-shadow-lg" />
+              </div>
               <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">かきょの間</h3>
               <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
                 和の空気漂う憩いの場。<br className="hidden md:block" />
@@ -105,7 +111,9 @@ export default function Home() {
 
           <Link href="/songs" className="group">
             <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40">
-              <div className="text-7xl mb-8 group-hover:rotate-12 transition-transform">🎵</div>
+              <div className="mb-8 group-hover:rotate-12 transition-transform h-20 w-20 flex items-center justify-center">
+                <img src="/きょーの一曲.webp" alt="きょーの一曲" className="w-full h-full object-contain drop-shadow-lg" />
+              </div>
               <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">きょーの一曲</h3>
               <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
                 オリジナルやカバーの中から、<br className="hidden md:block" />
@@ -119,7 +127,9 @@ export default function Home() {
 
           <Link href="/diagnosis" className="group">
             <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-white/30">
-              <div className="text-7xl mb-8 group-hover:scale-110 transition-transform">🔮</div>
+              <div className="mb-8 group-hover:scale-110 transition-transform h-20 w-20 flex items-center justify-center">
+                <img src="/推しタイプ診断.webp" alt="推しタイプ診断" className="w-full h-full object-contain drop-shadow-lg" />
+              </div>
               <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">推しタイプ診断</h3>
               <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
                 質問に答えて、あなたの<br className="hidden md:block" />
@@ -133,7 +143,9 @@ export default function Home() {
 
           <Link href="/greeting" className="group">
             <div className="glass-panel p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40">
-              <div className="text-7xl mb-8 group-hover:translate-x-2 transition-transform">👤</div>
+              <div className="mb-8 group-hover:translate-x-2 transition-transform h-20 w-20 flex items-center justify-center">
+                <img src="/管理人から.webp" alt="管理人から" className="w-full h-full object-contain drop-shadow-lg" />
+              </div>
               <h3 className="text-4xl font-black text-white font-serif mb-4 text-outline">管理人から</h3>
               <p className="text-[#d4c5b0] text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
                 本サイトの立ち上げへの想いと、<br className="hidden md:block" />

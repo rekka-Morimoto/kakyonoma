@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#かきょとお花見</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=M+PLUS+Rounded+1c:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff85a2;
+            --text-main: #5c3a41;
+            --text-sub: #7a545c;
+            --bg-gradient-start: #fff0f5;
+            --bg-gradient-end: #ffe4e1;
+            --card-bg: rgba(255, 255, 255, 0.85);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            font-family: 'M PLUS Rounded 1c', 'Kosugi Maru', sans-serif;
+            color: var(--text-main);
+            position: relative;
+        }
+
+        .poster-container {
+            width: 800px;
+            /* Allow height to fit content nicely */
+            min-height: 900px;
+            background: var(--card-bg);
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(255, 133, 162, 0.2);
+            padding: 60px 50px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            /* Add some floral background watermark */
+            background-image: radial-gradient(circle at 100% 100%, rgba(255, 183, 197, 0.1) 0%, transparent 50%),
+                              radial-gradient(circle at 0% 0%, rgba(255, 183, 197, 0.1) 0%, transparent 50%);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .main-title {
+            font-size: 36px;
+            color: var(--text-main);
+            margin: 0;
+            font-weight: 700;
+            line-height: 1.4;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+        }
+        
+        .main-title .hashtag {
+            color: var(--primary-color);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            padding: 25px 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+            position: relative;
+            z-index: 2;
+            border-left: 6px solid var(--primary-color);
+        }
+
+        .section h2 {
+            font-size: 26px;
+            margin: 0 0 15px 0;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .section h2::before {
+            content: '🌸';
+            margin-right: 10px;
+            font-size: 24px;
+        }
+
+        .section p {
+            font-size: 22px;
+            line-height: 1.6;
+            margin: 0;
+            color: var(--text-sub);
+            word-break: keep-all;
+        }
+
+        .footer-msg {
+            text-align: center;
+            margin-top: auto;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-main);
+            padding: 20px;
+            line-height: 1.5;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 隅の装飾 */
+        .corner-sakura {
+            position: absolute;
+            font-size: 60px;
+            color: var(--primary-color);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .cr-1 { top: 20px; left: 20px; transform: rotate(15deg); }
+        .cr-2 { top: 20px; right: 20px; transform: rotate(-25deg); }
+        .cr-3 { bottom: 20px; left: 20px; transform: rotate(45deg); }
+        .cr-4 { bottom: 20px; right: 20px; transform: rotate(-15deg); }
+
+    </style>
+</head>
+<body>
+    <div class="poster-container">
+        <div class="corner-sakura cr-1">🌸</div>
+        <div class="corner-sakura cr-2">🌸</div>
+        <div class="corner-sakura cr-3">🌸</div>
+        <div class="corner-sakura cr-4">🌸</div>
+
+        <div class="header">
+            <p class="main-title">桜の季節なので<br><span class="hashtag">#かきょとお花見</span>を開催します！</p>
+        </div>
+
+        <div class="section">
+            <h2>概要</h2>
+            <p>画面の中に「佳鏡院さん」と「桜」が映っていれば<br>写真、イラスト、創作、なんでもアリです！</p>
+        </div>
+
+        <div class="section">
+            <h2>投稿方法</h2>
+            <p><span style="font-weight:bold; color:var(--primary-color);">#佳鏡院まで届け</span> <span style="font-weight:bold; color:var(--primary-color);">#かきょとお花見</span><br>を付けて写真をポストしてください</p>
+        </div>
+
+        <div class="section">
+            <h2>日付</h2>
+            <p>4/15(日) 12:00 ピッタリに投稿<br><span style="font-size:18px;">(予約投稿が便利でおススメです)</span></p>
+        </div>
+
+        <div class="footer-msg">
+            みんなでタイムラインを桜でいっぱいにして<br>佳鏡院さんを驚かせよう！
+        </div>
+    </div>
+</body>
+</html>
