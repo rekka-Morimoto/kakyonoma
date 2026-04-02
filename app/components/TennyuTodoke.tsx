@@ -50,11 +50,11 @@ export default function TennyuTodoke({
                 boxShadow: captureMode ? 'none' : '0 20px 50px rgba(0,0,0,0.3)',
             }}
         >
-            {/* FORCE RESET BORDERS FOR IMAGE GENERATION */}
+            {/* FORCE RESET BORDERS FOR IMAGE GENERATION - SURGICAL RESET */}
             <style>{`
-                #tennyu-todoke * {
-                    border-style: none !important;
-                    border-width: 0 !important;
+                #tennyu-todoke *:not(.force-border) {
+                    border: none !important;
+                    outline: none !important;
                 }
                 #tennyu-todoke .force-border {
                     border-style: solid !important;
@@ -68,7 +68,7 @@ export default function TennyuTodoke({
                 .corner-accent {
                     width: 40px;
                     height: 40px;
-                    border-color: #c9a64e;
+                    border-color: #c9a64e !important;
                     opacity: 0.6;
                 }
             `}</style>
@@ -83,7 +83,7 @@ export default function TennyuTodoke({
 
             {/* Luxurious Double Border & Glow */}
             <div className="absolute inset-0 bg-radial-gradient(circle, transparent 70%, rgba(201, 166, 78, 0.05) 100%) pointer-events-none z-0" />
-            <div className="absolute top-4 left-4 right-4 bottom-4 border-[3px] border-[#2d2418] pointer-events-none force-border z-0 opacity-90" />
+            <div className="absolute top-4 left-4 right-4 bottom-4 border-[3px] border-[#2d2418] pointer-events-none force-border z-0 opacity-90 shadow-sm" />
             <div className="absolute top-6 left-6 right-6 bottom-6 border border-[#c9a64e]/50 pointer-events-none force-border z-0" />
 
             {/* Corner Ornaments */}
@@ -125,7 +125,7 @@ export default function TennyuTodoke({
                         <span className="text-[9px] font-bold text-[#c9a64e] tracking-[0.1em] mb-0.5">RESIDENT ID</span>
                         <div className="text-xl font-black italic flex items-baseline gap-1" style={{ color: '#c9a64e' }}>
                             <span className="text-[10px] not-italic opacity-40 mr-1">NO.</span>
-                            <span className="tracking-tighter">0004</span>
+                            <span className="tracking-tighter">{String(residentId).padStart(4, '0')}</span>
                         </div>
                     </div>
                 </div>
@@ -135,7 +135,7 @@ export default function TennyuTodoke({
             <main className="relative z-10 flex-grow flex gap-12 py-1 overflow-hidden font-medium">
                 {/* Photo Frame */}
                 <div className="w-[160px] shrink-0 pt-4">
-                    <div className="aspect-[3/4] w-full bg-white rounded-2xl border-[3.5px] border-[#2d2418] shadow-lg relative overflow-hidden force-border">
+                    <div className="aspect-[3/4] w-full bg-white rounded-2xl border-[3.8px] border-[#2d2418] shadow-lg relative overflow-hidden force-border">
                         {image ? (
                             <img src={image} alt="顔写真" className="w-full h-full object-cover" />
                         ) : (
@@ -155,7 +155,7 @@ export default function TennyuTodoke({
                     <div className="space-y-4">
                         <div className="relative">
                             <span className="text-[11px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1">
-                               <span className="w-2.5 h-2.5 rounded-sm rotate-45 bg-[#c9a64e] force-border shadow-sm"></span> なまえ
+                               <span className="w-2.5 h-2.5 rounded-sm rotate-45 bg-[#c9a64e] shadow-sm"></span> なまえ
                             </span>
                             <div className="text-3xl pl-4 font-black h-9 flex items-center text-[#2d2418] tracking-wider">
                                {name || ''}
@@ -165,33 +165,33 @@ export default function TennyuTodoke({
 
                         <div className="relative">
                             <span className="text-[11px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1 opacity-80">
-                               <span className="w-2.5 h-2.5 rounded-sm rotate-45 bg-[#c9a64e]/60 force-border opacity-70"></span> 呼び方
+                               <span className="w-2.5 h-2.5 rounded-sm rotate-45 bg-[#c9a64e]/60 opacity-70"></span> 呼び方
                             </span>
                             <div className="text-xl pl-6 font-bold h-7 flex items-center text-[#2d2418]">
                                {nickname || ''}
                             </div>
-                            <div className="w-full h-[1px] bg-[#2d2418]/20" />
+                            <div className="w-full h-[1px] border-b border-[#2d2418]/20 force-border h-px mt-0.5" />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-8">
                         <div className="relative">
                             <span className="text-[10px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#c9a64e] force-border"></span> Twitter(現 X)
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#c9a64e]"></span> Twitter(現 X)
                             </span>
                             <div className="text-sm pl-4 font-bold h-6 flex items-center text-[#2d2418]">
                                 {xAccount || ''}
                             </div>
-                            <div className="w-full h-[1px] bg-[#2d2418]/20" />
+                            <div className="w-full border-b border-[#2d2418]/20 force-border h-px" />
                         </div>
                         <div className="relative">
                             <span className="text-[10px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#c9a64e] force-border"></span> YouTube
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#c9a64e]"></span> YouTube
                             </span>
                             <div className="text-sm pl-4 font-bold h-6 flex items-center text-[#2d2418] truncate">
                                 {youtubeAccount || ''}
                             </div>
-                            <div className="w-full h-[1px] bg-[#2d2418]/20" />
+                            <div className="w-full border-b border-[#2d2418]/20 force-border h-px" />
                         </div>
                     </div>
 
@@ -201,14 +201,14 @@ export default function TennyuTodoke({
                             <div className="text-2xl pl-4 font-black h-8 flex items-end text-[#a84032] italic">
                                {roomNumber ? `${roomNumber}号室` : ''}
                             </div>
-                            <div className="w-full h-[1px] bg-[#2d2418]/20 mt-1" />
+                            <div className="w-full border-b border-[#2d2418]/20 force-border h-px mt-1" />
                         </div>
                         <div className="relative">
                             <span className="text-[10px] font-bold text-[#c9a64e] block mb-1 tracking-widest uppercase">HOME LOCATION</span>
                             <div className="text-sm pl-4 font-bold h-8 flex items-end text-[#2d2418] truncate">
                                {baseLocation || ''}
                             </div>
-                            <div className="w-full h-[1px] bg-[#2d2418]/20 mt-1" />
+                            <div className="w-full border-b border-[#2d2418]/20 force-border h-px mt-1" />
                         </div>
                     </div>
 
@@ -219,7 +219,7 @@ export default function TennyuTodoke({
                         <div className="text-[12px] pl-6 font-bold h-10 flex items-start text-[#2d2418]/70 leading-relaxed whitespace-pre-wrap overflow-hidden">
                             {freeText || ''}
                         </div>
-                        <div className="w-full h-[1.5px] bg-[#2d2418]/15 mt-1" />
+                        <div className="w-full border-b border-[#2d2418]/15 force-border h-px mt-1" />
                     </div>
                 </div>
             </main>
