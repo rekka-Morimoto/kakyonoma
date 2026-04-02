@@ -292,7 +292,7 @@ export default function RegistrationForm() {
                         <div className="mb-6">
                             <button onClick={() => setStep('form')} className="text-sm text-[#d4c5b0] hover:text-white transition-colors">← フォームに戻る</button>
                         </div>
-                        <h3 className="text-2xl font-black mb-4 text-white text-outline">推しタイプ診断</h3>
+                        <h3 className="text-2xl font-black mb-4 text-white text-outline">推しスタイル診断</h3>
                         <p className="text-base text-[#d4c5b0] mb-8 leading-relaxed">あなたのタイプに合わせて入居する棟を決定します。</p>
 
                         <div className="bg-black/20 p-6 rounded-3xl border border-white/5 shadow-inner">

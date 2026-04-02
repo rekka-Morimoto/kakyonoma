@@ -134,10 +134,10 @@ export default function Home() {
           <Link href="/diagnosis" className="group">
             <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-white/30 relative overflow-hidden">
               <div className="mb-0 group-hover:scale-110 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
-                <img src="/推しタイプ診断.webp" alt="推しタイプ診断" className="w-full h-full object-contain drop-shadow-2xl" />
+                <img src="/推しタイプ診断.webp" alt="推しスタイル診断" className="w-full h-full object-contain drop-shadow-2xl" />
               </div>
               <div className="relative z-10 mt-28 md:mt-44 flex flex-col items-center">
-                <h3 className="text-3xl md:text-4xl font-black text-white font-serif mb-4 text-outline">推しタイプ診断</h3>
+                <h3 className="text-3xl md:text-4xl font-black text-white font-serif mb-4 text-outline">推しスタイル診断</h3>
                 <p className="text-[#d4c5b0] text-base md:text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
                   質問に答えて、あなたの<br className="hidden md:block" />
                   推しへの向き合い方を診断します。
