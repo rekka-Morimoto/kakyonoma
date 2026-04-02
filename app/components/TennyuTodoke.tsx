@@ -92,36 +92,38 @@ export default function TennyuTodoke({
             <div className="absolute bottom-8 left-8 corner-accent border-b-2 border-l-2 force-border z-0" />
             <div className="absolute bottom-8 right-8 corner-accent border-b-2 border-r-2 force-border z-0" />
 
-            {/* --- Block 1: Header --- */}
+            {/* --- Block 1: Header (Rebuilt for Stability) --- */}
             <header className="relative z-10 w-full mb-2">
-                {/* Mascot Sticker Placement */}
-                <div className="absolute top-[-15px] right-[-15px] w-52 h-52 pointer-events-none select-none z-20">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 bg-[#c9a64e]/10 rounded-full blur-2xl" />
+                {/* Mascot Frame - Fixed Container */}
+                <div className="absolute top-[-25px] right-[-25px] w-56 h-56 pointer-events-none select-none z-20">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 bg-[#c9a64e]/10 rounded-full blur-3xl opacity-50" />
                     <img 
                         src="/mascot.png" 
                         alt="Mascot" 
                         className="w-full h-full object-contain"
                         style={{
-                            filter: 'drop-shadow(3px 3px 0 white) drop-shadow(-3px -3px 0 white) drop-shadow(3px -3px 0 white) drop-shadow(-3px 3px 0 white) drop-shadow(0 4px 8px rgba(0,0,0,0.15))'
+                            filter: 'drop-shadow(3px 3px 0 white) drop-shadow(-3px -3px 0 white) drop-shadow(3px -3px 0 white) drop-shadow(-3px 3px 0 white) drop-shadow(0 6px 12px rgba(0,0,0,0.1))'
                         }}
                     />
                 </div>
 
-                <div className="text-center mb-6 pl-0 pr-32">
-                    <div className="text-[11px] tracking-[0.4em] font-bold text-[#c9a64e] mb-1 uppercase opacity-90">RESIDENT REGISTRATION CARD</div>
-                    <div className="flex items-center justify-center gap-4">
-                        <div className="w-12 h-[1px] bg-[#c9a64e]/50" />
-                        <h1 className="text-5xl font-black tracking-[0.8em] text-[#2d2418] mr-[-0.8em] leading-none text-luxury">入居届</h1>
-                        <div className="w-12 h-[1px] bg-[#c9a64e]/50" />
+                {/* Centered Title Content */}
+                <div className="w-full pl-0 pr-36 flex flex-col items-center justify-center">
+                    <div className="text-[11px] tracking-[0.4em] font-bold text-[#c9a64e] mb-1.5 uppercase opacity-90">RESIDENT REGISTRATION CARD</div>
+                    <div className="flex items-center justify-center gap-6 w-full">
+                        <div className="flex-grow h-[1px] bg-[#c9a64e]/30 max-w-[80px]" />
+                        <h1 className="text-5xl font-black tracking-[0.8em] text-[#2d2418] mr-[-0.8em] leading-tight text-luxury whitespace-nowrap">入居届</h1>
+                        <div className="flex-grow h-[1px] bg-[#c9a64e]/30 max-w-[80px]" />
                     </div>
                 </div>
                 
-                <div className="flex justify-between items-end px-4 pr-48">
-                    <div className="min-w-[180px]">
+                {/* Metadata Row - Structured Flex */}
+                <div className="flex justify-between items-end px-4 mt-6 pr-44">
+                    <div className="flex flex-col">
                         <span className="text-[9px] font-bold text-[#c9a64e] tracking-widest block mb-1">REGISTRATION DATE</span>
-                        <div className="text-lg font-bold border-b border-[#2d2418]/15 force-border pb-1">令和七年 七月 十一日</div>
+                        <div className="text-lg font-bold border-b border-[#2d2418]/15 force-border pb-1 pr-4 min-w-[200px]">令和七年 七月 十一日</div>
                     </div>
-                    <div className="flex flex-col items-start translate-x-[-10px]">
+                    <div className="flex flex-col items-end">
                         <span className="text-[9px] font-bold text-[#c9a64e] tracking-[0.1em] mb-0.5">RESIDENT ID</span>
                         <div className="text-xl font-black italic flex items-baseline gap-1" style={{ color: '#c9a64e' }}>
                             <span className="text-[10px] not-italic opacity-40 mr-1">NO.</span>
@@ -170,7 +172,7 @@ export default function TennyuTodoke({
                             <div className="text-xl pl-6 font-bold h-7 flex items-center text-[#2d2418]">
                                {nickname || ''}
                             </div>
-                            <div className="w-full h-[1px] border-b border-[#2d2418]/20 force-border h-px mt-0.5" />
+                            <div className="w-full border-b border-[#2d2418]/20 force-border h-px mt-0.5" />
                         </div>
                     </div>
 
