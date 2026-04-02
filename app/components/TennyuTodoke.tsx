@@ -47,7 +47,7 @@ export default function TennyuTodoke({
                 fontFamily: "'Kaisei Tokumin', serif",
                 backgroundColor: '#fdfbf7', // Antique Off-white
                 color: '#2d2418',
-                boxShadow: captureMode ? 'none' : undefined,
+                boxShadow: captureMode ? 'none' : '0 20px 50px rgba(0,0,0,0.3)',
             }}
         >
             {/* FORCE RESET BORDERS FOR IMAGE GENERATION */}
@@ -63,10 +63,13 @@ export default function TennyuTodoke({
                     filter: url(#stamp-filter);
                 }
                 .text-luxury {
-                    text-shadow: 0.5px 0.5px 0px #c9a64e, -0.5px -0.5px 0px #c9a64e;
+                    text-shadow: 0.8px 0.8px 0px rgba(201, 166, 78, 0.4), -0.8px -0.8px 0px rgba(201, 166, 78, 0.4);
                 }
-                .text-pop-outline {
-                    text-shadow: 1px 1px 0 white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white;
+                .corner-accent {
+                    width: 40px;
+                    height: 40px;
+                    border-color: #c9a64e;
+                    opacity: 0.6;
                 }
             `}</style>
             
@@ -78,21 +81,28 @@ export default function TennyuTodoke({
                 </filter>
             </svg>
 
-            {/* Luxurious Double Border Frame */}
+            {/* Luxurious Double Border & Glow */}
+            <div className="absolute inset-0 bg-radial-gradient(circle, transparent 70%, rgba(201, 166, 78, 0.05) 100%) pointer-events-none z-0" />
             <div className="absolute top-4 left-4 right-4 bottom-4 border-[3px] border-[#2d2418] pointer-events-none force-border z-0 opacity-90" />
-            <div className="absolute top-6 left-6 right-6 bottom-6 border border-[#c9a64e]/40 pointer-events-none force-border z-0" />
+            <div className="absolute top-6 left-6 right-6 bottom-6 border border-[#c9a64e]/50 pointer-events-none force-border z-0" />
 
-            {/* --- Block 1: Header (Mascot Top Right Version) --- */}
+            {/* Corner Ornaments */}
+            <div className="absolute top-8 left-8 corner-accent border-t-2 border-l-2 force-border z-0" />
+            <div className="absolute top-8 right-8 corner-accent border-t-2 border-r-2 force-border z-0" />
+            <div className="absolute bottom-8 left-8 corner-accent border-b-2 border-l-2 force-border z-0" />
+            <div className="absolute bottom-8 right-8 corner-accent border-b-2 border-r-2 force-border z-0" />
+
+            {/* --- Block 1: Header --- */}
             <header className="relative z-10 w-full mb-2">
-                {/* Mascot - Top Right Sticker Placement */}
+                {/* Mascot Sticker Placement */}
                 <div className="absolute top-[-15px] right-[-15px] w-52 h-52 pointer-events-none select-none z-20">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 bg-[#c9a64e]/8 rounded-full blur-2xl" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 bg-[#c9a64e]/10 rounded-full blur-2xl" />
                     <img 
                         src="/mascot.png" 
                         alt="Mascot" 
                         className="w-full h-full object-contain"
                         style={{
-                            filter: 'drop-shadow(3px 3px 0 white) drop-shadow(-3px -3px 0 white) drop-shadow(3px -3px 0 white) drop-shadow(-3px 3px 0 white) drop-shadow(0 4px 6px rgba(0,0,0,0.1))'
+                            filter: 'drop-shadow(3px 3px 0 white) drop-shadow(-3px -3px 0 white) drop-shadow(3px -3px 0 white) drop-shadow(-3px 3px 0 white) drop-shadow(0 4px 8px rgba(0,0,0,0.15))'
                         }}
                     />
                 </div>
@@ -122,10 +132,10 @@ export default function TennyuTodoke({
             </header>
 
             {/* --- Block 2: Main Body --- */}
-            <main className="relative z-10 flex-grow flex gap-12 py-1 overflow-hidden">
+            <main className="relative z-10 flex-grow flex gap-12 py-1 overflow-hidden font-medium">
                 {/* Photo Frame */}
                 <div className="w-[160px] shrink-0 pt-4">
-                    <div className="aspect-[3/4] w-full bg-white rounded-2xl border-[4px] border-[#2d2418] shadow-lg relative overflow-hidden force-border">
+                    <div className="aspect-[3/4] w-full bg-white rounded-2xl border-[3.5px] border-[#2d2418] shadow-lg relative overflow-hidden force-border">
                         {image ? (
                             <img src={image} alt="顔写真" className="w-full h-full object-cover" />
                         ) : (
@@ -135,53 +145,53 @@ export default function TennyuTodoke({
                             </div>
                         )}
                     </div>
-                    <div className="mt-4 px-3 py-1.5 bg-[#c9a64e]/5 rounded-full text-center border border-[#c9a64e]/10 force-border">
+                    <div className="mt-4 px-3 py-1 bg-[#c9a64e]/10 rounded-full text-center border border-[#c9a64e]/20 force-border shadow-sm">
                         <p className="text-[10px] font-bold tracking-widest text-[#a8a29e]">近影・加工可</p>
                     </div>
                 </div>
 
                 {/* Profile Fields */}
                 <div className="flex-1 flex flex-col justify-between py-2">
-                    <div className="space-y-5">
+                    <div className="space-y-4">
                         <div className="relative">
                             <span className="text-[11px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1">
-                               <span className="w-2.5 h-2.5 rounded-sm rotate-45 border border-[#c9a64e]/50 bg-[#c9a64e]/80 force-border"></span> なまえ
+                               <span className="w-2.5 h-2.5 rounded-sm rotate-45 bg-[#c9a64e] force-border shadow-sm"></span> なまえ
                             </span>
                             <div className="text-3xl pl-4 font-black h-9 flex items-center text-[#2d2418] tracking-wider">
                                {name || ''}
                             </div>
-                            <div className="w-full h-[3.5px] bg-[#2d2418] rounded-full" />
+                            <div className="w-full h-[3px] bg-[#2d2418] rounded-full opacity-90 shadow-sm" />
                         </div>
 
                         <div className="relative">
                             <span className="text-[11px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1 opacity-80">
-                               <span className="w-2.5 h-2.5 rounded-sm rotate-45 border border-[#c9a64e]/30 bg-[#c9a64e]/50 force-border"></span> 呼び方
+                               <span className="w-2.5 h-2.5 rounded-sm rotate-45 bg-[#c9a64e]/60 force-border opacity-70"></span> 呼び方
                             </span>
                             <div className="text-xl pl-6 font-bold h-7 flex items-center text-[#2d2418]">
                                {nickname || ''}
                             </div>
-                            <div className="w-full h-[1.5px] bg-[#2d2418]/15" />
+                            <div className="w-full h-[1px] bg-[#2d2418]/20" />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-8">
                         <div className="relative">
                             <span className="text-[10px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1">
-                                <span className="w-1.5 h-1.5 rounded-full border border-[#c9a64e]/40 bg-[#c9a64e] force-border"></span> X ID
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#c9a64e] force-border"></span> Twitter(現 X)
                             </span>
                             <div className="text-sm pl-4 font-bold h-6 flex items-center text-[#2d2418]">
                                 {xAccount || ''}
                             </div>
-                            <div className="w-full h-[1px] bg-[#2d2418]/15" />
+                            <div className="w-full h-[1px] bg-[#2d2418]/20" />
                         </div>
                         <div className="relative">
                             <span className="text-[10px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1">
-                                <span className="w-1.5 h-1.5 rounded-full border border-[#c9a64e]/40 bg-[#c9a64e] force-border"></span> YouTube
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#c9a64e] force-border"></span> YouTube
                             </span>
                             <div className="text-sm pl-4 font-bold h-6 flex items-center text-[#2d2418] truncate">
                                 {youtubeAccount || ''}
                             </div>
-                            <div className="w-full h-[1px] bg-[#2d2418]/15" />
+                            <div className="w-full h-[1px] bg-[#2d2418]/20" />
                         </div>
                     </div>
 
@@ -191,20 +201,20 @@ export default function TennyuTodoke({
                             <div className="text-2xl pl-4 font-black h-8 flex items-end text-[#a84032] italic">
                                {roomNumber ? `${roomNumber}号室` : ''}
                             </div>
-                            <div className="w-full h-[1px] bg-[#2d2418]/15 mt-1" />
+                            <div className="w-full h-[1px] bg-[#2d2418]/20 mt-1" />
                         </div>
                         <div className="relative">
                             <span className="text-[10px] font-bold text-[#c9a64e] block mb-1 tracking-widest uppercase">HOME LOCATION</span>
                             <div className="text-sm pl-4 font-bold h-8 flex items-end text-[#2d2418] truncate">
                                {baseLocation || ''}
                             </div>
-                            <div className="w-full h-[1px] bg-[#2d2418]/15 mt-1" />
+                            <div className="w-full h-[1px] bg-[#2d2418]/20 mt-1" />
                         </div>
                     </div>
 
                     <div className="relative">
                         <span className="text-[11px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1">
-                            <span className="w-1.5 h-1.5 rounded-full border border-[#c9a64e]/40 bg-[#c9a64e] force-border"></span> 自由記載
+                            <span className="w-2 h-2 rounded-full border border-[#c9a64e]/50 bg-[#c9a64e]/20 force-border"></span> 自由記載
                         </span>
                         <div className="text-[12px] pl-6 font-bold h-10 flex items-start text-[#2d2418]/70 leading-relaxed whitespace-pre-wrap overflow-hidden">
                             {freeText || ''}
@@ -214,14 +224,14 @@ export default function TennyuTodoke({
                 </div>
             </main>
 
-            {/* --- Block 3: Footer (Seal and Authority) --- */}
+            {/* --- Block 3: Footer --- */}
             <footer className="relative z-10 w-full pt-4 min-h-[90px]">
                 <div className="flex justify-between items-end">
                     {/* Authority Name */}
                     <div className="pb-1 max-w-[500px]">
-                        <div className="flex items-center gap-4 mb-2 opacity-40">
+                        <div className="flex items-center gap-4 mb-2 opacity-50">
                             <span className="text-[8px] font-bold tracking-[0.4em] uppercase whitespace-nowrap">Official Registration Approval</span>
-                            <div className="h-[0.5px] bg-[#2d2418] flex-grow"></div>
+                            <div className="h-[0.5px] bg-[#2d2418]/40 flex-grow"></div>
                         </div>
                         <h2 className="text-3xl font-black tracking-[0.5em] text-[#2d2418] leading-none mb-1 opacity-95">メゾン・ド・きょー管理委員会</h2>
                     </div>
@@ -230,11 +240,12 @@ export default function TennyuTodoke({
                     <div className="absolute -top-12 -right-4 w-48 h-48 pointer-events-none select-none z-10">
                         <div className="w-full h-full rounded-full flex items-center justify-center font-black stamp-texture transform -rotate-[12deg] force-border" 
                              style={{ 
-                                 border: '4.5px double rgba(168, 64, 50, 0.5)', 
-                                 color: 'rgba(168, 64, 50, 0.8)',
-                                 backgroundColor: 'rgba(168, 64, 50, 0.05)'
+                                 border: '4.5px double rgba(168, 64, 50, 0.55)', 
+                                 color: 'rgba(168, 64, 50, 0.85)',
+                                 backgroundColor: 'rgba(168, 64, 50, 0.05)',
+                                 boxShadow: '0 4px 15px rgba(168, 64, 50, 0.1)'
                              }}>
-                            <div className="w-[90%] h-[90%] rounded-full flex flex-col items-center justify-center border-2 border-[rgba(168, 64, 50, 0.2)] force-border">
+                            <div className="w-[90%] h-[90%] rounded-full flex flex-col items-center justify-center border-2 border-[rgba(168, 64, 50, 0.25)] force-border">
                                 <span className="text-[7px] tracking-[0.4em] font-black opacity-60 uppercase mb-2">Maison de Kyo Seal</span>
                                 <div className="w-3/4 h-[0.5px] bg-[rgba(168, 64, 50, 0.3)] mb-2" />
                                 <span className="text-4xl block leading-none tracking-[0.4em] pr-[-0.4em]">承認済</span>
