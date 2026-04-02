@@ -71,13 +71,22 @@ export default function RegistrationForm() {
         if (element) {
             setLoading(true);
             try {
-                // html2canvas settings for high quality and better compatibility
+                // Wait a bit to ensure fonts and images are fully rendered
+                await new Promise(resolve => setTimeout(resolve, 500));
+
                 const canvas = await html2canvas(element, {
-                    scale: 2, // Higher resolution
+                    scale: 2,
                     useCORS: true,
                     backgroundColor: '#fdfbf7',
-                    logging: false,
-                    allowTaint: true,
+                    logging: true, // Enable logging for debugging during this phase
+                    allowTaint: false, // Changed to false as useCORS is true for better security/reliability
+                    onclone: (clonedDocument) => {
+                        // Ensure the cloned element is visible for capture
+                        const clonedElement = clonedDocument.getElementById('tennyu-todoke');
+                        if (clonedElement) {
+                            clonedElement.style.transform = 'none';
+                        }
+                    }
                 });
                 
                 const dataUrl = canvas.toDataURL('image/png');
@@ -85,7 +94,7 @@ export default function RegistrationForm() {
                 return dataUrl;
             } catch (error) {
                 console.error('Image Generation Error:', error);
-                alert('画像の生成に失敗しました。別のブラウザでお試しいただくか、管理者にお問い合わせください。');
+                alert('画像の生成に失敗しました。このエラーが続く場合は、ブラウザのキャッシュをクリアするか、別のブラウザ（Chrome等）でお試しください。');
                 return null;
             } finally {
                 setLoading(false);
