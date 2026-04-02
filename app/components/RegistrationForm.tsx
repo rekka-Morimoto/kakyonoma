@@ -110,15 +110,16 @@ export default function RegistrationForm() {
     const handleSubmit = async () => {
         if (!diagnosisResult) return;
 
-        let finalImage = generatedImage;
-        if (!finalImage) {
-            finalImage = (await handleGenerate()) || '';
-        }
-
-        if (!finalImage) return;
-
         setLoading(true);
         try {
+            // 1. まず現在のプレビュー（TennyuTodoke）を画像に変換
+            const finalTodokeImage = await handleGenerate();
+            if (!finalTodokeImage) {
+                setLoading(false);
+                return;
+            }
+
+            // 2. APIに送信。 完成画像を'image'に、元のプロフィールを'icon'に。
             const res = await fetch('/api/residents', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -128,8 +129,8 @@ export default function RegistrationForm() {
                     xAccount,
                     youtubeAccount,
                     baseLocation,
-                    image: finalImage,
-                    icon: image,
+                    image: finalTodokeImage, // こちらが「完成した入居届」
+                    icon: image,             // こちらが「元のアイコン写真」
                     password: password,
                     building: diagnosisResult,
                     answers: diagnosisAnswers,

@@ -13,8 +13,8 @@ interface Resident {
   baseLocation: string;
   roomNumber: number;
   building?: 'あこがれびと' | 'みまもりびと' | 'となりびと' | 'あゆみびと';
-  image: string; // URL または Base64
-  icon: string;  // URL または Base64
+  image: string; // 生成された「入居届」の画像URL (PNG)
+  icon: string;  // ユーザーがアップロードした「アイコン」URL (PNG)
   password?: string;
   createdAt: string;
   freeText?: string;
@@ -82,9 +82,9 @@ export async function POST(request: Request) {
     let iconUrl = icon;
 
     try {
-      if (image.startsWith('data:')) {
+      if (image?.startsWith('data:')) {
         const imageBuffer = base64ToBuffer(image);
-        const fileName = `todoke_${Date.now()}.png`;
+        const fileName = `todoke_full_${Date.now()}.png`;
         const blob = await put(`residents/${fileName}`, imageBuffer, {
           access: 'public',
           contentType: 'image/png',
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
 
       if (icon?.startsWith('data:')) {
         const iconBuffer = base64ToBuffer(icon);
-        const fileName = `icon_${Date.now()}.png`;
+        const fileName = `resident_icon_${Date.now()}.png`;
         const blob = await put(`residents/${fileName}`, iconBuffer, {
           access: 'public',
           contentType: 'image/png',
@@ -103,8 +103,6 @@ export async function POST(request: Request) {
       }
     } catch (blobErr) {
       console.error('Vercel Blob Upload Error:', blobErr);
-      // Fallback to Redis if Blob fails (though we want to avoid this ideally)
-      // return NextResponse.json({ error: 'Storage Error' }, { status: 500 });
     }
 
     const newId = await kv.incr('resident_counter');
@@ -123,8 +121,8 @@ export async function POST(request: Request) {
       baseLocation: baseLocation || '',
       roomNumber,
       building,
-      image: imageUrl,
-      icon: iconUrl,
+      image: imageUrl || '',
+      icon: iconUrl || '',
       password: password || '',
       createdAt: new Date().toISOString(),
       freeText: freeText || '',

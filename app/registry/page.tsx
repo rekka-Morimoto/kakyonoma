@@ -142,36 +142,8 @@ export default function Registry() {
     // --- View Certificate Handler ---
     const handleViewCertificate = async (resident: Resident) => {
         setViewingId(resident.id);
-        setIsGenerating(true);
-        setGeneratedImage(null);
-
-        // Wait for React to render the hidden component
-        setTimeout(async () => {
-            const element = document.getElementById(`renderer-${resident.id}`);
-            if (element) {
-                try {
-                    // ブラウザ上であることを確認
-                    if (typeof window === 'undefined') return;
-
-                    const domtoimage = (await import('dom-to-image-more')).default;
-
-                    const dataUrl = await domtoimage.toPng(element, {
-                        quality: 0.95,
-                        bgcolor: '#ffffff',
-                    });
-                    setGeneratedImage(dataUrl);
-                } catch (error) {
-                    console.error('Generation error:', error);
-                    alert('入居届の生成に失敗しました');
-                    setViewingId(null);
-                } finally {
-                    setIsGenerating(false);
-                }
-            } else {
-                setViewingId(null);
-                setIsGenerating(false);
-            }
-        }, 500);
+        // DBに保存されている完成画像を表示するだけ（再生成しない）
+        setGeneratedImage(resident.image || null);
     };
 
     const closeViewModal = () => {
@@ -420,28 +392,6 @@ export default function Registry() {
                                                 <span>📄</span>
                                                 入居届を確認
                                             </button>
-                                        </div>
-
-                                        {/* Hidden Renderer */}
-                                        <div className="fixed -top-[3000px] -left-[3000px] pointer-events-none">
-                                            {viewingId === resident.id && (
-                                                <div id={`renderer-${resident.id}`}>
-                                                    <TennyuTodoke
-                                                        name={resident.name}
-                                                        firstName={resident.firstName}
-                                                        lastName={resident.lastName}
-                                                        nickname={resident.nickname}
-                                                        xAccount={resident.xAccount || ''}
-                                                        youtubeAccount={resident.youtubeAccount || ''}
-                                                        baseLocation={resident.baseLocation || ''}
-                                                        roomNumber={resident.roomNumber}
-                                                        image={resident.icon || resident.image || ''}
-                                                        freeText={resident.freeText}
-                                                        residentId={resident.id}
-                                                        captureMode={true}
-                                                    />
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
                                 </div>
