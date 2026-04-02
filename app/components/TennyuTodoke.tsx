@@ -200,7 +200,7 @@ export default function TennyuTodoke({
             </main>
 
             {/* --- Block 3: Footer (Signature and Seal) --- */}
-            <footer className="relative z-10 w-full pt-4 min-h-[80px]">
+            <footer className="relative z-10 w-full pt-4 min-h-[100px]">
                 <div className="flex justify-between items-end">
                     {/* Committee Signature */}
                     <div className="pb-1 max-w-[520px]">
@@ -211,20 +211,35 @@ export default function TennyuTodoke({
                         <h2 className="text-3xl font-black tracking-[0.5em] font-serif text-[#2d2418] leading-none mb-1 opacity-90">メゾン・ド・きょー管理委員会</h2>
                     </div>
 
-                    {/* Stamp - Decorative "Kyo Seal" */}
-                    <div className="absolute -top-12 -right-6 w-44 h-44 pointer-events-none select-none z-20">
-                        <div className="w-full h-full rounded-full flex items-center justify-center font-black stamp-texture transform -rotate-[14deg] force-border" 
-                             style={{ 
-                                 border: '3.5px double rgba(168, 64, 50, 0.5)', 
-                                 color: 'rgba(168, 64, 50, 0.75)',
-                                 backgroundColor: 'rgba(168, 64, 50, 0.03)'
-                             }}>
-                            <div className="w-[90%] h-[90%] rounded-full flex flex-col items-center justify-center border-2 border-[rgba(168, 64, 50, 0.2)] force-border">
-                                <span className="text-[6px] tracking-[0.3em] font-black opacity-60 uppercase mb-2">Maison de Kyo Official</span>
-                                <div className="w-3/4 h-[0.5px] bg-[rgba(168, 64, 50, 0.3)] mb-2" />
-                                <span className="text-4xl block leading-none tracking-[0.3em] pr-[-0.3em] font-serif">承認済</span>
-                                <div className="w-3/4 h-[0.5px] bg-[rgba(168, 64, 50, 0.3)] mt-2" />
-                                <span className="text-[8px] mt-2 font-bold opacity-50 tracking-widest">管理委員会之印</span>
+                    {/* Mascot & Stamp area */}
+                    <div className="relative w-64 h-24">
+                        {/* Mascot Sticker */}
+                        <div className="absolute -left-4 bottom-2 w-32 h-32 pointer-events-none select-none z-10 transform rotate-[8deg]">
+                            <img 
+                                src="/mascot.png" 
+                                alt="Mascot" 
+                                className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]"
+                                style={{
+                                    WebkitFilter: 'drop-shadow(2px 2px 0 white) drop-shadow(-2px -2px 0 white) drop-shadow(2px -2px 0 white) drop-shadow(-2px 2px 0 white)'
+                                }}
+                            />
+                        </div>
+
+                        {/* Stamp - Decorative "Kyo Seal" */}
+                        <div className="absolute top-[-30px] right-[-10px] w-40 h-40 pointer-events-none select-none z-20">
+                            <div className="w-full h-full rounded-full flex items-center justify-center font-black stamp-texture transform -rotate-[14deg] force-border" 
+                                 style={{ 
+                                     border: '3.5px double rgba(168, 64, 50, 0.5)', 
+                                     color: 'rgba(168, 64, 50, 0.75)',
+                                     backgroundColor: 'rgba(168, 64, 50, 0.05)'
+                                 }}>
+                                <div className="w-[90%] h-[90%] rounded-full flex flex-col items-center justify-center border-2 border-[rgba(168, 64, 50, 0.2)] force-border">
+                                    <span className="text-[6px] tracking-[0.3em] font-black opacity-60 uppercase mb-2">Maison de Kyo Official</span>
+                                    <div className="w-3/4 h-[0.5px] bg-[rgba(168, 64, 50, 0.3)] mb-2" />
+                                    <span className="text-4xl block leading-none tracking-[0.3em] pr-[-0.3em] font-serif">承認済</span>
+                                    <div className="w-3/4 h-[0.5px] bg-[rgba(168, 64, 50, 0.3)] mt-2" />
+                                    <span className="text-[8px] mt-2 font-bold opacity-50 tracking-widest">管理委員会之印</span>
+                                </div>
                             </div>
                         </div>
                     </div>
