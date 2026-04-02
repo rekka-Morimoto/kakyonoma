@@ -63,34 +63,35 @@ export default function RegistrationForm() {
     };
 
     const handleGenerate = async () => {
-        // 1. ブラウザ上であることを確認する（サーバーでの実行を防止）
         if (typeof window === 'undefined') return null;
 
-        // 2. 実行される瞬間にだけライブラリを読み込む
-        const domtoimage = (await import('dom-to-image-more')).default;
-
+        const html2canvas = (await import('html2canvas')).default;
         const element = document.getElementById('tennyu-todoke');
+        
         if (element) {
             setLoading(true);
             try {
-                const dataUrl = await domtoimage.toPng(element, {
-                    quality: 0.95,
-                    bgcolor: '#ffffff',
-                    style: {
-                        transform: 'scale(1)',
-                        transformOrigin: 'top left'
-                    }
+                // html2canvas settings for high quality and better compatibility
+                const canvas = await html2canvas(element, {
+                    scale: 2, // Higher resolution
+                    useCORS: true,
+                    backgroundColor: '#fdfbf7',
+                    logging: false,
+                    allowTaint: true,
                 });
+                
+                const dataUrl = canvas.toDataURL('image/png');
                 setGeneratedImage(dataUrl);
                 return dataUrl;
             } catch (error) {
                 console.error('Image Generation Error:', error);
-                alert('画像の生成に失敗しました: ' + (error instanceof Error ? error.message : 'Unknown error'));
+                alert('画像の生成に失敗しました。別のブラウザでお試しいただくか、管理者にお問い合わせください。');
                 return null;
             } finally {
                 setLoading(false);
             }
         }
+        return null;
     };
 
     const handleFormNext = () => {
