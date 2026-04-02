@@ -42,15 +42,18 @@ export default function TennyuTodoke({
     return (
         <div
             id="tennyu-todoke"
-            className={`w-[850px] h-[600px] text-black p-12 relative mx-auto overflow-hidden ${captureMode ? '' : 'shadow-2xl border-[1px] border-stone-200'}`}
+            className={`w-[850px] h-[600px] text-black p-12 relative mx-auto overflow-hidden ${captureMode ? '' : 'shadow-2xl'}`}
             style={{
                 fontFamily: '"Hiragino Mincho ProN", "Yu Mincho", "MS PMincho", serif',
-                backgroundColor: '#fefcf8', // Slightly warm paper color
-                color: '#000000',
+                backgroundColor: '#fffdfa',
+                color: '#2d2418',
                 boxShadow: captureMode ? 'none' : undefined,
-                border: captureMode ? 'none' : undefined
             }}
         >
+            {/* Pattern Overlay for POP/Cute feeling */}
+            <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #c9a64e 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
+            <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'linear-gradient(45deg, #2d2418 25%, transparent 25%, transparent 50%, #2d2418 50%, #2d2418 75%, transparent 75%, transparent)', backgroundSize: '4px 4px' }}></div>
+
             {/* FORCE RESET BORDERS FOR IMAGE GENERATION */}
             <style>{`
                 #tennyu-todoke * {
@@ -62,182 +65,158 @@ export default function TennyuTodoke({
                 }
             `}</style>
 
-            {/* Outer Decorative Border 1 (Thick) - Simulated with div lines */}
-            <div className="absolute top-4 left-4 right-4 h-[2px] bg-black pointer-events-none" />
-            <div className="absolute bottom-4 left-4 right-4 h-[2px] bg-black pointer-events-none" />
-            <div className="absolute top-4 bottom-4 left-4 w-[2px] bg-black pointer-events-none" />
-            <div className="absolute top-4 bottom-4 right-4 w-[2px] bg-black pointer-events-none" />
-
-            {/* Outer Decorative Border 2 (Thin) - Simulated with div lines */}
-            <div className="absolute top-6 left-6 right-6 h-px bg-black/20 pointer-events-none" />
-            <div className="absolute bottom-6 left-6 right-6 h-px bg-black/20 pointer-events-none" />
-            <div className="absolute top-6 bottom-6 left-6 w-px bg-black/20 pointer-events-none" />
-            <div className="absolute top-6 bottom-6 right-6 w-px bg-black/20 pointer-events-none" />
+            {/* Decorative Elaborate Frames */}
+            <div className="absolute top-4 left-4 right-4 h-[3px] bg-[#2d2418] pointer-events-none" />
+            <div className="absolute bottom-4 left-4 right-4 h-[3px] bg-[#2d2418] pointer-events-none" />
+            <div className="absolute top-4 bottom-4 left-4 w-[3px] bg-[#2d2418] pointer-events-none" />
+            <div className="absolute top-4 bottom-4 right-4 w-[3px] bg-[#2d2418] pointer-events-none" />
+            
+            <div className="absolute top-[22px] left-[22px] right-[22px] bottom-[22px] border-2 border-[#c9a64e]/30 pointer-events-none force-border rounded-lg" />
 
             {/* Title Header */}
-            <div className="text-center mt-3 mb-4 flex flex-col items-center justify-center">
-                <div className="inline-block px-12 pb-4">
-                    <h1 className="text-5xl font-black tracking-[1em] whitespace-nowrap leading-tight">
+            <div className="text-center mt-4 mb-4 flex flex-col items-center justify-center relative">
+                <div className="inline-block px-16 pb-2">
+                    <div className="text-xs tracking-[0.8em] font-bold text-[#c9a64e] mb-1">MAISON DE KYO • RESIDENT REGISTRATION</div>
+                    <h1 className="text-6xl font-black tracking-[0.8em] whitespace-nowrap leading-none text-[#2d2418] mr-[-0.8em]">
                         入居届
                     </h1>
-                    <div className="w-full h-1 bg-black mt-1" />
                 </div>
+                {/* Decorative underline */}
+                <div className="w-80 h-1 bg-gradient-to-r from-transparent via-[#c9a64e] to-transparent opacity-60 mt-4" />
             </div>
 
             {/* Date and ID Area */}
-            <div className="flex justify-between px-12 mb-4">
-                <div className="min-w-[200px] relative">
-                    <div className="text-lg font-bold pb-1 text-black">
-                        令和八年 一月 吉日
+            <div className="flex justify-between px-14 mb-6 items-end">
+                <div className="min-w-[220px]">
+                    <div className="text-[10px] font-bold text-[#c9a64e] tracking-widest mb-0.5">REGISTRATION DATE</div>
+                    <div className="text-2xl font-black text-[#2d2418] border-b-2 border-[#2d2418] pb-1 force-border">
+                        令和七年 七月 十一日
                     </div>
-                    <div className="w-full h-px bg-black/40" />
                 </div>
-                <div className="text-xl font-black tracking-widest" style={{ color: '#a8a29e' }}>
-                    № {String(residentId).padStart(4, '0')}
+                <div className="text-2xl font-black italic flex items-baseline gap-1" style={{ color: '#c9a64e' }}>
+                    <span className="text-sm not-italic opacity-60">No.</span>
+                    <span className="tracking-tighter">{String(residentId).padStart(4, '0')}</span>
                 </div>
             </div>
 
             {/* Main Content Area */}
-            <div className="flex gap-10 px-12 relative z-10">
+            <div className="flex gap-12 px-14 relative z-10">
                 {/* Left: Portrait Photo */}
-                <div className="w-[180px] flex flex-col gap-2">
-                    {/* Photo Frame: Simulated border using padding and background */}
-                    <div className="aspect-[3/4] bg-black p-[2px] shadow-inner relative">
-                        <div className="w-full h-full bg-[#fafaf9] flex items-center justify-center overflow-hidden relative">
+                <div className="w-[190px] flex flex-col items-center">
+                    {/* Photo Frame: More stylish */}
+                    <div className="aspect-[3/4] w-full bg-[#2d2418] p-[3px] rounded-2xl shadow-xl relative overflow-hidden force-border">
+                        <div className="w-full h-full bg-[#fafaf9] rounded-xl flex items-center justify-center overflow-hidden relative force-border">
                             {image ? (
-                                <img src={image} alt="顔写真" className="w-full h-full object-contain" />
+                                <img src={image} alt="顔写真" className="w-full h-full object-cover" />
                             ) : (
                                 <div className="text-center flex flex-col items-center gap-2 text-[#d6d3d1]">
-                                    <span className="text-4xl opacity-20">📸</span>
-                                    <span className="text-xs font-bold tracking-widest uppercase">写真貼付</span>
+                                    <span className="text-5xl opacity-10">📸</span>
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] font-black tracking-widest text-[#c9a64e]">PHOTO</span>
+                                        <span className="text-[8px] font-bold tracking-widest text-[#a8a29e]">写真貼付用</span>
+                                    </div>
                                 </div>
                             )}
-
-                            {/* Photo Corners */}
-                            <div className="absolute top-0 left-0 w-2 h-2">
-                                <div className="absolute top-0 left-0 w-full h-[2px] bg-black/20" />
-                                <div className="absolute top-0 left-0 h-full w-[2px] bg-black/20" />
-                            </div>
-                            <div className="absolute top-0 right-0 w-2 h-2">
-                                <div className="absolute top-0 right-0 w-full h-[2px] bg-black/20" />
-                                <div className="absolute top-0 right-0 h-full w-[2px] bg-black/20" />
-                            </div>
-                            <div className="absolute bottom-0 left-0 w-2 h-2">
-                                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-black/20" />
-                                <div className="absolute bottom-0 left-0 h-full w-[2px] bg-black/20" />
-                            </div>
-                            <div className="absolute bottom-0 right-0 w-2 h-2">
-                                <div className="absolute bottom-0 right-0 w-full h-[2px] bg-black/20" />
-                                <div className="absolute bottom-0 right-0 h-full w-[2px] bg-black/20" />
-                            </div>
+                            {/* Decorative corner accents within the photo */}
+                            <div className="absolute top-2 left-2 w-2 h-2 border-t-[1px] border-l-[1px] border-[#c9a64e]/40 rounded-tl-sm force-border" />
+                            <div className="absolute top-2 right-2 w-2 h-2 border-t-[1px] border-r-[1px] border-[#c9a64e]/40 rounded-tr-sm force-border" />
                         </div>
                     </div>
-                    <p className="text-[10px] text-center leading-tight text-[#a8a29e]">
-                        ※近影・加工可
+                    <p className="mt-3 text-[10px] text-center font-bold tracking-widest text-[#a8a29e] bg-[#2d2418]/5 px-4 py-1 rounded-full">
+                        近影・加工可
                     </p>
                 </div>
 
                 {/* Right: Personal Information */}
-                <div className="flex-1 space-y-4">
-                    {/* Name Block: Single Column for unified name */}
-                    <div className="relative pb-2">
-                        <span className="absolute -top-4 left-0 text-[10px] font-bold tracking-widest text-[#78716c]">なまえ</span>
-                        <div className="text-3xl pl-4 font-black h-10 flex items-end">
-                            {name || '　'}
+                <div className="flex-1 space-y-6">
+                    {/* Name Block */}
+                    <div className="relative group">
+                        <span className="absolute -top-4 left-0 text-[10px] font-black tracking-[0.2em] text-[#c9a64e] flex items-center gap-2">
+                           <span className="w-1.5 h-1.5 rounded-full bg-[#c9a64e]"></span> なまえ
+                        </span>
+                        <div className="text-4xl pl-4 font-black h-12 flex items-end text-[#2d2418]">
+                            {name || ''}
                         </div>
-                        <div className="absolute bottom-0 left-0 w-full h-[2px] bg-black" />
+                        <div className="w-full h-[3px] bg-[#2d2418] rounded-full mt-1" />
                     </div>
 
                     {/* Nickname (Yobikata) */}
-                    <div className="relative pb-1">
-                        <span className="absolute -top-4 left-0 text-[10px] font-bold tracking-widest text-[#78716c]">呼び方</span>
-                        <div className="text-xl pl-6 font-bold h-8 flex items-end">
-                            {nickname || '　'}
+                    <div className="relative">
+                        <span className="absolute -top-4 left-0 text-[10px] font-black tracking-[0.2em] text-[#c9a64e] flex items-center gap-2 text-opacity-70">
+                           <span className="w-1.5 h-1.5 rounded-full bg-[#c9a64e] opacity-70"></span> 呼び方
+                        </span>
+                        <div className="text-2xl pl-6 font-bold h-9 flex items-end text-[#2d2418]">
+                            {nickname || ''}
                         </div>
-                        <div className="absolute bottom-0 left-0 w-full h-px bg-black" />
+                        <div className="w-full h-px bg-[#2d2418]/40 mt-1" />
                     </div>
 
                     {/* Room and Location Block */}
-                    <div className="grid grid-cols-2 gap-8">
-                        <div className="relative pb-1">
-                            <span className="absolute -top-4 left-0 text-[10px] font-bold tracking-widest text-[#78716c]">部屋番号</span>
-                            <div className="text-xl pl-6 font-bold h-8 flex items-end">
-                                {roomNumber ? `${roomNumber} 号室` : '　'}
+                    <div className="grid grid-cols-2 gap-10">
+                        <div className="relative">
+                            <span className="absolute -top-4 left-0 text-[10px] font-black tracking-[0.2em] text-[#c9a64e] text-opacity-70">部屋番号</span>
+                            <div className="text-2xl pl-6 font-black h-9 flex items-end text-[#a84032] italic">
+                                {roomNumber ? `${roomNumber}号室` : ''}
                             </div>
-                            <div className="absolute bottom-0 left-0 w-full h-px bg-black" />
+                            <div className="w-full h-px bg-[#2d2418]/20 mt-1" />
                         </div>
-                        <div className="relative pb-1">
-                            <span className="absolute -top-4 left-0 text-[10px] font-bold tracking-widest text-[#78716c]">本拠地</span>
-                            <div className="text-base pl-6 font-bold h-8 flex items-end overflow-hidden">
-                                <span className="truncate">{baseLocation || '　'}</span>
+                        <div className="relative">
+                            <span className="absolute -top-4 left-0 text-[10px] font-black tracking-[0.2em] text-[#c9a64e] text-opacity-70">本拠地</span>
+                            <div className="text-lg pl-6 font-bold h-9 flex items-end overflow-hidden text-[#2d2418]">
+                                <span className="truncate">{baseLocation || ''}</span>
                             </div>
-                            <div className="absolute bottom-0 left-0 w-full h-px bg-black" />
-                        </div>
-                    </div>
-
-                    {/* Social Assets Grouped under 'Contact Info' */}
-                    <div className="pt-2">
-                        <div className="relative pl-4 ml-1">
-                            {/* Vertical Line */}
-                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-stone-200" />
-
-                            <span className="absolute -top-5 left-0 text-[10px] font-bold tracking-widest text-[#a8a29e]">連絡先</span>
-
-                            <div className="flex flex-col gap-2">
-                                <div className="flex items-center">
-                                    <span className="w-20 text-[10px] font-bold tracking-widest shrink-0 text-[#a8a29e]">X</span>
-                                    <div className="text-base font-sans font-bold pl-2">
-                                        {xAccount ? `@${xAccount}` : '未登録'}
-                                    </div>
-                                </div>
-                                <div className="flex items-center">
-                                    <span className="w-20 text-[10px] font-bold tracking-widest shrink-0 text-[#a8a29e]">YouTube</span>
-                                    <div className="text-base font-sans font-bold pl-2">
-                                        {youtubeAccount || '未登録'}
-                                    </div>
-                                </div>
-                            </div>
+                            <div className="w-full h-px bg-[#2d2418]/20 mt-1" />
                         </div>
                     </div>
 
-                    {/* Free Text Field - Always reserve space */}
-                    <div className="pt-2">
-                        <div className="relative pb-1">
-                            <span className="absolute -top-4 left-0 text-[10px] font-bold tracking-widest text-[#78716c]">自由記載</span>
-                            <div className="text-xs pl-2 leading-relaxed h-[80px] overflow-hidden whitespace-pre-wrap">
+                    {/* Contacts & Free Text */}
+                    <div className="grid grid-cols-5 gap-6 pt-2">
+                        <div className="col-span-2 space-y-4">
+                           <div className="flex items-center gap-3">
+                               <div className="w-8 h-8 rounded-lg bg-[#2d2418] flex items-center justify-center text-white text-xs font-black">X</div>
+                               <div className="text-sm font-bold text-[#2d2418] truncate">
+                                   {xAccount ? `@${xAccount}` : '-'}
+                               </div>
+                           </div>
+                           <div className="flex items-center gap-3">
+                               <div className="w-8 h-8 rounded-lg bg-[#a84032] flex items-center justify-center text-white text-[8px] font-black">Yt</div>
+                               <div className="text-sm font-bold text-[#2d2418] truncate">
+                                   {youtubeAccount || '-'}
+                               </div>
+                           </div>
+                        </div>
+                        <div className="col-span-3 relative pl-4 border-l-2 border-[#c9a64e]/20 force-border h-[90px]">
+                            <span className="absolute -top-4 left-4 text-[10px] font-black tracking-[0.2em] text-[#c9a64e]">自由記載</span>
+                            <div className="text-[13px] leading-relaxed font-bold text-[#2d2418]/80 whitespace-pre-wrap h-full overflow-hidden">
                                 {freeText || ''}
                             </div>
-                            <div className="absolute bottom-0 left-0 w-full h-px bg-black/30" />
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Footer and Declaration */}
-            <div className="absolute bottom-6 left-0 w-full px-12">
-                <div className="pt-6 flex justify-between items-end relative">
-                    <div className="absolute top-0 w-full h-px bg-black/10" />
-                    <div className="space-y-0.5">
-                        <p className="text-[12px] tracking-widest whitespace-nowrap opacity-80">上記のとおり入居したことを届け出ます。</p>
-                        <p className="font-bold text-xl tracking-[0.2em] font-serif whitespace-nowrap">メゾン・ド・きょー管理委員会</p>
-                    </div>
+            <div className="absolute bottom-8 left-0 w-full px-16 flex justify-between items-end">
+                <div className="space-y-1">
+                    <p className="text-[11px] tracking-[0.3em] font-bold text-[#2d2418]/40 uppercase">Above information is accurate and true.</p>
+                    <p className="text-2xl font-black tracking-[0.3em] font-serif text-[#2d2418]">メゾン・ド・きょー管理委員会</p>
                 </div>
             </div>
 
-            {/* Traditional Approval Stamp */}
-            <div className="absolute bottom-10 right-20 w-28 h-28 pointer-events-none select-none">
-                <div className="w-full h-full rounded-full flex flex-col items-center justify-center font-black transform -rotate-12 force-border" style={{ border: '4px solid rgba(220, 38, 38, 0.6)', color: 'rgba(220, 38, 38, 0.8)' }}>
-                    <div className="w-full text-center py-1 relative">
-                        <div className="absolute top-0 w-full h-[2px] bg-red-600/40" />
-                        <div className="absolute bottom-0 w-full h-[2px] bg-red-600/40" />
-                        <span className="text-[10px] tracking-widest block leading-none mb-1">メゾン・ド・きょー</span>
-                        <span className="text-3xl block leading-none">承認済</span>
+            {/* Pop & Modern Approval Stamp */}
+            <div className="absolute bottom-10 right-20 w-32 h-32 pointer-events-none select-none">
+                <div className="w-full h-full rounded-full flex flex-col items-center justify-center font-black transform -rotate-[15deg] force-border scale-110" 
+                     style={{ border: '5px solid #a84032', color: '#a84032', boxShadow: '0 0 0 2px rgba(168, 64, 50, 0.1)' }}>
+                    <div className="w-full text-center py-2 relative flex flex-col items-center">
+                        <div className="w-4/5 h-[2px] bg-[#a84032]/40 mb-1" />
+                        <span className="text-[9px] tracking-widest block leading-none font-black opacity-80 mb-1">APPROVED BY MAISON</span>
+                        <span className="text-[32px] block leading-none tracking-[0.2em] mr-[-0.2em]">承認済</span>
+                        <div className="w-4/5 h-[2px] bg-[#a84032]/40 mt-1" />
                     </div>
                 </div>
+                {/* Subtle digital glitch/offset effect for pop feel */}
+                <div className="absolute inset-0 rounded-full border-4 border-[#c9a64e]/20 -z-10 blur-[1px]"></div>
             </div>
-
-            {/* Watermark/Texture Overlay (Optional decoration) */}
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '16px 16px' }}></div>
         </div>
     );
 }

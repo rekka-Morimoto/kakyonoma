@@ -173,7 +173,7 @@ export default function RegistrationForm() {
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 className="w-full p-3 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
-                                placeholder="例: 山田太郎"
+                                placeholder="例: 佳鏡院"
                             />
                         </div>
 
@@ -184,7 +184,7 @@ export default function RegistrationForm() {
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
                                 className="w-full p-3 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
-                                placeholder="例: やまちゃん"
+                                placeholder="例: かっきょん"
                             />
                         </div>
 
@@ -226,7 +226,7 @@ export default function RegistrationForm() {
                                 value={youtubeAccount}
                                 onChange={(e) => setYoutubeAccount(e.target.value)}
                                 className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white focus:border-[#c9a64e]/50 transition outline-none"
-                                placeholder="例: @YourChannel"
+                                placeholder="記入自由"
                             />
                         </div>
 
@@ -253,7 +253,7 @@ export default function RegistrationForm() {
                                 maxLength={200}
                                 rows={5}
                                 className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white focus:border-[#c9a64e]/50 transition outline-none resize-none"
-                                placeholder="自己紹介やきょーちゃんへのメッセージなど"
+                                placeholder="佳鏡院さんへの思いやきょーめいとへのメッセージ等"
                             />
                         </div>
 
