@@ -193,21 +193,25 @@ export default function Registry() {
 
             {/* View Certificate Modal */}
             {viewingId && (
-                <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[100] p-4 backdrop-blur-xl" onClick={closeViewModal}>
-                    <div className="glass-panel p-2 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-auto relative border-white/20" onClick={e => e.stopPropagation()}>
-                        {isGenerating ? (
-                            <div className="p-24 flex flex-col items-center">
-                                <div className="w-16 h-16 border-4 border-amber-200/20 border-t-[#c9a64e] animate-spin rounded-full mb-6"></div>
-                                <p className="text-[#c9a64e] font-black text-xl animate-pulse text-outline">生成中...</p>
+                <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-[100] p-4 backdrop-blur-xl" onClick={closeViewModal}>
+                    <div className="max-w-4xl w-full max-h-[95vh] overflow-auto relative flex justify-center" onClick={e => e.stopPropagation()}>
+                        {residents.find(r => r.id === viewingId) && (
+                            <div className="scale-[0.5] sm:scale-[0.7] md:scale-95 lg:scale-100 transition-transform origin-center">
+                                <TennyuTodoke
+                                    {...residents.find(r => r.id === viewingId)!}
+                                    xAccount={residents.find(r => r.id === viewingId)!.xAccount || ''}
+                                    youtubeAccount={residents.find(r => r.id === viewingId)!.youtubeAccount || ''}
+                                    baseLocation={residents.find(r => r.id === viewingId)!.baseLocation || ''}
+                                    roomNumber={residents.find(r => r.id === viewingId)!.roomNumber}
+                                    image={residents.find(r => r.id === viewingId)!.icon || residents.find(r => r.id === viewingId)!.image || ''}
+                                    captureMode={true}
+                                    residentId={viewingId}
+                                />
                             </div>
-                        ) : (
-                            generatedImage && (
-                                <img src={generatedImage} alt="入居届" className="w-full h-auto rounded-2xl shadow-inner" />
-                            )
                         )}
                         <button
                             onClick={closeViewModal}
-                            className="absolute top-6 right-6 bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-black/70 transition shadow-xl border border-white/10 text-2xl"
+                            className="fixed top-10 right-10 bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-black/70 transition shadow-xl border border-white/10 text-2xl z-[110]"
                         >
                             ✕
                         </button>

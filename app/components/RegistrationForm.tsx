@@ -16,7 +16,6 @@ export default function RegistrationForm() {
     const [password, setPassword] = useState('');
     const [freeText, setFreeText] = useState('');
     const [image, setImage] = useState<string | null>(null);
-    const [generatedImage, setGeneratedImage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [locations, setLocations] = useState<string[]>([]);
     const [previewRoomNumber, setPreviewRoomNumber] = useState(1);
@@ -62,46 +61,6 @@ export default function RegistrationForm() {
         }
     };
 
-    const handleGenerate = async () => {
-        if (typeof window === 'undefined') return null;
-
-        // dom-to-image-more に戻し、確実にレンダリングを待つ設定にする
-        const domtoimage = (await import('dom-to-image-more')).default;
-        const element = document.getElementById('tennyu-todoke');
-        
-        if (element) {
-            setLoading(true);
-            try {
-                // 1. フォントの読み込み完了を待機
-                await document.fonts.ready;
-                // 2. さらに念のため1秒待機（画像やCSSアニメーションの安定のため）
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
-                const dataUrl = await domtoimage.toPng(element, {
-                    quality: 1.0,
-                    bgcolor: '#fdfbf7',
-                    width: 850,
-                    height: 600,
-                    style: {
-                        transform: 'scale(1)',
-                        transformOrigin: 'top left',
-                        margin: '0',
-                    }
-                });
-                
-                setGeneratedImage(dataUrl);
-                return dataUrl;
-            } catch (error) {
-                console.error('Image Generation Error:', error);
-                alert('画像の生成に失敗しました。お手数ですが、もう一度「決定」ボタンを押していただくか、ブラウザを更新して再度お試しください。');
-                return null;
-            } finally {
-                setLoading(false);
-            }
-        }
-        return null;
-    };
-
     const handleFormNext = () => {
         if (!name || !password) {
             alert('必須項目を入力してください');
@@ -121,14 +80,6 @@ export default function RegistrationForm() {
 
         setLoading(true);
         try {
-            // 1. まず現在のプレビュー（TennyuTodoke）を画像に変換
-            const finalTodokeImage = await handleGenerate();
-            if (!finalTodokeImage) {
-                setLoading(false);
-                return;
-            }
-
-            // 2. APIに送信。 完成画像を'image'に、元のプロフィールを'icon'に。
             const res = await fetch('/api/residents', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -138,8 +89,8 @@ export default function RegistrationForm() {
                     xAccount,
                     youtubeAccount,
                     baseLocation,
-                    image: finalTodokeImage, // こちらが「完成した入居届」
-                    icon: image,             // こちらが「元のアイコン写真」
+                    image: image, 
+                    icon: image,
                     password: password,
                     building: diagnosisResult,
                     answers: diagnosisAnswers,
