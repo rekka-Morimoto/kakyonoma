@@ -123,16 +123,16 @@ export default function TennyuTodoke({
                 
                 <div className="flex justify-between items-end px-4 mt-8 pr-12 w-full">
                     <div className="flex flex-col relative">
-                        <span className="text-[9px] font-bold text-[#c9a64e] tracking-widest block mb-1">REGISTRATION DATE</span>
-                        <div className="text-lg font-bold pb-1 min-w-[220px]">令和七年 七月 十一日</div>
-                        <div className="absolute bottom-0 left-0 right-12 h-px bg-[#2d2418]/20" />
-                    </div>
-                    <div className="flex flex-col items-end pr-16 relative">
                         <span className="text-[9px] font-bold text-[#c9a64e] tracking-[0.1em] mb-0.5">RESIDENT ID</span>
                         <div className="text-xl font-black italic flex items-baseline gap-1" style={{ color: '#c9a64e' }}>
                             <span className="text-[10px] not-italic opacity-40 mr-1">NO.</span>
                             <span className="tracking-tighter">{String(residentId).padStart(4, '0')}</span>
                         </div>
+                    </div>
+                    <div className="flex flex-col items-end relative">
+                        <span className="text-[9px] font-bold text-[#c9a64e] tracking-widest block mb-1">REGISTRATION DATE</span>
+                        <div className="text-lg font-bold pb-1 min-w-[220px] text-right">令和七年 七月 十一日</div>
+                        <div className="absolute bottom-0 left-[-20px] right-0 h-px bg-[#2d2418]/20" />
                     </div>
                 </div>
             </header>
@@ -240,12 +240,12 @@ export default function TennyuTodoke({
             {/* --- Block 3: Footer --- */}
             <footer className="relative z-10 w-full pt-4 min-h-[90px]">
                 <div className="flex justify-between items-end">
-                    <div className="pb-1 max-w-[500px]">
+                    <div className="pb-1 w-full">
                         <div className="flex items-center gap-4 mb-2 opacity-50">
                             <span className="text-[8px] font-bold tracking-[0.4em] uppercase whitespace-nowrap leading-none">Official Approval Authority</span>
                             <div className="h-px bg-[#2d2418]/40 flex-grow"></div>
                         </div>
-                        <h2 className="text-3xl font-black tracking-[0.5em] text-[#2d2418] leading-none mb-1 opacity-95">メゾン・ド・きょー管理委員会</h2>
+                        <h2 className="text-3xl font-black tracking-[0.5em] text-[#2d2418] leading-none mb-1 opacity-95 whitespace-nowrap">メゾン・ド・きょー管理委員会</h2>
                     </div>
 
                     <div className="absolute -top-12 -right-4 w-48 h-48 pointer-events-none select-none z-10">

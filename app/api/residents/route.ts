@@ -73,8 +73,8 @@ export async function POST(request: Request) {
     } = body;
 
     const hasName = name || (firstName && lastName);
-    if (!hasName || !image) {
-      return NextResponse.json({ error: 'Name and Image are required' }, { status: 400 });
+    if (!hasName) {
+      return NextResponse.json({ error: 'Name is required' }, { status: 400 });
     }
 
     // --- Upload images to Vercel Blob ---
