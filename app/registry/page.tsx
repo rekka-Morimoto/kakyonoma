@@ -265,11 +265,11 @@ export default function Registry() {
                                 className={`group p-1 rounded-[2.5rem] transition-all relative overflow-hidden shadow-2xl shrink-0 ${selectedBuilding === style.name ? 'scale-110 z-10' : 'scale-100 opacity-80 hover:opacity-100 hover:scale-105'}`}
                             >
                                 <div className={`px-8 py-5 rounded-[2.4rem] flex flex-col items-center gap-3 min-w-[170px] border-2 transition-all duration-500 ${selectedBuilding === style.name ? `bg-gradient-to-b ${style.gradient} border-white/40 shadow-inner` : 'bg-black/60 border-white/10 hover:border-[#c9a64e]/50'}`}>
-                                    <div className={`relative w-20 h-20 flex items-center justify-center rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl group-hover:rotate-3 transition-transform duration-500`}>
+                                    <div className={`relative flex items-center justify-center rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl group-hover:rotate-3 transition-all duration-500 ${selectedBuilding === style.name ? 'w-32 h-32' : 'w-20 h-20'}`}>
                                         {style.iconPath ? (
-                                            <img src={style.iconPath} alt="" className="w-16 h-16 object-contain" />
+                                            <img src={style.iconPath} alt="" className={`object-contain transition-all duration-500 ${selectedBuilding === style.name ? 'w-28 h-28' : 'w-16 h-16'}`} />
                                         ) : (
-                                            <span className="text-5xl">{style.emoji}</span>
+                                            <span className={`transition-all duration-500 ${selectedBuilding === style.name ? 'text-7xl' : 'text-5xl'}`}>{style.emoji}</span>
                                         )}
                                         <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
                                     </div>
