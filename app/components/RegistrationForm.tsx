@@ -267,8 +267,16 @@ export default function RegistrationForm() {
                     <div className="space-y-10 animate-in zoom-in-95 duration-300 text-center">
                         <div>
                             <h3 className="text-2xl font-black text-white text-outline">診断結果</h3>
-                            <div className={`mt-6 w-32 h-32 mx-auto rounded-full bg-gradient-to-br ${DIAGNOSIS_RESULTS[diagnosisResult].color} flex items-center justify-center text-5xl shadow-2xl border-4 border-white/20`}>
-                                {DIAGNOSIS_RESULTS[diagnosisResult].emoji}
+                            <div className={`mt-6 w-48 h-48 mx-auto rounded-full bg-gradient-to-br ${DIAGNOSIS_RESULTS[diagnosisResult].color} flex items-center justify-center p-4 shadow-2xl border-4 border-white/20 overflow-hidden relative`}>
+                                {DIAGNOSIS_RESULTS[diagnosisResult].iconPath ? (
+                                    <img 
+                                        src={DIAGNOSIS_RESULTS[diagnosisResult].iconPath} 
+                                        alt={diagnosisResult} 
+                                        className="w-full h-full object-contain"
+                                    />
+                                ) : (
+                                    <span className="text-6xl">{DIAGNOSIS_RESULTS[diagnosisResult].emoji}</span>
+                                )}
                             </div>
                             <h4 className="text-4xl font-black mt-6 text-white text-outline">{diagnosisResult}</h4>
                             <p className="text-[#d4c5b0] mt-4 text-base leading-relaxed px-4 whitespace-pre-wrap drop-shadow-md">
