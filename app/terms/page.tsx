@@ -24,11 +24,7 @@ export default async function TermsPage() {
 
     return (
         <main className="min-h-screen bg-transparent p-8 md:p-20 relative overflow-hidden flex flex-col items-center">
-            <div className="max-w-4xl w-full space-y-12 relative z-10">
-                <Link href="/" className="inline-flex items-center text-[#c9a64e] hover:text-white transition-colors mb-4 group font-bold tracking-widest text-lg">
-                    <span className="mr-3 transform group-hover:-translate-x-2 transition-transform text-2xl">←</span>
-                    BACK
-                </Link>
+            <div className="max-w-4xl w-full space-y-12 relative z-10 pt-12">
 
                 <div className="glass-panel p-10 md:p-20 rounded-[3rem] border-white/10 shadow-2xl space-y-12">
                     <header className="border-b border-white/10 pb-10 text-center">
