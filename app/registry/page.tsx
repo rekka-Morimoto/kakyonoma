@@ -287,6 +287,33 @@ export default function Registry() {
                         ))}
                     </div>
 
+                    {/* Building Description Display */}
+                    {selectedBuilding && (
+                        <div className="w-full max-w-5xl mx-auto mb-20 animate-in fade-in zoom-in-95 duration-700">
+                            <div className="glass-panel p-10 md:p-12 rounded-[3.5rem] border-white/10 shadow-2xl relative overflow-hidden group">
+                                <div className={`absolute inset-0 bg-gradient-to-br ${getBuildingStyle(selectedBuilding).gradient} opacity-5 transition-opacity group-hover:opacity-10`} />
+                                <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
+                                    <div className={`w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-white/5 flex items-center justify-center border border-white/10 shadow-2xl shadow-black/50 shrink-0`}>
+                                        {getBuildingStyle(selectedBuilding).iconPath ? (
+                                            <img src={getBuildingStyle(selectedBuilding).iconPath} alt="" className="w-24 h-24 md:w-32 md:h-32 object-contain" />
+                                        ) : (
+                                            <span className="text-7xl">{getBuildingStyle(selectedBuilding).emoji}</span>
+                                        )}
+                                    </div>
+                                    <div className="space-y-4 text-center md:text-left">
+                                        <div className="flex items-center justify-center md:justify-start gap-4">
+                                            <span className="px-4 py-1 bg-[#c9a64e] text-white text-[10px] font-black rounded-full tracking-widest uppercase text-outline">Definition</span>
+                                            <h3 className="text-3xl font-serif font-black text-white text-glow">{selectedBuilding}</h3>
+                                        </div>
+                                        <p className="text-xl md:text-2xl text-[#d4c5b0] font-serif leading-relaxed italic drop-shadow-md">
+                                            {getBuildingStyle(selectedBuilding).description}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {isAdminMode && (
                         <button
                             onClick={handleBulkDelete}
