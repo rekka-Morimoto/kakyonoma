@@ -128,7 +128,7 @@ export default function TennyuTodoke({
                         <div className="absolute bottom-0 left-0 right-0 h-px bg-[#2d2418]/20" />
                     </div>
                     {/* Move ID to a place where it won't overlap the character icon (middle-right) */}
-                    <div className="flex flex-col items-end pr-24 relative">
+                    <div className="flex flex-col items-end pr-36 relative">
                         <span className="text-[9px] font-bold text-[#c9a64e] tracking-[0.1em] mb-0.5 whitespace-nowrap">RESIDENT ID</span>
                         <div className="text-xl font-black italic flex items-baseline gap-1" style={{ color: '#c9a64e' }}>
                             <span className="text-[10px] not-italic opacity-40 mr-1">NO.</span>
