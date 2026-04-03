@@ -250,7 +250,7 @@ export default function Registry() {
                 {/* Admin Toolbar & Filters */}
                 <div className="mb-20 flex flex-col md:flex-row justify-between items-center gap-10">
                     {/* Building Filter */}
-                    <div className="flex flex-wrap justify-center gap-8 mb-16 max-w-7xl mx-auto px-6">
+                    <div className="w-full flex flex-wrap justify-center items-center gap-6 mb-12">
                         <button
                             onClick={() => setSelectedBuilding(null)}
                             className={`group px-10 py-6 rounded-3xl font-serif font-black text-xl transition-all relative overflow-hidden flex items-center justify-center min-w-[140px] shadow-2xl border-2 ${selectedBuilding === null ? 'bg-[#c9a64e] text-white border-amber-200 scale-105 shadow-amber-900/40' : 'bg-black/60 text-stone-400 border-white/10 hover:border-[#c9a64e]/40 hover:text-white'}`}
@@ -262,20 +262,20 @@ export default function Registry() {
                             <button
                                 key={style.name}
                                 onClick={() => setSelectedBuilding(style.name)}
-                                className={`group p-1 rounded-[2.5rem] transition-all relative overflow-hidden shadow-2xl ${selectedBuilding === style.name ? 'scale-110 z-10' : 'scale-100 opacity-80 hover:opacity-100 hover:scale-105'}`}
+                                className={`group p-1 rounded-[2.5rem] transition-all relative overflow-hidden shadow-2xl shrink-0 ${selectedBuilding === style.name ? 'scale-110 z-10' : 'scale-100 opacity-80 hover:opacity-100 hover:scale-105'}`}
                             >
-                                <div className={`px-8 py-6 rounded-[2.4rem] flex flex-col items-center gap-4 min-w-[180px] border-2 transition-all duration-500 ${selectedBuilding === style.name ? `bg-gradient-to-b ${style.gradient} border-white/40 shadow-inner` : 'bg-black/60 border-white/10 hover:border-[#c9a64e]/50'}`}>
-                                    <div className={`relative w-28 h-28 flex items-center justify-center rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl group-hover:rotate-3 transition-transform duration-500`}>
+                                <div className={`px-8 py-5 rounded-[2.4rem] flex flex-col items-center gap-3 min-w-[170px] border-2 transition-all duration-500 ${selectedBuilding === style.name ? `bg-gradient-to-b ${style.gradient} border-white/40 shadow-inner` : 'bg-black/60 border-white/10 hover:border-[#c9a64e]/50'}`}>
+                                    <div className={`relative w-20 h-20 flex items-center justify-center rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl group-hover:rotate-3 transition-transform duration-500`}>
                                         {style.iconPath ? (
-                                            <img src={style.iconPath} alt="" className="w-24 h-24 object-contain" />
+                                            <img src={style.iconPath} alt="" className="w-16 h-16 object-contain" />
                                         ) : (
-                                            <span className="text-6xl">{style.emoji}</span>
+                                            <span className="text-5xl">{style.emoji}</span>
                                         )}
                                         <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <span className={`text-[10px] uppercase tracking-[0.3em] mb-1 font-sans font-black ${selectedBuilding === style.name ? 'text-white/70' : 'text-[#c9a64e]'}`}>Type</span>
-                                        <span className={`text-base font-serif font-black tracking-widest ${selectedBuilding === style.name ? 'text-white text-glow' : 'text-stone-300'}`}>
+                                        <span className={`text-[9px] uppercase tracking-[0.3em] mb-0.5 font-sans font-black ${selectedBuilding === style.name ? 'text-white/70' : 'text-[#c9a64e]'}`}>Type</span>
+                                        <span className={`text-sm font-serif font-black tracking-widest ${selectedBuilding === style.name ? 'text-white text-glow' : 'text-stone-300'}`}>
                                             {style.name}
                                         </span>
                                     </div>
@@ -287,28 +287,19 @@ export default function Registry() {
                         ))}
                     </div>
 
-                    {/* Building Description Display */}
+                    {/* Building Description Display - Now Below the row */}
                     {selectedBuilding && (
-                        <div className="w-full max-w-5xl mx-auto mb-20 animate-in fade-in zoom-in-95 duration-700">
-                            <div className="glass-panel p-10 md:p-12 rounded-[3.5rem] border-white/10 shadow-2xl relative overflow-hidden group">
+                        <div className="w-full max-w-4xl mx-auto mb-16 animate-in fade-in slide-in-from-top-4 duration-700">
+                            <div className="glass-panel p-8 md:p-10 rounded-[3rem] border-white/10 shadow-2xl relative overflow-hidden group">
                                 <div className={`absolute inset-0 bg-gradient-to-br ${getBuildingStyle(selectedBuilding).gradient} opacity-5 transition-opacity group-hover:opacity-10`} />
-                                <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
-                                    <div className={`w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-white/5 flex items-center justify-center border border-white/10 shadow-2xl shadow-black/50 shrink-0`}>
-                                        {getBuildingStyle(selectedBuilding).iconPath ? (
-                                            <img src={getBuildingStyle(selectedBuilding).iconPath} alt="" className="w-24 h-24 md:w-32 md:h-32 object-contain" />
-                                        ) : (
-                                            <span className="text-7xl">{getBuildingStyle(selectedBuilding).emoji}</span>
-                                        )}
+                                <div className="relative z-10 space-y-4">
+                                    <div className="flex items-center gap-4">
+                                        <span className="px-4 py-1 bg-[#c9a64e] text-white text-[9px] font-black rounded-full tracking-widest uppercase text-outline">Definition</span>
+                                        <h3 className="text-2xl font-serif font-black text-white text-glow">{selectedBuilding}</h3>
                                     </div>
-                                    <div className="space-y-4 text-center md:text-left">
-                                        <div className="flex items-center justify-center md:justify-start gap-4">
-                                            <span className="px-4 py-1 bg-[#c9a64e] text-white text-[10px] font-black rounded-full tracking-widest uppercase text-outline">Definition</span>
-                                            <h3 className="text-3xl font-serif font-black text-white text-glow">{selectedBuilding}</h3>
-                                        </div>
-                                        <p className="text-xl md:text-2xl text-[#d4c5b0] font-serif leading-relaxed italic drop-shadow-md">
-                                            {getBuildingStyle(selectedBuilding).description}
-                                        </p>
-                                    </div>
+                                    <p className="text-lg md:text-xl text-[#d4c5b0] font-serif leading-relaxed italic drop-shadow-md">
+                                        {getBuildingStyle(selectedBuilding).description}
+                                    </p>
                                 </div>
                             </div>
                         </div>
