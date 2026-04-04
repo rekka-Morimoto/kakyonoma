@@ -1,4 +1,5 @@
 'use client';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 
 export default function Home() {
@@ -169,6 +170,9 @@ export default function Home() {
 
         </div>
 
+        {/* Dynamic Message Section */}
+        <HomeMessage />
+
         {/* Footer */}
         <div className="pt-20 opacity-60">
           <div className="flex items-center justify-center gap-8 mb-6">
@@ -182,5 +186,52 @@ export default function Home() {
 
       </div>
     </main>
+  );
+}
+
+function HomeMessage() {
+  const [content, setContent] = React.useState('');
+
+  React.useEffect(() => {
+    fetch('/api/home-message')
+      .then(res => res.json())
+      .then(data => setContent(data.content))
+      .catch(err => console.error(err));
+  }, []);
+
+  if (!content) return null;
+
+  return (
+    <div className="max-w-4xl mx-auto mt-20 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+      <div className="glass-panel p-10 md:p-16 rounded-[3rem] relative overflow-hidden group border-white/5 shadow-2xl">
+        {/* Decorative Inner Border */}
+        <div className="absolute inset-4 border border-[#c9a64e]/20 rounded-[2.2rem] pointer-events-none" />
+        
+        {/* Subtle Background Ornament */}
+        <div className="absolute -bottom-10 -right-10 text-[15rem] text-white/5 pointer-events-none select-none rotate-12">
+          📜
+        </div>
+
+        <div className="relative z-10 space-y-8">
+          <div className="flex flex-col items-center gap-2">
+            <div className="text-[#c9a64e] text-sm tracking-[0.4em] font-black uppercase opacity-80">Announcements</div>
+            <h3 className="text-3xl md:text-4xl font-serif font-black text-white text-glow tracking-widest">
+              管理役場より
+            </h3>
+            <div className="w-16 h-px bg-[#c9a64e]/40 mt-2" />
+          </div>
+
+          <div className="text-lg md:text-xl text-[#d4c5b0] font-serif leading-[2.2] text-center whitespace-pre-wrap drop-shadow-md px-4">
+            {content}
+          </div>
+
+          <div className="flex justify-center pt-6">
+            <div className="text-xs text-[#c9a64e]/60 tracking-[0.3em] font-bold uppercase py-2 px-6 border border-[#c9a64e]/30 rounded-full">
+              Updated 2026.04
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
