@@ -108,7 +108,7 @@ export async function POST(request: Request) {
     const newId = await kv.incr('resident_counter');
     const buildingResidentsCountKey = `building_count:${building}`;
     const buildingCount = await kv.incr(buildingResidentsCountKey);
-    const roomNumber = Math.ceil(buildingCount / 4);
+    const roomNumber = Math.floor((buildingCount - 1) / 4) + 1;
 
     const newResident: Resident = {
       id: newId,
