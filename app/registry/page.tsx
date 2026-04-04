@@ -69,10 +69,10 @@ export default function Registry() {
     };
 
     const handleAdminLogin = () => {
-        if (adminPassword === 'admin') {
+        if (adminPassword === '5226ms') {
             setIsAdminMode(true);
             setShowAdminInput(false);
-            setDeletePassword('admin');
+            setDeletePassword('5226ms');
         } else {
             alert('パスワードが違います');
         }
