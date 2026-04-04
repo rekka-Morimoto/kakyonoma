@@ -71,6 +71,28 @@ export default function DiagnosisPage() {
         }
     };
 
+    const handleClearAllStats = async () => {
+        if (!confirm(`【警告】すべての統計データを削除しますか？\nこの操作は取り消せません。`)) return;
+        if (!confirm(`本当によろしいですか？ すべての集計がリセットされます。`)) return;
+
+        try {
+            const res = await fetch('/api/stats', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ clearAll: true, password: adminPassword }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setAdminMsg(data.message);
+                fetchStats(); // Refresh
+            } else {
+                setAdminMsg(`Error: ${data.error}`);
+            }
+        } catch (e) {
+            setAdminMsg('Failed to connect');
+        }
+    };
+
     return (
         <div className="min-h-screen bg-[#faf9f6] text-stone-900 font-serif flex flex-col">
             {/* Header */}
@@ -152,34 +174,48 @@ export default function DiagnosisPage() {
                     </button>
 
                     {isAdminOpen && (
-                        <div className="bg-stone-100 p-8 rounded-2xl border border-stone-200 font-sans animate-in fade-in slide-in-from-bottom-2">
-                            <h4 className="font-bold text-stone-700 mb-4">Clear Daily Stats</h4>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-stone-500 mb-1">Target Date</label>
-                                    <input
-                                        type="date"
-                                        value={targetDate}
-                                        onChange={e => setTargetDate(e.target.value)}
-                                        className="w-full p-2 rounded border border-stone-300"
-                                    />
+                        <div className="bg-stone-100 p-8 rounded-2xl border border-stone-200 font-sans animate-in fade-in slide-in-from-bottom-2 space-y-8">
+                            <div>
+                                <h4 className="font-black text-stone-700 mb-4 border-b border-stone-200 pb-2">Delete Stats</h4>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-bold text-stone-500 mb-1">Target Date</label>
+                                        <input
+                                            type="date"
+                                            value={targetDate}
+                                            onChange={e => setTargetDate(e.target.value)}
+                                            className="w-full p-2 rounded border border-stone-300 text-sm"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={handleClearStats}
+                                        className="w-full bg-stone-400 text-white font-bold py-2 rounded hover:bg-stone-500 transition-colors text-sm"
+                                    >
+                                        Clear Daily Data
+                                    </button>
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-stone-500 mb-1">Password</label>
-                                    <input
-                                        type="password"
-                                        value={adminPassword}
-                                        onChange={e => setAdminPassword(e.target.value)}
-                                        className="w-full p-2 rounded border border-stone-300"
-                                    />
-                                </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-dashed border-stone-300">
+                                <h4 className="font-black text-red-600 mb-4">Dangerous Zone</h4>
                                 <button
-                                    onClick={handleClearStats}
-                                    className="w-full bg-red-500 text-white font-bold py-2 rounded hover:bg-red-600 transition-colors"
+                                    onClick={handleClearAllStats}
+                                    className="w-full bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-all shadow-lg active:scale-95 text-sm"
                                 >
-                                    Clear Data
+                                    ⚠️ Clear ALL Statistics
                                 </button>
-                                {adminMsg && <p className="text-center text-sm font-bold mt-2">{adminMsg}</p>}
+                            </div>
+
+                            <div className="pt-4">
+                                <label className="block text-xs font-bold text-stone-500 mb-1">Passcode</label>
+                                <input
+                                    type="password"
+                                    value={adminPassword}
+                                    onChange={e => setAdminPassword(e.target.value)}
+                                    className="w-full p-2 rounded border border-stone-300 font-mono"
+                                    placeholder="••••••"
+                                />
+                                {adminMsg && <p className="text-center text-xs font-bold mt-4 text-stone-600 bg-white p-2 rounded border border-stone-200">{adminMsg}</p>}
                             </div>
                         </div>
                     )}

@@ -32,10 +32,18 @@ export async function GET() {
 
 export async function DELETE(request: Request) {
     try {
-        const { date, password } = await request.json();
+        const { date, password, clearAll } = await request.json();
 
         if (password !== ADMIN_PASSWORD) {
             return NextResponse.json({ error: 'Invalid password' }, { status: 403 });
+        }
+
+        if (clearAll) {
+            const keys = await kv.keys('stats:*');
+            if (keys.length > 0) {
+                await kv.del(...keys);
+            }
+            return NextResponse.json({ message: 'All statistics cleared successfully' });
         }
 
         if (!date) {
