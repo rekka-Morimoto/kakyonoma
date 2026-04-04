@@ -101,7 +101,7 @@ export default function TennyuTodoke({
 
             {/* --- Block 1: Header --- */}
             <header className="relative z-10 w-full mb-0">
-                <div className="absolute top-[-35px] right-[-45px] w-56 h-56 pointer-events-none select-none z-20">
+                <div className="absolute top-[-40px] right-[-50px] w-64 h-64 pointer-events-none select-none z-20">
                     <img 
                         src="/mascot.png" 
                         alt="Mascot" 
@@ -112,26 +112,26 @@ export default function TennyuTodoke({
                     />
                 </div>
 
-                <div className="w-full flex flex-col items-center justify-center pt-0">
-                    <div className="text-[10px] tracking-[0.4em] font-bold text-[#c9a64e] mb-1 uppercase opacity-90">RESIDENT REGISTRATION CARD</div>
-                    <div className="flex items-center justify-center gap-4 w-full max-w-[450px]">
+                <div className="w-full flex flex-col items-center justify-center pt-2">
+                    <div className="text-[11px] tracking-[0.4em] font-bold text-[#c9a64e] mb-2 uppercase opacity-90">RESIDENT REGISTRATION CARD</div>
+                    <div className="flex items-center justify-center gap-6 w-full max-w-[500px]">
                         <div className="flex-grow h-px bg-[#c9a64e]/40" />
-                        <h1 className="text-4xl font-black tracking-[0.8em] text-[#2d2418] mr-[-0.8em] leading-none text-luxury whitespace-nowrap">入居届</h1>
+                        <h1 className="text-5xl font-black tracking-[0.8em] text-[#2d2418] mr-[-0.8em] leading-none text-luxury whitespace-nowrap">入居届</h1>
                         <div className="flex-grow h-px bg-[#c9a64e]/40" />
                     </div>
                 </div>
                 
-                <div className="flex justify-between items-end px-4 mt-6 pr-12 w-full">
+                <div className="flex justify-between items-end px-4 mt-8 pr-12 w-full">
                     <div className="flex flex-col relative">
-                        <span className="text-[8px] font-bold text-[#c9a64e] tracking-widest block mb-0.5">REGISTRATION DATE</span>
-                        <div className="text-base font-bold pb-0.5 min-w-[200px]">令和七年 七月 十一日</div>
+                        <span className="text-[9px] font-bold text-[#c9a64e] tracking-widest block mb-1">REGISTRATION DATE</span>
+                        <div className="text-xl font-bold pb-1 min-w-[220px]">令和七年 七月 十一日</div>
                         <div className="absolute bottom-0 left-0 right-0 h-px bg-[#2d2418]/20" />
                     </div>
                     {/* Move ID to a place where it won't overlap the character icon (middle-right) */}
-                    <div className="flex flex-col items-end pr-32 relative">
-                        <span className="text-[8px] font-bold text-[#c9a64e] tracking-[0.1em] mb-0.5 whitespace-nowrap uppercase">RESIDENT ID</span>
-                        <div className="text-lg font-black italic flex items-baseline gap-1" style={{ color: '#c9a64e' }}>
-                            <span className="text-[9px] not-italic opacity-40 mr-1">NO.</span>
+                    <div className="flex flex-col items-end pr-36 relative">
+                        <span className="text-[9px] font-bold text-[#c9a64e] tracking-[0.1em] mb-0.5 whitespace-nowrap uppercase">RESIDENT ID</span>
+                        <div className="text-xl font-black italic flex items-baseline gap-1" style={{ color: '#c9a64e' }}>
+                            <span className="text-[10px] not-italic opacity-40 mr-1">NO.</span>
                             <span className="tracking-tighter">{String(residentId).padStart(4, '0')}</span>
                         </div>
                     </div>
@@ -139,103 +139,104 @@ export default function TennyuTodoke({
             </header>
 
             {/* --- Block 2: Main Body --- */}
-            <main className="relative z-10 flex flex-col gap-2 py-0 overflow-hidden font-medium mt-2">
+            <main className="relative z-10 flex flex-col gap-4 py-0 overflow-hidden font-medium mt-4">
                 <div className="flex gap-10">
                     {/* Photo Frame (Physical Lines) */}
-                    <div className="w-[140px] shrink-0">
-                        <div className="aspect-[3/4] w-full bg-white rounded-xl relative overflow-hidden shadow-lg">
+                    <div className="w-[160px] shrink-0 pt-2">
+                        <div className="aspect-[3/4] w-full bg-white rounded-2xl relative overflow-hidden shadow-xl">
                             {/* Physical Border for Photo */}
-                            <div className="absolute inset-0 rounded-xl border-none pointer-events-none z-20">
-                                <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#2d2418]" />
-                                <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#2d2418]" />
-                                <div className="absolute top-0 bottom-0 left-0 w-[3px] bg-[#2d2418]" />
-                                <div className="absolute top-0 bottom-0 right-0 w-[3px] bg-[#2d2418]" />
+                            <div className="absolute inset-0 rounded-2xl border-none pointer-events-none z-20">
+                                <div className="absolute top-0 left-0 right-0 h-[3.8px] bg-[#2d2418]" />
+                                <div className="absolute bottom-0 left-0 right-0 h-[3.8px] bg-[#2d2418]" />
+                                <div className="absolute top-0 bottom-0 left-0 w-[3.8px] bg-[#2d2418]" />
+                                <div className="absolute top-0 bottom-0 right-0 w-[3.8px] bg-[#2d2418]" />
                             </div>
                             {image ? (
                                 <img src={image} alt="顔写真" className="w-full h-full object-cover" />
                             ) : (
                                 <div className="text-center flex flex-col items-center justify-center h-full bg-[#f5f1e8]">
-                                    <span className="text-4xl opacity-10">📸</span>
-                                    <span className="text-[8px] font-black tracking-widest mt-1 opacity-30 text-[#2d2418]">貼付欄</span>
+                                    <span className="text-5xl opacity-10">📸</span>
+                                    <span className="text-[9px] font-black tracking-widest mt-1 opacity-30 text-[#2d2418]">貼付欄</span>
                                 </div>
                             )}
                         </div>
-                        <div className="mt-2 px-3 py-0.5 bg-[#c9a64e]/10 rounded-full text-center shadow-sm">
-                            <p className="text-[9px] font-bold tracking-widest text-[#a8a29e]">近影・加工可</p>
+                        <div className="mt-3 px-3 py-1 bg-[#c9a64e]/10 rounded-full text-center shadow-sm">
+                            <p className="text-[10px] font-bold tracking-widest text-[#a8a29e]">近影・加工可</p>
                         </div>
                     </div>
 
                     {/* Profile Fields */}
-                    <div className="flex-1 flex flex-col justify-start">
-                        <div className="grid grid-cols-1 gap-3">
+                    <div className="flex-1 flex flex-col justify-between py-1">
+                        <div className="space-y-4">
                             <div className="relative">
-                                <span className="text-[10px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-0.5">
-                                   <span className="w-2 h-2 rounded-sm rotate-45 bg-[#c9a64e]"></span> なまえ
+                                <span className="text-[11px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1">
+                                   <span className="w-2.5 h-2.5 rounded-sm rotate-45 bg-[#c9a64e]"></span> なまえ
                                 </span>
-                                <div className="text-2xl pl-4 font-black h-8 flex items-center text-[#2d2418] tracking-wider leading-none">
+                                <div className="text-3xl pl-4 font-black h-10 flex items-center text-[#2d2418] tracking-wider leading-none">
                                    {name || ''}
                                 </div>
-                                <div className="w-full h-[3px] bg-[#2d2418] rounded-full opacity-90" />
+                                <div className="w-full h-1 bg-[#2d2418] rounded-full opacity-90" />
                             </div>
 
                             <div className="relative">
-                                <span className="text-[9px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-0.5 opacity-80">
-                                   <span className="w-2 h-2 rounded-sm rotate-45 bg-[#c9a64e]/60 opacity-70"></span> 呼び方
+                                <span className="text-[10px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1 opacity-80">
+                                   <span className="w-2.5 h-2.5 rounded-sm rotate-45 bg-[#c9a64e]/60 opacity-70"></span> 呼び方
                                 </span>
-                                <div className="text-base pl-6 font-bold h-6 flex items-center text-[#2d2418] leading-none">
+                                <div className="text-xl pl-6 font-bold h-7 flex items-center text-[#2d2418] leading-none">
                                    {nickname || ''}
                                 </div>
-                                <div className="h-px bg-[#2d2418]/20 w-full" />
+                                <div className="h-px bg-[#2d2418]/20 w-full mt-1.5" />
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-6 mt-3">
+                        <div className="grid grid-cols-2 gap-8">
                             <div className="relative">
-                                <span className="text-[9px] font-black tracking-widest text-[#c9a64e] mb-0.5 block">X (Twitter)</span>
-                                <div className="text-sm pl-4 font-bold h-5 flex items-center text-[#2d2418] leading-none">
+                                <span className="text-[10px] font-black tracking-widest text-[#c9a64e] mb-1 block">X (Twitter)</span>
+                                <div className="text-base pl-4 font-bold h-6 flex items-center text-[#2d2418] leading-none">
                                     {xAccount || ''}
                                 </div>
-                                <div className="h-px bg-[#2d2418]/20 w-full" />
+                                <div className="h-px bg-[#2d2418]/20 w-full mt-1.5" />
                             </div>
                             <div className="relative">
-                                <span className="text-[9px] font-black tracking-widest text-[#c9a64e] mb-0.5 block">YouTube</span>
-                                <div className="text-sm pl-4 font-bold h-5 flex items-center text-[#2d2418] truncate leading-none">
+                                <span className="text-[10px] font-black tracking-widest text-[#c9a64e] mb-1 block">YouTube</span>
+                                <div className="text-base pl-4 font-bold h-6 flex items-center text-[#2d2418] truncate leading-none">
                                     {youtubeAccount || ''}
                                 </div>
-                                <div className="h-px bg-[#2d2418]/20 w-full" />
+                                <div className="h-px bg-[#2d2418]/20 w-full mt-1.5" />
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-6 mt-3">
+                        <div className="grid grid-cols-2 gap-8">
                             <div className="relative">
-                                <span className="text-[9px] font-bold text-[#c9a64e] block mb-0.5 tracking-widest uppercase leading-none">ROOM NO.</span>
-                                <div className="text-xl pl-4 font-black h-7 flex items-end text-[#a84032] italic leading-none">
+                                <span className="text-[10px] font-bold text-[#c9a64e] block mb-1 tracking-widest uppercase leading-none">ROOM NO.</span>
+                                <div className="text-3xl pl-4 font-black h-8 flex items-end text-[#a84032] italic leading-none">
                                    {roomNumber ? `${roomNumber}号室` : ''}
                                 </div>
-                                <div className="h-px bg-[#2d2418]/20 w-full" />
+                                <div className="h-px bg-[#2d2418]/20 w-full mt-1" />
                             </div>
                             <div className="relative">
-                                <span className="text-[9px] font-bold text-[#c9a64e] block mb-0.5 tracking-widest uppercase leading-none">LOCATION</span>
-                                <div className="text-sm pl-4 font-bold h-7 flex items-end text-[#2d2418] truncate leading-none">
+                                <span className="text-[10px] font-bold text-[#c9a64e] block mb-1 tracking-widest uppercase leading-none">LOCATION</span>
+                                <div className="text-lg pl-4 font-bold h-8 flex items-end text-[#2d2418] truncate leading-none">
                                    {baseLocation || ''}
                                 </div>
-                                <div className="h-px bg-[#2d2418]/20 w-full" />
+                                <div className="h-px bg-[#2d2418]/20 w-full mt-1" />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Free Text Area - Positioned to take remaining wide space */}
-                <div className="relative mt-2 flex flex-col flex-1">
-                    <span className="text-[9px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#c9a64e]/30" /> 自由記載欄
+                {/* Free Text Area - Re-sized to feel more like a note column */}
+                <div className="relative mt-2 flex flex-col">
+                    <span className="text-[10px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-2">
+                        <span className="w-2 h-2 rounded-full bg-[#c9a64e]/30" /> 自由記載欄
                     </span>
-                    <div className="relative px-6 py-2 min-h-[70px] bg-white/30 rounded-lg overflow-hidden w-full max-w-[550px]">
+                    <div className="relative px-8 py-3 min-h-[90px] bg-white/40 rounded-2xl border-none w-full max-w-[580px]">
                         {/* Decorative background lines */}
-                        <div className="absolute inset-x-6 top-6 h-px bg-[#2d2418]/5" />
-                        <div className="absolute inset-x-6 top-12 h-px bg-[#2d2418]/5" />
+                        <div className="absolute inset-x-8 top-8 h-px bg-[#2d2418]/10" />
+                        <div className="absolute inset-x-8 top-15 h-px bg-[#2d2418]/10" />
+                        <div className="absolute inset-x-8 top-22 h-px bg-[#2d2418]/10" />
                         
-                        <div className="relative z-10 text-[12px] font-bold text-[#2d2418]/70 leading-[1.4rem] whitespace-pre-wrap italic">
+                        <div className="relative z-10 text-[14px] font-bold text-[#2d2418]/80 leading-[1.6rem] whitespace-pre-wrap italic">
                             {freeText || ''}
                         </div>
                     </div>
@@ -243,32 +244,32 @@ export default function TennyuTodoke({
             </main>
 
             {/* --- Block 3: Footer --- */}
-            <footer className="relative z-10 w-full pt-2 min-h-[70px] mt-auto">
+            <footer className="relative z-10 w-full pt-4 min-h-[90px] mt-auto">
                 <div className="flex justify-between items-end">
                     <div className="pb-1 w-full flex flex-col justify-end">
-                        <div className="flex items-center gap-4 mb-1.5 opacity-40">
-                            <span className="text-[7px] font-bold tracking-[0.4em] uppercase whitespace-nowrap leading-none">Official Approval Authority</span>
-                            <div className="h-px bg-[#2d2418]/30 flex-grow"></div>
+                        <div className="flex items-center gap-4 mb-2 opacity-50">
+                            <span className="text-[8px] font-bold tracking-[0.4em] uppercase whitespace-nowrap leading-none">Official Approval Authority</span>
+                            <div className="h-px bg-[#2d2418]/40 flex-grow"></div>
                         </div>
-                        <h2 className="text-2xl font-black tracking-[0.5em] text-[#2d2418] leading-none opacity-90 whitespace-nowrap">メゾン・ド・きょー管理委員会</h2>
+                        <h2 className="text-3xl font-black tracking-[0.5em] text-[#2d2418] leading-none opacity-95 whitespace-nowrap">メゾン・ド・きょー管理委員会</h2>
                     </div>
 
-                    <div className="absolute -top-12 -right-4 w-44 h-44 pointer-events-none select-none z-10 opacity-90">
+                    <div className="absolute -top-12 -right-4 w-48 h-48 pointer-events-none select-none z-10">
                         <div className="w-full h-full rounded-full flex flex-col items-center justify-center font-black stamp-texture transform -rotate-[12deg] relative" 
                              style={{ 
                                  color: 'rgba(168, 64, 50, 0.85)',
-                                 backgroundColor: 'rgba(168, 64, 50, 0.03)',
+                                 backgroundColor: 'rgba(168, 64, 50, 0.05)',
                              }}>
                             <div className="absolute inset-0 rounded-full border-none z-0">
-                                <div className="absolute inset-0 rounded-full border-transparent" style={{ boxShadow: 'inset 0 0 0 2.5px rgba(168, 64, 50, 0.5)' }} />
-                                <div className="absolute inset-3.5 rounded-full border-transparent" style={{ boxShadow: 'inset 0 0 0 1px rgba(168, 64, 50, 0.2)' }} />
+                                <div className="absolute inset-0 rounded-full border-transparent" style={{ boxShadow: 'inset 0 0 0 3px rgba(168, 64, 50, 0.55)' }} />
+                                <div className="absolute inset-4 rounded-full border-transparent" style={{ boxShadow: 'inset 0 0 0 1px rgba(168, 64, 50, 0.25)' }} />
                             </div>
                             <div className="relative z-10 flex flex-col items-center">
-                                <span className="text-[6px] tracking-[0.4em] font-black opacity-60 uppercase mb-1.5 leading-none">Maison de Kyo Seal</span>
-                                <div className="w-12 h-px bg-[rgba(168, 64, 50, 0.2)] mb-1.5" />
-                                <span className="text-3xl block leading-none tracking-[0.4em] pr-[-0.4em]">承認済</span>
-                                <div className="w-12 h-px bg-[rgba(168, 64, 50, 0.2)] mt-1.5" />
-                                <span className="text-[8px] mt-1.5 font-bold opacity-40 tracking-widest leading-none">管理委員会之印</span>
+                                <span className="text-[7px] tracking-[0.4em] font-black opacity-60 uppercase mb-2 leading-none">Maison de Kyo Seal</span>
+                                <div className="w-16 h-px bg-[rgba(168, 64, 50, 0.3)] mb-2" />
+                                <span className="text-4xl block leading-none tracking-[0.4em] pr-[-0.4em]">承認済</span>
+                                <div className="w-16 h-px bg-[rgba(168, 64, 50, 0.3)] mt-2" />
+                                <span className="text-[9px] mt-2 font-bold opacity-50 tracking-widest leading-none">管理委員会之印</span>
                             </div>
                         </div>
                     </div>
