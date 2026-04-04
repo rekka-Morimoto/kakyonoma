@@ -219,21 +219,27 @@ export default function TennyuTodoke({
                         </div>
                         <div className="relative pb-1">
                             <span className="text-[10px] font-bold text-[#c9a64e] block mb-1 tracking-widest uppercase leading-none">HOME LOCATION</span>
-                            <div className="text-sm pl-4 font-bold h-8 flex items-end text-[#2d2418] truncate leading-none">
+                            <div className="text-base pl-4 font-bold h-8 flex items-end text-[#2d2418] truncate leading-none">
                                {baseLocation || ''}
                             </div>
                             <div className="h-px bg-[#2d2418]/20 w-full mt-1" />
                         </div>
                     </div>
 
-                    <div className="relative pb-1">
-                        <span className="text-[11px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-1">
-                            <span className="w-2 h-2 rounded-full bg-[#c9a64e]/20" /> 自由記載
+                    <div className="relative mt-4 flex-grow">
+                        <span className="text-[10px] font-black tracking-widest text-[#c9a64e] flex items-center gap-2 mb-2">
+                            <span className="w-2 h-2 rounded-full bg-[#c9a64e]/30" /> 自由記載欄
                         </span>
-                        <div className="text-[12px] pl-6 font-bold h-10 flex items-start text-[#2d2418]/70 leading-relaxed whitespace-pre-wrap overflow-hidden">
-                            {freeText || ''}
+                        <div className="relative px-6 py-3 min-h-[80px] bg-white/40 rounded-xl border-none">
+                            {/* Decorative background lines for manual-writing feel */}
+                            <div className="absolute inset-x-6 top-8 h-px bg-[#2d2418]/10" />
+                            <div className="absolute inset-x-6 top-14 h-px bg-[#2d2418]/10" />
+                            <div className="absolute inset-x-6 top-20 h-px bg-[#2d2418]/10" />
+                            
+                            <div className="relative z-10 text-[13px] font-bold text-[#2d2418]/80 leading-[1.5rem] whitespace-pre-wrap italic">
+                                {freeText || '佳鏡院さんへの想いやきょーめいとへのメッセージ等'}
+                            </div>
                         </div>
-                        <div className="h-px bg-[#2d2418]/15 w-full mt-1" />
                     </div>
                 </div>
             </main>
