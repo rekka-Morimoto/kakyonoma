@@ -14,10 +14,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "メゾン・ド・きょー (Maison de Kyo)",
-  description: "メゾン・ド・きょー公式サイト。自分だけの入居届を作り、仲間たちとの時間を過ごしましょう。",
+  description: "きょーめいと非公式ファンサイト「メゾン・ド・きょー」入居者募集中",
   openGraph: {
     title: "メゾン・ド・きょー (Maison de Kyo)",
-    description: "メゾン・ド・きょー公式サイト。自分だけの入居届を作り、仲間たちとの時間を過ごしましょう。",
+    description: "きょーめいと非公式ファンサイト「メゾン・ド・きょー」入居者募集中",
     url: "https://maison-de-kyo.vercel.app",
     siteName: "メゾン・ド・きょー",
     images: [
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "メゾン・ド・きょー (Maison de Kyo)",
-    description: "メゾン・ド._きょー公式サイト。自分だけの入居届を作り、仲間たちとの時間を過ごしましょう。",
+    description: "きょーめいと非公式ファンサイト「メゾン・ド・きょー」入居者募集中",
     images: ["https://maison-de-kyo.vercel.app/banner.webp"],
   },
 };
