@@ -297,7 +297,7 @@ export default function Registry() {
                                         <span className="px-4 py-1 bg-[#c9a64e] text-white text-[9px] font-black rounded-full tracking-widest uppercase text-outline">Definition</span>
                                         <h3 className="text-2xl font-serif font-black text-white text-glow">{selectedBuilding}</h3>
                                     </div>
-                                    <p className="text-lg md:text-xl text-[#d4c5b0] font-serif leading-relaxed italic drop-shadow-md">
+                                    <p className="text-lg md:text-xl text-[#d4c5b0] font-serif leading-[2] text-center whitespace-pre-wrap drop-shadow-md px-4">
                                         {getBuildingStyle(selectedBuilding).description}
                                     </p>
                                 </div>
