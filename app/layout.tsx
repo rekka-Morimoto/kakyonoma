@@ -14,16 +14,28 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "かきょの間 (Kakyo-no-ma)",
-  description: "メゾン・ド・きょー公式サイト",
+  description: "メゾン・ド・きょー公式サイト。自分だけの入居届を作り、仲間たちとの時間を過ごしましょう。",
   openGraph: {
     title: "かきょの間 (Kakyo-no-ma)",
-    description: "メゾン・ド・きょー公式サイト",
+    description: "メゾン・ド・きょー公式サイト。自分だけの入居届を作り、仲間たちとの時間を過ごしましょう。",
+    url: "https://kakyonoma.vercel.app",
+    siteName: "かきょの間",
+    images: [
+      {
+        url: "https://kakyonoma.vercel.app/banner.webp",
+        width: 1200,
+        height: 630,
+        alt: "かきょの間 バナー",
+      },
+    ],
+    locale: "ja_JP",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "かきょの間 (Kakyo-no-ma)",
-    description: "メゾン・ド・きょー公式サイト",
+    description: "メゾン・ド・きょー公式サイト。自分だけの入居届を作り、仲間たちとの時間を過ごしましょう。",
+    images: ["https://kakyonoma.vercel.app/banner.webp"],
   },
 };
 
