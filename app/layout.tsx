@@ -16,16 +16,16 @@ export const metadata: Metadata = {
   title: "メゾン・ド・きょー (Maison de Kyo)",
   description: "きょーめいと非公式ファンサイト「メゾン・ド・きょー」入居者募集中",
   openGraph: {
-    title: "メゾン・ド・きょー (Maison de Kyo)",
-    description: "きょーめいと非公式ファンサイト「メゾン・ド・きょー」入居者募集中",
+    title: "メゾン・ド._きょー (Maison de Kyo)",
+    description: "きょーめいと非公式ファンサイト「メゾン・ド._きょー」入居者募集中",
     url: "https://maison-de-kyo.vercel.app",
-    siteName: "メゾン・ド・きょー",
+    siteName: "メゾン・ド._きょー",
     images: [
       {
-        url: "https://maison-de-kyo.vercel.app/banner.webp",
+        url: "https://maison-de-kyo.vercel.app/banner.webp?.png",
         width: 1200,
         height: 630,
-        alt: "メゾン・ド・きょー バナー",
+        alt: "メゾン・ド._きょー バナー",
       },
     ],
     locale: "ja_JP",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "メゾン・ド・きょー (Maison de Kyo)",
     description: "きょーめいと非公式ファンサイト「メゾン・ド・きょー」入居者募集中",
-    images: ["https://maison-de-kyo.vercel.app/banner.webp"],
+    images: ["https://maison-de-kyo.vercel.app/banner.webp?.png"],
   },
 };
 
