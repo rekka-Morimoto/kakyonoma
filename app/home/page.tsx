@@ -18,7 +18,7 @@ export default function Home() {
 
           {/* Illustration Banner with Window Frame */}
           <div className="max-w-6xl mx-auto rounded-3xl overflow-hidden window-frame shadow-2xl">
-            <div className="relative min-h-[300px] md:min-h-[400px] flex items-center justify-center">
+            <div className="relative flex items-center justify-center">
               <img
                 src="/banner.webp"
                 alt="かきょの間 バナー"
