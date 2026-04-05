@@ -13,19 +13,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "かきょの間 (Kakyo-no-ma)",
+  title: "メゾン・ド・きょー (Maison de Kyo)",
   description: "メゾン・ド・きょー公式サイト。自分だけの入居届を作り、仲間たちとの時間を過ごしましょう。",
   openGraph: {
-    title: "かきょの間 (Kakyo-no-ma)",
+    title: "メゾン・ド・きょー (Maison de Kyo)",
     description: "メゾン・ド・きょー公式サイト。自分だけの入居届を作り、仲間たちとの時間を過ごしましょう。",
-    url: "https://kakyonoma.vercel.app",
-    siteName: "かきょの間",
+    url: "https://maison-de-kyo.vercel.app",
+    siteName: "メゾン・ド・きょー",
     images: [
       {
-        url: "https://kakyonoma.vercel.app/banner.webp",
+        url: "https://maison-de-kyo.vercel.app/banner.webp",
         width: 1200,
         height: 630,
-        alt: "かきょの間 バナー",
+        alt: "メゾン・ド・きょー バナー",
       },
     ],
     locale: "ja_JP",
@@ -33,9 +33,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "かきょの間 (Kakyo-no-ma)",
-    description: "メゾン・ド・きょー公式サイト。自分だけの入居届を作り、仲間たちとの時間を過ごしましょう。",
-    images: ["https://kakyonoma.vercel.app/banner.webp"],
+    title: "メゾン・ド・きょー (Maison de Kyo)",
+    description: "メゾン・ド._きょー公式サイト。自分だけの入居届を作り、仲間たちとの時間を過ごしましょう。",
+    images: ["https://maison-de-kyo.vercel.app/banner.webp"],
   },
 };
 
