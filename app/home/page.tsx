@@ -181,7 +181,7 @@ export default function Home() {
             <div className="h-px bg-white/20 w-24" />
           </div>
           <p className="text-white/40 text-sm tracking-[0.5em] font-serif uppercase">Resident Support Portal</p>
-          <p className="text-white/20 text-[10px] mt-4 tracking-[0.2em] font-serif">© 2026 KAKYO-NO-MA • EST. 2026</p>
+          <p className="text-white/20 text-[10px] mt-4 tracking-[0.2em] font-serif">© 2026 MAISON-DE-KYO • EST. 2026</p>
         </div>
 
       </div>
