@@ -114,9 +114,9 @@ export default function RegistrationForm() {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center min-h-screen p-8 bg-transparent text-white">
+        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center min-h-screen p-4 md:p-8 bg-transparent text-white w-full max-w-7xl mx-auto">
             {/* Main Content Area */}
-            <div className="w-full lg:w-1/3 glass-panel p-8 rounded-[2.5rem] transition-all duration-500 border-white/10 shadow-2xl">
+            <div className="w-full lg:w-[400px] shrink-0 glass-panel p-6 md:p-8 rounded-[2.5rem] transition-all duration-500 border-white/10 shadow-2xl">
                 <div className="mb-6 p-4 bg-amber-900/40 border border-[#c9a64e]/30 rounded-2xl text-xs text-[#fcf9f2] leading-relaxed">
                     <p className="font-bold text-[#c9a64e] mb-1">【重要】登録に関する注意</p>
                     <p>※ご本人のアカウントのみ登録をお願いします。</p>
@@ -305,8 +305,8 @@ export default function RegistrationForm() {
             </div>
 
             {/* Preview Section */}
-            <div className="w-full lg:w-auto flex justify-center bg-black/30 p-4 sm:p-10 border border-white/5 rounded-[3rem] shadow-2xl backdrop-blur-sm overflow-visible">
-                <div className="w-full h-full flex justify-center items-start overflow-visible">
+            <div className="flex-1 w-full max-w-full lg:max-w-none flex justify-center bg-black/30 p-4 sm:p-10 border border-white/5 rounded-[3rem] shadow-2xl backdrop-blur-sm overflow-hidden">
+                <div className="w-full h-full flex justify-center items-start">
                     <TennyuTodoke
                         name={name}
                         nickname={nickname}
