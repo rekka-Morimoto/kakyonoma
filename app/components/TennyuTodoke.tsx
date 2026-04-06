@@ -40,20 +40,17 @@ export default function TennyuTodoke({
     }, [date]);
 
     return (
-        <div className="w-full flex justify-center py-4 overflow-visible">
+        <div className="w-full flex justify-center py-4 overflow-visible" style={{ minHeight: 'calc(600px * min(1, calc((100vw - 32px) / 850)))' }}>
             <style>{`
                 .todoke-wrapper {
                     transform-origin: top center;
                     transition: transform 0.2s ease-out;
+                    width: 850px;
+                    height: 600px;
                 }
-                @media (max-width: 850px) {
+                @media (max-width: 882px) {
                     .todoke-wrapper {
-                        transform: scale(calc(100vw / 950));
-                    }
-                }
-                @media (max-width: 600px) {
-                    .todoke-wrapper {
-                        transform: scale(calc(100vw / 920));
+                        transform: scale(calc((100vw - 32px) / 850));
                     }
                 }
             `}</style>
