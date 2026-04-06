@@ -42,7 +42,7 @@ body {
 /* Immersive Retro Maison Background */
 body::after {
   content: '';
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -64,6 +64,9 @@ body {
   padding: 0;
   overflow-x: hidden;
   background-color: #0c0805; /* Fallback matching the theme */
+  /* Limit scroll height to background image aspect ratio if possible, 
+     or just ensure content doesn't create gaps. 
+     For dynamic image height, we'll use a container with aspect ratio. */
 }
 
 /* Subtle Vignette for readability */
