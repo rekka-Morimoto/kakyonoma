@@ -40,39 +40,27 @@ export default function TennyuTodoke({
     }, [date]);
 
     return (
-        <div className="w-full h-full flex items-center justify-center p-2 min-h-0 min-w-0 overflow-visible">
+        <div className="w-full h-full flex items-start justify-center overflow-visible">
             <style>{`
                 .todoke-container {
                     width: 100%;
                     max-width: 850px;
+                    /* Define aspect ratio naturally */
                     aspect-ratio: 850 / 600;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
                     position: relative;
+                    container-type: inline-size;
+                    display: flex;
+                    justify-content: center;
                 }
                 .todoke-content-wrapper {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
                     width: 850px;
                     height: 600px;
-                    flex-shrink: 0;
-                    transform-origin: center center;
-                }
-                /* Use a simple media query based scaling for reliability */
-                @media (max-width: 900px) {
-                    .todoke-content-wrapper {
-                        transform: scale(calc((100vw - 64px) / 850));
-                    }
-                }
-                /* Desktop fitting: scale down if height is constrained */
-                @media (min-width: 901px) and (max-height: 800px) {
-                    .todoke-content-wrapper {
-                        transform: scale(0.85);
-                    }
-                }
-                @media (min-width: 901px) and (max-height: 700px) {
-                    .todoke-content-wrapper {
-                        transform: scale(0.7);
-                    }
+                    transform-origin: top left;
+                    /* RULE: SCALE TO FIT CONTAINER WIDTH EXACTLY */
+                    transform: scale(calc(100cqw / 850));
                 }
             `}</style>
             <div className="todoke-container">
