@@ -40,25 +40,26 @@ export default function TennyuTodoke({
     }, [date]);
 
     return (
-        <div className="w-full h-full flex items-center justify-center overflow-hidden p-2 md:p-6">
+        <div className="w-full h-full flex items-center justify-center p-4 min-h-0 min-w-0 overflow-visible">
             <style>{`
                 .todoke-container {
                     width: 100%;
                     max-width: 850px;
                     aspect-ratio: 850 / 600;
-                    position: relative;
-                    container-type: inline-size;
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    position: relative;
+                    container-type: inline-size;
                 }
                 .todoke-content-wrapper {
                     position: absolute;
                     width: 850px;
                     height: 600px;
+                    flex-shrink: 0;
                     transform-origin: center center;
-                    /* SCALE: Fit within the container with a tiny safety margin */
-                    transform: scale(calc(min(1, (100cqw - 4px) / 850)));
+                    /* RULE: Scale to 92% of container width to ensure safe padding inside the frame */
+                    transform: scale(calc(92cqw / 850));
                 }
             `}</style>
             <div className="todoke-container">
@@ -70,7 +71,7 @@ export default function TennyuTodoke({
                             fontFamily: "'Kaisei Tokumin', serif",
                             backgroundColor: '#fdfbf7', // Antique Off-white
                             color: '#2d2418',
-                            boxShadow: captureMode ? 'none' : '0 20px 50px rgba(0,0,0,0.3)',
+                            boxShadow: captureMode ? 'none' : '0 15px 40px rgba(0,0,0,0.4)',
                             isolation: 'isolate',
                             border: 'none',
                         }}
