@@ -40,27 +40,25 @@ export default function TennyuTodoke({
     }, [date]);
 
     return (
-        <div className="w-full h-full flex items-start justify-center overflow-visible">
+        <div className="w-full h-full flex items-center justify-center overflow-hidden p-2 md:p-6">
             <style>{`
                 .todoke-container {
                     width: 100%;
                     max-width: 850px;
-                    /* Define aspect ratio naturally */
                     aspect-ratio: 850 / 600;
                     position: relative;
                     container-type: inline-size;
                     display: flex;
+                    align-items: center;
                     justify-content: center;
                 }
                 .todoke-content-wrapper {
                     position: absolute;
-                    top: 0;
-                    left: 0;
                     width: 850px;
                     height: 600px;
-                    transform-origin: top left;
-                    /* RULE: SCALE TO FIT CONTAINER WIDTH EXACTLY */
-                    transform: scale(calc(100cqw / 850));
+                    transform-origin: center center;
+                    /* SCALE: Fit within the container with a tiny safety margin */
+                    transform: scale(calc(min(1, (100cqw - 4px) / 850)));
                 }
             `}</style>
             <div className="todoke-container">
