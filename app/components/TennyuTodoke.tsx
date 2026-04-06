@@ -305,9 +305,8 @@ export default function TennyuTodoke({
                     </div>
                 </div>
             </footer>
-        </div>
-        </div>
-        </div>
+                </div>
+            </div>
         </div>
     );
 }
