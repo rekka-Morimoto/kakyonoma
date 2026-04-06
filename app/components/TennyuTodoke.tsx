@@ -53,13 +53,12 @@ export default function TennyuTodoke({
                     container-type: inline-size;
                 }
                 .todoke-content-wrapper {
-                    position: absolute;
                     width: 850px;
                     height: 600px;
                     flex-shrink: 0;
                     transform-origin: center center;
-                    /* RULE: Scale to 92% of container width to ensure safe padding inside the frame */
-                    transform: scale(calc(92cqw / 850));
+                    /* SCALE TO EXACTLY 90% OF THE CONTAINER WIDTH */
+                    transform: scale(calc(90cqw / 850));
                 }
             `}</style>
             <div className="todoke-container">
