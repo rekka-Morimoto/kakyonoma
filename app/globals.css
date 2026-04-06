@@ -39,30 +39,31 @@ body {
   min-height: 100vh;
 }
 
-/* Immersive Retro Maison Background */
+/* Immersive Retro Maison Background - Rules Implementation */
 body::after {
   content: '';
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  min-height: 100%;
   background-image: url('/maison-bg.png');
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: 100% auto; /* Default for mobile: width-fit */
+  background-size: 100% auto; /* Rule ①: Width fit */
   opacity: 0.85;
   z-index: -2;
   pointer-events: none;
   filter: contrast(1.1) brightness(0.65);
 }
 
-/* Desktop optimization to prevent over-scaling */
-@media (min-width: 768px) {
-  body::after {
-    background-size: cover;
-    background-position: center top;
-  }
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #0c0805;
+  position: relative;
+  /* Rule ④: Boundaries are naturally handled by min-height: 100% and background integration */
 }
 
 body {
