@@ -48,8 +48,8 @@ export default function TennyuTodoke({
         const handleResize = (entries: ResizeObserverEntry[]) => {
             for (let entry of entries) {
                 const width = entry.contentRect.width;
-                // TARGET: 90% of the actual rendered frame width
-                const targetScale = (width * 0.9) / 850;
+                // TARGET: 95% of the actual rendered frame width for a tighter, more impactful fit
+                const targetScale = (width * 0.95) / 850;
                 setScale(Math.min(1, targetScale));
             }
         };

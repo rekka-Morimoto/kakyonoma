@@ -305,7 +305,7 @@ export default function RegistrationForm() {
             </div>
 
             {/* Preview Section */}
-            <div className="flex-1 w-full max-w-full lg:max-w-none flex justify-center bg-black/30 p-6 md:p-12 border border-white/5 rounded-[3rem] shadow-2xl backdrop-blur-sm overflow-hidden min-h-[400px]">
+            <div className="flex-1 w-full max-w-full lg:max-w-none flex justify-center bg-black/30 p-2 md:p-6 border border-white/5 rounded-[3rem] shadow-2xl backdrop-blur-sm overflow-hidden min-h-[400px]">
                 <div className="w-full h-full flex justify-center items-center">
                     <TennyuTodoke
                         name={name}
