@@ -46,9 +46,9 @@ body::after {
   top: 0;
   left: 0;
   width: 100%;
-  min-height: 100%;
+  height: 100%;
   background-image: url('/maison-bg.png');
-  background-repeat: repeat-y;
+  background-repeat: no-repeat;
   background-position: center top;
   background-size: 100% auto;
   opacity: 0.85;
@@ -57,6 +57,13 @@ body::after {
   pointer-events: none;
   filter: contrast(1.1) brightness(0.65);
   /* Settled darkening for depth */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #0c0805; /* Fallback matching the theme */
 }
 
 /* Subtle Vignette for readability */
