@@ -127,6 +127,22 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
 
     const handleMouseUp = () => setIsDragging(false);
 
+    // Touch handlers for mobile support
+    const handleTouchStart = (e: React.TouchEvent) => {
+        setIsDragging(true);
+        const touch = e.touches[0];
+        setLastMousePos({ x: touch.clientX, y: touch.clientY });
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (!isDragging) return;
+        const touch = e.touches[0];
+        const dx = touch.clientX - lastMousePos.x;
+        const dy = touch.clientY - lastMousePos.y;
+        setOffset(prev => ({ x: prev.x + dx, y: prev.y + dy }));
+        setLastMousePos({ x: touch.clientX, y: touch.clientY });
+    };
+
     const handleWheel = (e: React.WheelEvent) => {
         setScale(s => Math.min(Math.max(s + (e.deltaY > 0 ? -0.1 : 0.1), 0.2), 3));
     };
@@ -134,11 +150,14 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
     return (
         <div
             ref={containerRef}
-            className={`w-full h-full bg-transparent relative overflow-hidden cursor-${isDragging ? 'grabbing' : 'grab'}`}
+            className={`w-full h-full bg-transparent relative overflow-hidden touch-none cursor-${isDragging ? 'grabbing' : 'grab'}`}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleMouseUp}
             onWheel={handleWheel}
         >
             <div className="absolute inset-0 flex items-center justify-center transition-transform duration-75 ease-out select-none"
@@ -196,7 +215,7 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
 
             {/* Legend / Info Overlay */}
             <div className="absolute bottom-6 right-6 z-50 pointer-events-none opacity-40 hover:opacity-100 transition-opacity">
-                <p className="text-white text-[10px] tracking-widest text-right">DRAG TO PAN • WHEEL TO ZOOM</p>
+                <p className="text-white text-[10px] tracking-widest text-right">DRAG OR SWIPE TO PAN • WHEEL TO ZOOM</p>
             </div>
         </div>
     );
