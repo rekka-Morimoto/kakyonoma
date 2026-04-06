@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface TennyuTodokeProps {
     name: string;
@@ -39,42 +39,50 @@ export default function TennyuTodoke({
         }
     }, [date]);
 
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [scale, setScale] = useState(1);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        const handleResize = (entries: ResizeObserverEntry[]) => {
+            for (let entry of entries) {
+                const width = entry.contentRect.width;
+                // TARGET: 90% of the actual rendered frame width
+                const targetScale = (width * 0.9) / 850;
+                setScale(Math.min(1, targetScale));
+            }
+        };
+
+        const observer = new ResizeObserver(handleResize);
+        observer.observe(containerRef.current);
+        return () => observer.disconnect();
+    }, []);
+
     return (
-        <div className="w-full h-full flex items-center justify-center p-4 min-h-0 min-w-0 overflow-visible">
-            <style>{`
-                .todoke-container {
-                    width: 100%;
-                    max-width: 850px;
-                    aspect-ratio: 850 / 600;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    position: relative;
-                    container-type: inline-size;
-                }
-                .todoke-content-wrapper {
-                    width: 850px;
-                    height: 600px;
-                    flex-shrink: 0;
-                    transform-origin: center center;
-                    /* SCALE TO EXACTLY 90% OF THE CONTAINER WIDTH */
-                    transform: scale(calc(90cqw / 850));
-                }
-            `}</style>
-            <div className="todoke-container">
-                <div className="todoke-content-wrapper">
-                    <div
-                        id="tennyu-todoke"
-                        className={`w-[850px] h-[600px] text-black pt-10 pb-8 px-16 relative overflow-hidden flex flex-col justify-between border-none ${captureMode ? '' : 'shadow-2xl'}`}
-                        style={{
-                            fontFamily: "'Kaisei Tokumin', serif",
-                            backgroundColor: '#fdfbf7', // Antique Off-white
-                            color: '#2d2418',
-                            boxShadow: captureMode ? 'none' : '0 15px 40px rgba(0,0,0,0.4)',
-                            isolation: 'isolate',
-                            border: 'none',
-                        }}
-                    >
+        <div ref={containerRef} className="w-full h-full flex items-center justify-center p-4 min-h-0 min-w-0 overflow-hidden">
+            <div 
+                className="flex-shrink-0"
+                style={{
+                    width: '850px',
+                    height: '600px',
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'center center',
+                    transition: 'transform 0.1s ease-out',
+                }}
+            >
+                <div
+                    id="tennyu-todoke"
+                    className={`w-[850px] h-[600px] text-black pt-10 pb-8 px-16 relative overflow-hidden flex flex-col justify-between border-none ${captureMode ? '' : 'shadow-2xl'}`}
+                    style={{
+                        fontFamily: "'Kaisei Tokumin', serif",
+                        backgroundColor: '#fdfbf7', // Antique Off-white
+                        color: '#2d2418',
+                        boxShadow: captureMode ? 'none' : '0 15px 40px rgba(0,0,0,0.4)',
+                        isolation: 'isolate',
+                        border: 'none',
+                    }}
+                >
             {/* CSS Logic to forcefully suppress ANY external borders from Tailwind v4 */}
             <style>{`
                 #tennyu-todoke, #tennyu-todoke * {
