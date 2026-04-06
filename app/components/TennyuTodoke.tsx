@@ -40,33 +40,44 @@ export default function TennyuTodoke({
     }, [date]);
 
     return (
-        <div className="w-full flex justify-center py-4 overflow-visible" style={{ minHeight: 'calc(600px * min(1, calc((100vw - 32px) / 850)))' }}>
+        <div className="w-full flex justify-center py-4 overflow-visible rounded-xl h-fit">
             <style>{`
+                .todoke-container {
+                    width: 100%;
+                    max-width: 850px;
+                    aspect-ratio: 850 / 600;
+                    position: relative;
+                    /* Use zoom or scale dynamically inside the container */
+                    container-type: inline-size;
+                }
                 .todoke-wrapper {
-                    transform-origin: top center;
-                    transition: transform 0.2s ease-out;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
                     width: 850px;
                     height: 600px;
+                    transform-origin: top left;
                 }
-                @media (max-width: 882px) {
+                @container (max-width: 849px) {
                     .todoke-wrapper {
-                        transform: scale(calc((100vw - 32px) / 850));
+                        transform: scale(calc(100cqw / 850));
                     }
                 }
             `}</style>
-            <div className="todoke-wrapper">
-                <div
-                    id="tennyu-todoke"
-                    className={`w-[850px] h-[600px] text-black pt-10 pb-8 px-16 relative mx-auto overflow-hidden flex flex-col justify-between border-none ${captureMode ? '' : 'shadow-2xl'}`}
-                    style={{
-                        fontFamily: "'Kaisei Tokumin', serif",
-                        backgroundColor: '#fdfbf7', // Antique Off-white
-                        color: '#2d2418',
-                        boxShadow: captureMode ? 'none' : '0 20px 50px rgba(0,0,0,0.3)',
-                        isolation: 'isolate',
-                        border: 'none',
-                    }}
-                >
+            <div className="todoke-container">
+                <div className="todoke-wrapper">
+                    <div
+                        id="tennyu-todoke"
+                        className={`w-[850px] h-[600px] text-black pt-10 pb-8 px-16 relative overflow-hidden flex flex-col justify-between border-none ${captureMode ? '' : 'shadow-2xl'}`}
+                        style={{
+                            fontFamily: "'Kaisei Tokumin', serif",
+                            backgroundColor: '#fdfbf7', // Antique Off-white
+                            color: '#2d2418',
+                            boxShadow: captureMode ? 'none' : '0 20px 50px rgba(0,0,0,0.3)',
+                            isolation: 'isolate',
+                            border: 'none',
+                        }}
+                    >
             {/* CSS Logic to forcefully suppress ANY external borders from Tailwind v4 */}
             <style>{`
                 #tennyu-todoke, #tennyu-todoke * {
@@ -289,6 +300,7 @@ export default function TennyuTodoke({
                     </div>
                 </div>
             </footer>
+        </div>
         </div>
         </div>
         </div>
