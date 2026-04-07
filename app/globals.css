@@ -46,7 +46,9 @@ body::after {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  /* Assuming the background image is long (e.g., 100vw wide x ~120vw high) */
+  /* We set height to a value that matches the image aspect ratio to avoid gaps */
+  height: clamp(100vh, calc(100vw * 1.5), 3000px); 
   background-image: url('/maison-bg.png');
   background-repeat: no-repeat;
   background-position: center top;
