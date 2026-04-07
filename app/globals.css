@@ -42,14 +42,14 @@ body {
 /* Immersive Retro Maison Background - Rules Implementation */
 body::after {
   content: '';
-  position: absolute; /* Default for Desktop: scroll sync */
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  min-height: 100%;
+  height: 100%;
   background-image: url('/maison-bg.png');
   background-repeat: no-repeat;
-  background-position: center center;
+  background-position: center top;
   background-size: 100% auto;
   opacity: 0.85;
   z-index: -2;
@@ -57,31 +57,14 @@ body::after {
   filter: contrast(1.1) brightness(0.65);
 }
 
-/* Fix background only on Mobile Portrait */
-@media (max-width: 768px) and (orientation: portrait) {
-  body::after {
-    position: fixed;
-    height: 100vh;
-    background-position: center top;
-  }
-}
-
+/* Fix background behavior */
 body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
   background-color: #0c0805;
   position: relative;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  background-color: #0c0805; /* Fallback matching the theme */
-  /* Limit scroll height to background image aspect ratio if possible, 
-     or just ensure content doesn't create gaps. 
-     For dynamic image height, we'll use a container with aspect ratio. */
+  min-height: 100vh;
 }
 
 /* Subtle Vignette for readability */
