@@ -47,15 +47,20 @@ export default function RootLayout({
   return (
     <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen relative`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}
         >
-          {/* Entire Background Image - No cropping, fits width, scrolls with content */}
+          {/* 
+            Natural Flow Background - This defines the total page height.
+            The scroll will end exactly where this image ends.
+          */}
           <div className="maison-bg-root">
             <img src="/maison-bg.png" alt="" className="maison-bg-img" />
+            
+            {/* The main content is overlaid on top of the natural-flow background */}
+            <main className="maison-main-overlay">
+              {children}
+            </main>
           </div>
-          <main className="relative z-10">
-            {children}
-          </main>
         </body>
     </html>
   );

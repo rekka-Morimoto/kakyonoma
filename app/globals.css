@@ -44,41 +44,36 @@ body {
    Ensures 100% visibility without cropping and anchors scroll to image bottom.
 */
 .maison-bg-root {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative; /* Acts as the scroll-defining 'floor' */
   width: 100%;
-  height: 100%; /* Spans the entire body height */
   pointer-events: none;
   z-index: -2;
-  overflow: hidden;
 }
 
 .maison-bg-img {
   width: 100%;
-  height: auto; /* Height is determined by width to keep aspect ratio */
+  height: auto;
   display: block;
   opacity: 0.85;
   filter: contrast(1.1) brightness(0.65);
 }
 
-/* Fix background behavior and lock scroll to image height */
+.maison-main-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  pointer-events: auto; /* Re-enable interactions for the content */
+}
+
+/* Base Body Setup */
 body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
   background-color: #0c0805;
   position: relative;
-  /* 
-     The body height will naturally be at least the image height 
-     because .maison-bg-img is a block element inside the layout.
-  */
-  min-height: 100vh;
-}
-
-main {
-  /* Ensure content doesn't force height beyond background if not needed */
-  min-height: 100vh;
 }
 
 /* Subtle Vignette for readability */
