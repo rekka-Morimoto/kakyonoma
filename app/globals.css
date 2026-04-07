@@ -60,19 +60,16 @@ body {
   pointer-events: none;
 }
 
-/* Mobile & Portrait Optimization: Fixed Background */
+/* Mobile & Portrait Optimization: Fixed Background but ALLOW SCROLLING */
 @media (max-width: 768px), (orientation: portrait) {
-  .maison-bg-root {
+  .maison-bg-img {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    z-index: 0;
-  }
-  .maison-bg-img {
-    height: 100%;
     object-fit: cover;
+    z-index: -1;
   }
 }
 
