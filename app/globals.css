@@ -41,13 +41,14 @@ body {
 
 /* 
    Immersive Retro Maison Background - Image Based 
-   Ensures 100% visibility without cropping and anchors scroll to image bottom.
+   Ensures 100% visibility without cropping (Desktop) 
+   and Fixed Background (Mobile/Portrait).
 */
 .maison-bg-root {
-  position: relative; /* Acts as the scroll-defining 'floor' */
+  position: relative; /* Acts as the scroll-defining 'floor' on Desktop */
   width: 100%;
-  pointer-events: none; /* CRITICAL: Allows clicks to pass through */
-  z-index: 1; /* Lowest layer of the content stack */
+  pointer-events: none;
+  z-index: 1;
 }
 
 .maison-bg-img {
@@ -56,7 +57,23 @@ body {
   display: block;
   opacity: 0.85;
   filter: contrast(1.1) brightness(0.65);
-  pointer-events: none; /* Ensures the image itself doesn't catch clicks */
+  pointer-events: none;
+}
+
+/* Mobile & Portrait Optimization: Fixed Background */
+@media (max-width: 768px), (orientation: portrait) {
+  .maison-bg-root {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 0;
+  }
+  .maison-bg-img {
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .maison-main-overlay {
@@ -64,8 +81,8 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 100; /* CRITICAL: High enough to be on top of the 'floor' */
-  pointer-events: auto; /* Re-enable interactions for all form elements */
+  z-index: 100;
+  pointer-events: auto;
 }
 
 /* Base Body Setup */
