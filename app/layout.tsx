@@ -46,11 +46,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen relative`}
+        >
+          {/* Entire Background Image - No cropping, fits width, scrolls with content */}
+          <div className="maison-bg-root">
+            <img src="/maison-bg.png" alt="" className="maison-bg-img" />
+          </div>
+          <main className="relative z-10">
+            {children}
+          </main>
+        </body>
     </html>
   );
 }

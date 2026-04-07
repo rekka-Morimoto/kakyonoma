@@ -39,23 +39,25 @@ body {
   min-height: 100vh;
 }
 
-/* Immersive Retro Maison Background - Rules Implementation */
-body::after {
-  content: '';
+/* 
+   Immersive Retro Maison Background - Image Based 
+   Ensures 100% visibility without cropping.
+*/
+.maison-bg-root {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  /* Assuming the background image is long (e.g., 100vw wide x ~120vw high) */
-  /* We set height to a value that matches the image aspect ratio to avoid gaps */
-  height: clamp(100vh, calc(100vw * 1.5), 3000px); 
-  background-image: url('/maison-bg.png');
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: 100% auto;
-  opacity: 0.85;
-  z-index: -2;
   pointer-events: none;
+  z-index: -2;
+  overflow: hidden;
+}
+
+.maison-bg-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  opacity: 0.85;
   filter: contrast(1.1) brightness(0.65);
 }
 
