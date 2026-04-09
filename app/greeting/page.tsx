@@ -29,7 +29,7 @@ export default async function GreetingPage() {
                         <p className="text-[#c9a64e] tracking-[0.5em] font-sans font-black uppercase text-sm drop-shadow-md">A Message from the Manager</p>
                     </header>
 
-                    <article className="prose prose-invert prose-stone max-w-none space-y-10 font-serif leading-loose text-white/90 text-lg md:text-xl text-justify break-keep">
+                    <article className="prose prose-invert prose-stone max-w-none space-y-10 font-serif leading-loose text-white/90 text-lg md:text-xl text-left">
                         {paragraphs.map((para, idx) => (
                             <p key={idx} className="text-outline opacity-90 whitespace-pre-wrap">
                                 {para}
