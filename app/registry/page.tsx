@@ -226,7 +226,7 @@ export default function Registry() {
                         <h1 className="text-6xl md:text-8xl font-serif font-black tracking-tight text-white text-outline">
                             入居者名簿
                         </h1>
-                        <p className="text-[#c9a64e] font-black tracking-[0.4em] uppercase text-sm md:text-base drop-shadow-lg">Resident Registry — Kakyo-no-ma</p>
+                        <p className="text-[#c9a64e] font-black tracking-[0.4em] uppercase text-sm md:text-base drop-shadow-lg">Resident Registry — Maison de Kyo</p>
                     </div>
 
                     <div className="flex gap-6">
@@ -425,7 +425,7 @@ export default function Registry() {
 
             <footer className="py-48 border-t border-white/5 max-w-7xl mx-auto px-10 text-center">
                 <p className="text-[#c9a64e]/40 text-2xl tracking-[0.5em] font-serif italic mb-8 drop-shadow-md">
-                    — KAKYO-NO-MA —
+                    — Maison de Kyo —
                 </p>
 
                 {/* Admin Toggle */}
