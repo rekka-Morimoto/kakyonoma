@@ -48,6 +48,47 @@ export default function Registry() {
         fetchResidents();
     }, []);
 
+    // Precision Background Scroll Synchronization (Parallax)
+    const backgroundRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!backgroundRef.current) return;
+            
+            const scrollY = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const fullHeight = document.documentElement.scrollHeight;
+            
+            // Calculate scroll progress (0 to 1)
+            const scrollProgress = scrollY / (fullHeight - windowHeight);
+            
+            // Find the background image inside the ref
+            const img = backgroundRef.current.querySelector('img');
+            if (img) {
+                const imgHeight = img.offsetHeight;
+                // Range the image can move = Image Height - Visible Window Height
+                const travelDistance = imgHeight - windowHeight;
+                
+                if (travelDistance > 0) {
+                    // Move the image upwards based on scroll progress
+                    const translateY = -scrollProgress * travelDistance;
+                    img.style.transform = `translateY(${translateY}px)`;
+                }
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('resize', handleScroll); // Responsive recalculation
+        
+        // Initial call after a short delay for image/content load
+        const timer = setTimeout(handleScroll, 500);
+        
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleScroll);
+            clearTimeout(timer);
+        };
+    }, [residents, filteredResidents]); // Re-calculate when data changes height
+
     useEffect(() => {
         if (selectedBuilding) {
             setFilteredResidents(residents.filter(r => r.building === selectedBuilding));
@@ -153,6 +194,16 @@ export default function Registry() {
 
     return (
         <div className="min-h-screen bg-transparent text-stone-100 font-sans relative">
+
+            {/* Precision Synchronized Background for Registry Page */}
+            <div ref={backgroundRef} className="fixed inset-0 w-full h-screen z-[-2] overflow-hidden pointer-events-none">
+                <img 
+                    src="/maison-bg.png" 
+                    alt="" 
+                    className="w-full h-auto block opacity-85" 
+                    style={{ filter: 'contrast(1.1) brightness(0.65)', transition: 'transform 0.1s ease-out' }}
+                />
+            </div>
 
             {/* Immersive Overlay to dampen background slightly for registry readability */}
             <div className="fixed inset-0 bg-black/40 z-[-1] pointer-events-none" />
