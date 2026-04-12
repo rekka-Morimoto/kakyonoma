@@ -30,8 +30,12 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
     const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 });
 
     const getLayout = (count: number): { cols: number; rows: number; mats: MatPosition[] } => {
-        // High buffer ratio to allow for sparse placement
-        const targetMatCount = Math.ceil(count * 4.0) + 20;
+        // Dynamic capacity: Start at 100, then expand in steps of 100
+        const targetMatCount = Math.max(100, Math.ceil(count / 100) * 100);
+        
+        // Calculate grid density: 
+        // We want a roughly rectangular/square layout. 
+        // 100 mats = 200 total cells. A 14x14 grid (196 cells) is close to 100 mats.
         const cols = Math.ceil(Math.sqrt(targetMatCount * 2));
         const finalCols = cols % 2 === 0 ? cols : cols + 1;
         const rows = Math.ceil((targetMatCount * 2) / finalCols);
