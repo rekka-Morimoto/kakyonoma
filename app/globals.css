@@ -200,3 +200,19 @@ body::before {
   z-index: 10;
   pointer-events: none;
 }
+
+/* Custom scrollbar for kakyovoice list */
+.voice-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.voice-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+.voice-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(201, 166, 78, 0.3);
+  border-radius: 3px;
+}
+.voice-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 166, 78, 0.5);
+}
