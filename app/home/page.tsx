@@ -150,6 +150,24 @@ export default function Home() {
             </div>
           </Link>
 
+          <Link href="/kakyovoice" className="group">
+            <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
+              <div className="mb-0 group-hover:scale-110 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
+                <img src="/kakyovoice.png" alt="まいにちかきょボイス" className="w-full h-full object-contain drop-shadow-2xl" />
+              </div>
+              <div className="relative z-10 mt-28 md:mt-44 flex flex-col items-center">
+                <h3 className="text-3xl md:text-4xl font-black text-white font-serif mb-4 text-outline whitespace-nowrap">まいにちかきょボイス</h3>
+                <p className="text-[#d4c5b0] text-base md:text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
+                  日々の声をここに集めて。<br className="hidden md:block" />
+                  これまでのボイスを振り返ります。
+                </p>
+                <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
+                  Listen →
+                </div>
+              </div>
+            </div>
+          </Link>
+
           <Link href="/greeting" className="group">
             <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
               <div className="mb-0 group-hover:translate-x-2 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
@@ -163,24 +181,6 @@ export default function Home() {
                 </p>
                 <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
                   Message →
-                </div>
-              </div>
-            </div>
-          </Link>
-
-          <Link href="/kakyovoice" className="group">
-            <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
-              <div className="mb-0 group-hover:scale-110 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
-                <img src="/kakyovoice.png" alt="まいにちかきょボイス" className="w-full h-full object-contain drop-shadow-2xl" />
-              </div>
-              <div className="relative z-10 mt-28 md:mt-44 flex flex-col items-center">
-                <h3 className="text-3xl md:text-4xl font-black text-white font-serif mb-4 text-outline">まいにちかきょボイス</h3>
-                <p className="text-[#d4c5b0] text-base md:text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                  日々の声をここに集めて。<br className="hidden md:block" />
-                  これまでのボイスを振り返ります。
-                </p>
-                <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
-                  Listen →
                 </div>
               </div>
             </div>

@@ -79,7 +79,7 @@ export default function KakyoVoicePage() {
                             : 'bg-white/5 border-transparent text-[#d4c5b0] hover:bg-white/8 hover:text-white'
                         }`}
                       >
-                        <div className="font-bold text-sm md:text-base leading-relaxed break-all">
+                        <div className="font-bold text-sm md:text-base leading-relaxed break-keep">
                           {voice.title}
                         </div>
                       </button>
@@ -100,7 +100,7 @@ export default function KakyoVoicePage() {
                         <div className="text-xs text-[#c9a64e] tracking-widest font-sans font-bold uppercase mb-1">
                           Now Playing
                         </div>
-                        <h4 className="text-white font-serif font-bold text-lg max-w-md mx-auto">
+                        <h4 className="text-white font-serif font-bold text-lg max-w-md mx-auto break-keep">
                           {selectedVoice.title}
                         </h4>
                       </div>
