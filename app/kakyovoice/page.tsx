@@ -3,14 +3,19 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
-interface Voice {
+interface VoiceItem {
   title: string;
   url: string;
 }
 
+interface VoiceSection {
+  category: string;
+  items: VoiceItem[];
+}
+
 export default function KakyoVoicePage() {
-  const [voices, setVoices] = useState<Voice[]>([]);
-  const [selectedVoice, setSelectedVoice] = useState<Voice | null>(null);
+  const [sections, setSections] = useState<VoiceSection[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState<VoiceItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,9 +27,12 @@ export default function KakyoVoicePage() {
           throw new Error('データの取得に失敗しました');
         }
         const data = await res.json();
-        setVoices(data.voices || []);
-        if (data.voices && data.voices.length > 0) {
-          setSelectedVoice(data.voices[0]);
+        setSections(data.sections || []);
+        if (data.sections && data.sections.length > 0) {
+          const firstSection = data.sections.find((s: VoiceSection) => s.items.length > 0);
+          if (firstSection) {
+            setSelectedVoice(firstSection.items[0]);
+          }
         }
       } catch (err: any) {
         console.error(err);
@@ -35,6 +43,7 @@ export default function KakyoVoicePage() {
     }
     fetchVoices();
   }, []);
+
 
 
   return (
@@ -62,30 +71,39 @@ export default function KakyoVoicePage() {
           ) : (
             <div className="flex flex-col lg:flex-row gap-8">
               {/* Left Column: Voice List */}
-              <div className="w-full lg:w-5/12 flex flex-col">
-                <h3 className="text-lg font-serif font-bold text-[#c9a64e] mb-4 border-b border-[#c9a64e]/20 pb-2">
-                  📝 ボイス一覧
-                </h3>
-                <div className="voice-scrollbar overflow-y-auto max-h-[500px] space-y-3 pr-2">
-                  {voices.map((voice, index) => {
-                    const isSelected = selectedVoice?.url === voice.url;
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedVoice(voice)}
-                        className={`w-full text-left p-4 rounded-xl transition-all duration-300 border font-serif cursor-pointer ${
-                          isSelected
-                            ? 'bg-white/10 border-[#c9a64e] text-white shadow-[0_0_15px_rgba(201,166,78,0.2)]'
-                            : 'bg-white/5 border-transparent text-[#d4c5b0] hover:bg-white/8 hover:text-white'
-                        }`}
-                      >
-                        <div className="font-bold text-sm md:text-base leading-relaxed break-keep">
-                          {voice.title}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+              <div className="w-full lg:w-5/12 flex flex-col space-y-6">
+                {sections.map((section, sIndex) => (
+                  <div key={sIndex} className="flex flex-col">
+                    <h3 className="text-lg font-serif font-bold text-[#c9a64e] mb-4 border-b border-[#c9a64e]/20 pb-2 flex items-center gap-2">
+                      {section.category === 'かきょみこ、ふたりのーと。' ? '📓' : '📝'} {section.category}
+                    </h3>
+                    <div 
+                      className="voice-scrollbar overflow-y-auto space-y-3 pr-2"
+                      style={{ 
+                        maxHeight: section.category === 'かきょみこ、ふたりのーと。' ? '250px' : '350px' 
+                      }}
+                    >
+                      {section.items.map((voice, index) => {
+                        const isSelected = selectedVoice?.url === voice.url;
+                        return (
+                          <button
+                            key={index}
+                            onClick={() => setSelectedVoice(voice)}
+                            className={`w-full text-left p-4 rounded-xl transition-all duration-300 border font-serif cursor-pointer ${
+                              isSelected
+                                ? 'bg-white/10 border-[#c9a64e] text-white shadow-[0_0_15px_rgba(201,166,78,0.2)]'
+                                : 'bg-white/5 border-transparent text-[#d4c5b0] hover:bg-white/8 hover:text-white'
+                            }`}
+                          >
+                            <div className="font-bold text-sm md:text-base leading-relaxed break-keep">
+                              {voice.title}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {/* Right Column: Embedded Post */}
