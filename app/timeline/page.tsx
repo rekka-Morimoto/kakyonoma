@@ -25,13 +25,8 @@ export default function TimelinePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const auth = sessionStorage.getItem('kakyotimeline_auth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
-      fetchEvents();
-    } else {
-      setLoading(false);
-    }
+    // ページアクセス時に毎回パスワードを求めるようにするため、sessionStorageからの自動認証を廃止
+    setLoading(false);
   }, []);
 
   const fetchEvents = async () => {
@@ -52,7 +47,6 @@ export default function TimelinePage() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === '5226') {
-      sessionStorage.setItem('kakyotimeline_auth', 'true');
       setIsAuthenticated(true);
       fetchEvents();
     } else {
