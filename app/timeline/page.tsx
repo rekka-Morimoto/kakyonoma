@@ -6,6 +6,8 @@ interface TimelineEvent {
   importance: number;
   date: string;
   title: string;
+  linkUrl?: string | null;
+  thumbnailUrl?: string | null;
 }
 
 /* ─── 背景：夜空に浮かぶ星屑のSVG星の生成 ─── */
@@ -209,17 +211,9 @@ export default function TimelinePage() {
                     const isEven = index % 2 === 0;
                     const imp = event.importance;
 
-                    // タイトルからXポストのURLを抽出
-                    const urlRegex = /(https?:\/\/[^\s]+)/g;
-                    const urlMatch = event.title.match(urlRegex);
-                    const linkUrl = urlMatch ? urlMatch[0] : null;
-                    const cleanTitle = linkUrl ? event.title.replace(urlRegex, '').trim() : event.title;
-
-                    // ポストに対応するサムネイル画像を選択 (生誕祭の画像)
-                    let thumbnailUrl: string | null = null;
-                    if (linkUrl && linkUrl.includes('1987148857747325367')) {
-                      thumbnailUrl = 'https://pbs.twimg.com/media/G5PFWvSaMAEElVj.jpg';
-                    }
+                    const linkUrl = event.linkUrl;
+                    const cleanTitle = event.title;
+                    const thumbnailUrl = event.thumbnailUrl;
 
                     /* ── 重要度別スタイル定義 ── */
                     const cardClass = imp === 3
