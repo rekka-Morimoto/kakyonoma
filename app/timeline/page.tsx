@@ -19,12 +19,109 @@ const STARS = Array.from({ length: 80 }, (_, i) => ({
   opacity: (((i * 31) % 70) + 30) / 100,
 }));
 
+interface TimelineBlock {
+  type: 'full' | 'grid';
+  event?: TimelineEvent;
+  leftEvents?: TimelineEvent[];
+  rightEvents?: TimelineEvent[];
+}
+
+const getEventStyles = (imp: number) => {
+  const cardClass = imp === 3
+    ? 'p-6 md:p-8 rounded-3xl border-2 border-[#c9a64e]/50 shadow-[0_4px_30px_rgba(201,166,78,0.15)] hover:shadow-[0_12px_45px_rgba(201,166,78,0.4),_0_0_25px_rgba(255,226,154,0.2)] relative overflow-hidden'
+    : imp === 2
+      ? 'p-4 rounded-xl border border-white/10 hover:border-[#c9a64e]/40 shadow-sm relative'
+      : 'py-2 px-3 rounded-lg border-b border-white/5 relative';
+
+  const cardBg = imp === 3
+    ? 'radial-gradient(circle at 85% 15%, rgba(251, 191, 36, 0.2) 0%, rgba(14, 25, 48, 0.95) 75%)'
+    : imp === 2
+      ? 'rgba(14, 25, 48, 0.55)'
+      : 'transparent';
+
+  const titleClass = imp === 3
+    ? 'text-xl md:text-2xl font-black text-white leading-snug tracking-wider'
+    : imp === 2
+      ? 'text-sm md:text-base font-bold text-[#e2e8f0] leading-snug'
+      : 'text-xs text-[#cbd5e1] leading-snug';
+
+  const dateClass = imp === 3
+    ? 'text-xs md:text-sm font-black text-[#ffc56c] tracking-widest mb-2.5 font-sans'
+    : imp === 2
+      ? 'text-[11px] font-bold text-[#d4b26f] tracking-wider mb-1.5 font-sans'
+      : 'text-[10px] font-bold text-[#a0aec0] tracking-wide mb-1 font-sans';
+
+  const dotClass = imp === 3
+    ? 'w-6 h-6 rounded-full z-10 flex items-center justify-center'
+    : imp === 2
+      ? 'w-3.5 h-3.5 rounded-full z-10'
+      : 'w-2.5 h-2.5 rounded-full z-10';
+
+  const dotStyle = imp === 3
+    ? {
+        background: 'radial-gradient(circle, #ffffff 0%, #c9a64e 60%, #5c3010 100%)',
+        boxShadow: '0 0 15px 5px rgba(255,255,255,0.65), 0 0 0 4px rgba(6,10,23,0.9)',
+      }
+    : imp === 2
+      ? {
+          background: '#c9a64e',
+          boxShadow: '0 0 8px 2px rgba(201,166,78,0.5), 0 0 0 3px rgba(6,10,23,0.9)',
+        }
+      : {
+          background: '#a0aec0',
+          boxShadow: '0 0 5px 1px rgba(160,174,192,0.4), 0 0 0 2px rgba(6,10,23,0.9)',
+        };
+
+  return { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle };
+};
+
 export default function TimelinePage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const blocks = React.useMemo<TimelineBlock[]>(() => {
+    const list: TimelineBlock[] = [];
+    let currentGridBatch: TimelineEvent[] = [];
+
+    events.forEach((event) => {
+      if (event.importance === 3) {
+        if (currentGridBatch.length > 0) {
+          const leftEvents: TimelineEvent[] = [];
+          const rightEvents: TimelineEvent[] = [];
+          currentGridBatch.forEach((ev, idx) => {
+            if (idx % 2 === 0) {
+              leftEvents.push(ev);
+            } else {
+              rightEvents.push(ev);
+            }
+          });
+          list.push({ type: 'grid', leftEvents, rightEvents });
+          currentGridBatch = [];
+        }
+        list.push({ type: 'full', event });
+      } else {
+        currentGridBatch.push(event);
+      }
+    });
+
+    if (currentGridBatch.length > 0) {
+      const leftEvents: TimelineEvent[] = [];
+      const rightEvents: TimelineEvent[] = [];
+      currentGridBatch.forEach((ev, idx) => {
+        if (idx % 2 === 0) {
+          leftEvents.push(ev);
+        } else {
+          rightEvents.push(ev);
+        }
+      });
+      list.push({ type: 'grid', leftEvents, rightEvents });
+    }
+
+    return list;
+  }, [events]);
 
   useEffect(() => {
     // ページアクセス時に毎回パスワードを求めるようにするため、sessionStorageからの自動認証を廃止
@@ -192,7 +289,7 @@ export default function TimelinePage() {
               </header>
 
               {/* ── タイムライン ── */}
-              <div className="relative pt-10">
+              <div className="relative pt-10 w-full">
                 {/* 天の川（Milky Way）ガイド線：星雲のようなぼかし光 */}
                 <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-8 md:-translate-x-1/2 pointer-events-none"
                   style={{
@@ -206,69 +303,191 @@ export default function TimelinePage() {
                     filter: 'blur(1px)',
                   }} />
 
-                <div className="space-y-10">
+                {/* ── PC表示 (md以上): 密集グリッド ＆ フル幅ブロック ── */}
+                <div className="hidden md:block space-y-12 relative w-full animate-fadeIn">
+                  {blocks.map((block, blockIdx) => {
+                    if (block.type === 'full' && block.event) {
+                      // ☆3つ: フル幅・中央配置カード
+                      const event = block.event;
+                      const { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle } = getEventStyles(3);
+
+                      return (
+                        <div key={`full-${blockIdx}`} className="relative w-full py-6 flex justify-center">
+                          {/* 中央のドット */}
+                          <div
+                            className="absolute left-1/2 -translate-x-1/2 -top-1 w-6 h-6 rounded-full z-20 flex items-center justify-center"
+                            style={dotStyle}
+                          >
+                            <span className="w-2.5 h-2.5 rounded-full bg-white opacity-90 animate-ping" />
+                          </div>
+
+                          {/* カード本体 (中央配置, 最大幅 max-w-2xl) */}
+                          <div
+                            className={`${cardClass} w-full max-w-2xl transition-all duration-300 hover:scale-[1.01]`}
+                            style={{ background: cardBg }}
+                          >
+                            <div className="absolute top-0 left-0 right-0 h-0.5"
+                              style={{ background: 'linear-gradient(to right, transparent, #c9a64e, transparent)' }} />
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5"
+                              style={{ background: 'linear-gradient(to right, transparent, #c9a64e, transparent)' }} />
+                            
+                            {/* 三日月のあしらい */}
+                            <div className="absolute top-3 right-3 text-[#c9a64e]/50 pointer-events-none select-none animate-pulse" style={{ animationDuration: '4s' }}>
+                              <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                              </svg>
+                            </div>
+
+                            {/* 瞬く星屑 */}
+                            <span className="absolute top-2.5 left-2.5 text-[#c9a64e]/60 text-xs animate-pulse select-none" style={{ animationDelay: '0.2s', animationDuration: '3s' }}>✦</span>
+                            <span className="absolute bottom-3 right-5 text-[#c9a64e]/50 text-[10px] animate-pulse select-none" style={{ animationDelay: '1.2s', animationDuration: '2.5s' }}>✦</span>
+                            <span className="absolute bottom-5 left-8 text-[#c9a64e]/40 text-xs animate-pulse select-none" style={{ animationDelay: '0.7s', animationDuration: '4s' }}>✦</span>
+
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 w-full relative z-10">
+                              <div className="flex-1 min-w-0 pr-2">
+                                <div className={dateClass}>{event.date}</div>
+                                <h3 className={titleClass}>{event.title}</h3>
+                              </div>
+
+                              {event.thumbnailUrl && event.linkUrl && (
+                                <a
+                                  href={event.linkUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block w-full sm:w-44 h-32 sm:h-24 rounded-2xl overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative shadow-lg"
+                                >
+                                  <img
+                                    src={event.thumbnailUrl}
+                                    alt="X Post Thumbnail"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
+                                    loading="lazy"
+                                  />
+                                  <div className="absolute inset-0 bg-black/35 group-hover/thumb:bg-black/15 transition-colors flex items-center justify-center">
+                                    <span className="text-xs text-white bg-black/60 px-2 py-1 rounded-lg font-sans opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center gap-1">
+                                      🔗 Xで開く
+                                    </span>
+                                  </div>
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    } else {
+                      // ☆1, ☆2: 密集2カラムグリッド配置
+                      const leftEvents = block.leftEvents || [];
+                      const rightEvents = block.rightEvents || [];
+
+                      return (
+                        <div key={`grid-${blockIdx}`} className="grid grid-cols-2 gap-x-12 gap-y-6 w-full relative">
+                          {/* 左カラム (右寄せ) */}
+                          <div className="flex flex-col gap-6 items-end w-full">
+                            {leftEvents.map((ev, evIdx) => {
+                              const { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle } = getEventStyles(ev.importance);
+                              return (
+                                <div key={`left-ev-${evIdx}`} className="relative w-full max-w-[90%] transition-all duration-300 hover:scale-[1.015]">
+                                  {/* 天の川（中央）への水平接続線とドット */}
+                                  <div className="absolute right-[-31px] top-1/2 -translate-y-1/2 flex items-center z-20 pointer-events-none">
+                                    <div className="w-[11px] h-px bg-[#c9a64e]/20" />
+                                    <div className={`rounded-full ${dotClass}`} style={dotStyle} />
+                                  </div>
+
+                                  <div className={`${cardClass} w-full text-right`} style={{ background: cardBg }}>
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
+                                      <div className="flex-1 min-w-0 order-1 sm:order-2">
+                                        <div className={dateClass}>{ev.date}</div>
+                                        <h3 className={titleClass}>{ev.title}</h3>
+                                      </div>
+
+                                      {ev.thumbnailUrl && ev.linkUrl && (
+                                        <a
+                                          href={ev.linkUrl}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="block w-full sm:w-28 h-28 sm:h-16 rounded-lg overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative order-2 sm:order-1"
+                                        >
+                                          <img
+                                            src={ev.thumbnailUrl}
+                                            alt="X Post Thumbnail"
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
+                                            loading="lazy"
+                                          />
+                                          <div className="absolute inset-0 bg-black/30 group-hover/thumb:bg-black/10 transition-colors flex items-center justify-center">
+                                            <span className="text-[10px] text-white bg-black/60 px-1.5 py-0.5 rounded font-sans opacity-0 group-hover/thumb:opacity-100 transition-opacity">
+                                              🔗 Xで開く
+                                            </span>
+                                          </div>
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* 右カラム (左寄せ) */}
+                          <div className="flex flex-col gap-6 items-start w-full">
+                            {rightEvents.map((ev, evIdx) => {
+                              const { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle } = getEventStyles(ev.importance);
+                              return (
+                                <div key={`right-ev-${evIdx}`} className="relative w-full max-w-[90%] transition-all duration-300 hover:scale-[1.015]">
+                                  {/* 天の川（中央）への水平接続線とドット */}
+                                  <div className="absolute left-[-31px] top-1/2 -translate-y-1/2 flex items-center flex-row-reverse z-20 pointer-events-none">
+                                    <div className="w-[11px] h-px bg-[#c9a64e]/20" />
+                                    <div className={`rounded-full ${dotClass}`} style={dotStyle} />
+                                  </div>
+
+                                  <div className={`${cardClass} w-full text-left`} style={{ background: cardBg }}>
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
+                                      <div className="flex-1 min-w-0">
+                                        <div className={dateClass}>{ev.date}</div>
+                                        <h3 className={titleClass}>{ev.title}</h3>
+                                      </div>
+
+                                      {ev.thumbnailUrl && ev.linkUrl && (
+                                        <a
+                                          href={ev.linkUrl}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="block w-full sm:w-28 h-28 sm:h-16 rounded-lg overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative"
+                                        >
+                                          <img
+                                            src={ev.thumbnailUrl}
+                                            alt="X Post Thumbnail"
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
+                                            loading="lazy"
+                                          />
+                                          <div className="absolute inset-0 bg-black/30 group-hover/thumb:bg-black/10 transition-colors flex items-center justify-center">
+                                            <span className="text-[10px] text-white bg-black/60 px-1.5 py-0.5 rounded font-sans opacity-0 group-hover/thumb:opacity-100 transition-opacity">
+                                              🔗 Xで開く
+                                            </span>
+                                          </div>
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    }
+                  })}
+                </div>
+
+                {/* ── モバイル表示 (md未満): シンプル1カラム縦並び ── */}
+                <div className="block md:hidden space-y-8 w-full animate-fadeIn">
                   {events.map((event, index) => {
-                    const isEven = index % 2 === 0;
                     const imp = event.importance;
-
-                    const linkUrl = event.linkUrl;
-                    const cleanTitle = event.title;
-                    const thumbnailUrl = event.thumbnailUrl;
-
-                    /* ── 重要度別スタイル定義 ── */
-                    const cardClass = imp === 3
-                      ? 'p-5 md:p-6 rounded-2xl border-2 border-[#c9a64e]/50 shadow-[0_4px_25px_rgba(201,166,78,0.12)] hover:shadow-[0_10px_35px_rgba(201,166,78,0.3),_0_0_20px_rgba(255,226,154,0.15)] relative overflow-hidden'
-                      : imp === 2
-                        ? 'p-4 rounded-xl border border-white/10 hover:border-[#c9a64e]/40 shadow-sm'
-                        : 'py-2 px-3 rounded-lg border-b border-white/5';
-
-                    const cardBg = imp === 3
-                      ? 'radial-gradient(circle at 85% 15%, rgba(251, 191, 36, 0.15) 0%, rgba(14, 25, 48, 0.85) 75%)'
-                      : imp === 2
-                        ? 'rgba(14, 25, 48, 0.55)'
-                        : 'transparent';
-
-                    const titleClass = imp === 3
-                      ? 'text-lg md:text-xl font-black text-white leading-snug tracking-wider'
-                      : imp === 2
-                        ? 'text-sm md:text-base font-bold text-[#e2e8f0] leading-snug'
-                        : 'text-xs text-[#cbd5e1] leading-snug';
-
-                    const dateClass = imp === 3
-                      ? 'text-xs font-black text-[#ffc56c] tracking-widest mb-2 font-sans'
-                      : imp === 2
-                        ? 'text-[11px] font-bold text-[#d4b26f] tracking-wider mb-1.5 font-sans'
-                        : 'text-[10px] font-bold text-[#a0aec0] tracking-wide mb-1 font-sans';
-
-                    const dotClass = imp === 3
-                      ? 'w-5 h-5 rounded-full z-10 flex items-center justify-center'
-                      : imp === 2
-                        ? 'w-3.5 h-3.5 rounded-full z-10'
-                        : 'w-2.5 h-2.5 rounded-full z-10';
-
-                    const dotStyle = imp === 3
-                      ? {
-                          background: 'radial-gradient(circle, #ffffff 0%, #c9a64e 60%, #5c3010 100%)',
-                          boxShadow: '0 0 15px 5px rgba(255,255,255,0.65), 0 0 0 4px rgba(6,10,23,0.9)',
-                        }
-                      : imp === 2
-                        ? {
-                            background: '#c9a64e',
-                            boxShadow: '0 0 8px 2px rgba(201,166,78,0.5), 0 0 0 3px rgba(6,10,23,0.9)',
-                          }
-                        : {
-                            background: '#a0aec0',
-                            boxShadow: '0 0 5px 1px rgba(160,174,192,0.4), 0 0 0 2px rgba(6,10,23,0.9)',
-                          };
+                    const { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle } = getEventStyles(imp);
 
                     return (
-                      <div
-                        key={index}
-                        className={`flex flex-col md:flex-row items-start md:items-center relative w-full ${isEven ? 'md:flex-row-reverse' : ''}`}
-                      >
+                      <div key={`mobile-${index}`} className="flex items-start relative w-full">
                         {/* ドット */}
                         <div
-                          className={`absolute left-4 md:left-1/2 -translate-x-1/2 top-4 md:top-1/2 md:-translate-y-1/2 ${dotClass}`}
+                          className={`absolute left-4 -translate-x-1/2 top-4 ${dotClass}`}
                           style={{
                             background: dotStyle.background,
                             boxShadow: dotStyle.boxShadow,
@@ -278,17 +497,17 @@ export default function TimelinePage() {
                         </div>
 
                         {/* カード */}
-                        <div className={`w-[calc(100%-2.5rem)] md:w-[45%] ml-10 md:ml-0 ${isEven ? 'md:pr-10' : 'md:pl-10'}`}>
+                        <div className="w-[calc(100%-2.5rem)] ml-10">
                           <div
-                            className={`${cardClass} transition-all duration-300 hover:scale-[1.015]`}
+                            className={`${cardClass} transition-all duration-300 hover:scale-[1.01]`}
                             style={{ background: cardBg }}
                           >
                             {/* ☆☆☆ 豪華装飾：金の箔押し風ラインと輝き */}
                             {imp === 3 && (
                               <>
-                                <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl"
+                                <div className="absolute top-0 left-0 right-0 h-0.5"
                                   style={{ background: 'linear-gradient(to right, transparent, #c9a64e, transparent)' }} />
-                                <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-2xl"
+                                <div className="absolute bottom-0 left-0 right-0 h-0.5"
                                   style={{ background: 'linear-gradient(to right, transparent, #c9a64e, transparent)' }} />
                                 
                                 {/* 三日月のあしらい */}
@@ -305,22 +524,22 @@ export default function TimelinePage() {
                               </>
                             )}
 
-                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                              <div className="flex-1">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
+                              <div className="flex-1 min-w-0">
                                 <div className={dateClass}>{event.date}</div>
-                                <h3 className={titleClass}>{cleanTitle}</h3>
+                                <h3 className={titleClass}>{event.title}</h3>
                               </div>
 
                               {/* サムネイル画像表示 */}
-                              {thumbnailUrl && linkUrl && (
+                              {event.thumbnailUrl && event.linkUrl && (
                                 <a
-                                  href={linkUrl}
+                                  href={event.linkUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="block w-full md:w-28 h-28 md:h-16 rounded-lg overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative"
+                                  className="block w-full sm:w-28 h-28 sm:h-16 rounded-lg overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative shadow-md"
                                 >
                                   <img
-                                    src={thumbnailUrl}
+                                    src={event.thumbnailUrl}
                                     alt="X Post Thumbnail"
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
                                     loading="lazy"
@@ -335,9 +554,6 @@ export default function TimelinePage() {
                             </div>
                           </div>
                         </div>
-
-                        {/* MD幅用スペーサー */}
-                        <div className="hidden md:block md:w-[45%]" />
                       </div>
                     );
                   })}
