@@ -209,15 +209,27 @@ export default function TimelinePage() {
                     const isEven = index % 2 === 0;
                     const imp = event.importance;
 
+                    // タイトルからXポストのURLを抽出
+                    const urlRegex = /(https?:\/\/[^\s]+)/g;
+                    const urlMatch = event.title.match(urlRegex);
+                    const linkUrl = urlMatch ? urlMatch[0] : null;
+                    const cleanTitle = linkUrl ? event.title.replace(urlRegex, '').trim() : event.title;
+
+                    // ポストに対応するサムネイル画像を選択 (生誕祭の画像)
+                    let thumbnailUrl: string | null = null;
+                    if (linkUrl && linkUrl.includes('1987148857747325367')) {
+                      thumbnailUrl = 'https://pbs.twimg.com/media/G5PFWvSaMAEElVj.jpg';
+                    }
+
                     /* ── 重要度別スタイル定義 ── */
                     const cardClass = imp === 3
-                      ? 'p-5 md:p-6 rounded-2xl border-2 border-[#c9a64e]/60 shadow-[0_4px_25px_rgba(201,166,78,0.15)] relative overflow-hidden'
+                      ? 'p-5 md:p-6 rounded-2xl border-2 border-[#c9a64e]/50 shadow-[0_4px_25px_rgba(201,166,78,0.12)] hover:shadow-[0_10px_35px_rgba(201,166,78,0.3),_0_0_20px_rgba(255,226,154,0.15)] relative overflow-hidden'
                       : imp === 2
                         ? 'p-4 rounded-xl border border-white/10 hover:border-[#c9a64e]/40 shadow-sm'
                         : 'py-2 px-3 rounded-lg border-b border-white/5';
 
                     const cardBg = imp === 3
-                      ? 'rgba(14, 25, 48, 0.85)'
+                      ? 'radial-gradient(circle at 85% 15%, rgba(251, 191, 36, 0.15) 0%, rgba(14, 25, 48, 0.85) 75%)'
                       : imp === 2
                         ? 'rgba(14, 25, 48, 0.55)'
                         : 'transparent';
@@ -284,13 +296,49 @@ export default function TimelinePage() {
                                   style={{ background: 'linear-gradient(to right, transparent, #c9a64e, transparent)' }} />
                                 <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-2xl"
                                   style={{ background: 'linear-gradient(to right, transparent, #c9a64e, transparent)' }} />
-                                {/* 隅の金星 */}
-                                <span className="absolute top-2 right-2 text-[#c9a64e] text-xs opacity-80 animate-pulse select-none">✦</span>
-                                <span className="absolute top-2 left-2 text-[#c9a64e] text-xs opacity-80 animate-pulse select-none">✦</span>
+                                
+                                {/* 三日月のあしらい */}
+                                <div className="absolute top-2.5 right-2.5 text-[#c9a64e]/50 pointer-events-none select-none animate-pulse" style={{ animationDuration: '4s' }}>
+                                  <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                                  </svg>
+                                </div>
+
+                                {/* 瞬く星屑 */}
+                                <span className="absolute top-2 left-2 text-[#c9a64e]/60 text-[10px] animate-pulse select-none" style={{ animationDelay: '0.2s', animationDuration: '3s' }}>✦</span>
+                                <span className="absolute bottom-2.5 right-4 text-[#c9a64e]/50 text-[8px] animate-pulse select-none" style={{ animationDelay: '1.2s', animationDuration: '2.5s' }}>✦</span>
+                                <span className="absolute bottom-4 left-6 text-[#c9a64e]/40 text-[9px] animate-pulse select-none" style={{ animationDelay: '0.7s', animationDuration: '4s' }}>✦</span>
                               </>
                             )}
-                            <div className={dateClass}>{event.date}</div>
-                            <h3 className={titleClass}>{event.title}</h3>
+
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                              <div className="flex-1">
+                                <div className={dateClass}>{event.date}</div>
+                                <h3 className={titleClass}>{cleanTitle}</h3>
+                              </div>
+
+                              {/* サムネイル画像表示 */}
+                              {thumbnailUrl && linkUrl && (
+                                <a
+                                  href={linkUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block w-full md:w-28 h-28 md:h-16 rounded-lg overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative"
+                                >
+                                  <img
+                                    src={thumbnailUrl}
+                                    alt="X Post Thumbnail"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
+                                    loading="lazy"
+                                  />
+                                  <div className="absolute inset-0 bg-black/30 group-hover/thumb:bg-black/10 transition-colors flex items-center justify-center">
+                                    <span className="text-[10px] text-white bg-black/60 px-1.5 py-0.5 rounded font-sans opacity-0 group-hover/thumb:opacity-100 transition-opacity">
+                                      🔗 Xで開く
+                                    </span>
+                                  </div>
+                                </a>
+                              )}
+                            </div>
                           </div>
                         </div>
 
