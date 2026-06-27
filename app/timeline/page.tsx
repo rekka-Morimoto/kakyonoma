@@ -72,7 +72,13 @@ const getEventStyles = (imp: number) => {
           boxShadow: '0 0 5px 1px rgba(160,174,192,0.4), 0 0 0 2px rgba(6,10,23,0.9)',
         };
 
-  return { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle };
+  const thumbSizeClass = imp === 3
+    ? 'w-full sm:w-44 h-32 sm:h-24 max-w-[220px]'
+    : imp === 2
+      ? 'w-full sm:w-28 h-24 sm:h-16 max-w-[160px]'
+      : 'w-full sm:w-16 h-16 sm:h-10 max-w-[100px]';
+
+  return { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle, thumbSizeClass };
 };
 
 export default function TimelinePage() {
@@ -309,7 +315,7 @@ export default function TimelinePage() {
                     if (block.type === 'full' && block.event) {
                       // ☆3つ: フル幅・中央配置カード
                       const event = block.event;
-                      const { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle } = getEventStyles(3);
+                      const { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle, thumbSizeClass } = getEventStyles(3);
 
                       return (
                         <div key={`full-${blockIdx}`} className="relative w-full py-6 flex justify-center">
@@ -354,17 +360,17 @@ export default function TimelinePage() {
                                   href={event.linkUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="block w-full sm:w-44 h-32 sm:h-24 rounded-2xl overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative shadow-lg"
+                                  className={`block ${thumbSizeClass} overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative shadow-lg`}
                                 >
                                   <img
                                     src={event.thumbnailUrl}
-                                    alt="X Post Thumbnail"
+                                    alt="Thumbnail"
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
                                     loading="lazy"
                                   />
                                   <div className="absolute inset-0 bg-black/35 group-hover/thumb:bg-black/15 transition-colors flex items-center justify-center">
                                     <span className="text-xs text-white bg-black/60 px-2 py-1 rounded-lg font-sans opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center gap-1">
-                                      🔗 Xで開く
+                                      🔗 開く
                                     </span>
                                   </div>
                                 </a>
@@ -383,7 +389,7 @@ export default function TimelinePage() {
                           {/* 左カラム (右寄せ) */}
                           <div className="flex flex-col gap-6 items-end w-full">
                             {leftEvents.map((ev, evIdx) => {
-                              const { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle } = getEventStyles(ev.importance);
+                              const { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle, thumbSizeClass } = getEventStyles(ev.importance);
                               return (
                                 <div key={`left-ev-${evIdx}`} className="relative w-full max-w-[90%] transition-all duration-300 hover:scale-[1.015]">
                                   {/* 天の川（中央）への水平接続線とドット */}
@@ -404,17 +410,17 @@ export default function TimelinePage() {
                                           href={ev.linkUrl}
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="block w-full sm:w-28 h-28 sm:h-16 rounded-lg overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative order-2 sm:order-1"
+                                          className={`block ${thumbSizeClass} overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative order-2 sm:order-1 shadow-md`}
                                         >
                                           <img
                                             src={ev.thumbnailUrl}
-                                            alt="X Post Thumbnail"
+                                            alt="Thumbnail"
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
                                             loading="lazy"
                                           />
                                           <div className="absolute inset-0 bg-black/30 group-hover/thumb:bg-black/10 transition-colors flex items-center justify-center">
                                             <span className="text-[10px] text-white bg-black/60 px-1.5 py-0.5 rounded font-sans opacity-0 group-hover/thumb:opacity-100 transition-opacity">
-                                              🔗 Xで開く
+                                              🔗 開く
                                             </span>
                                           </div>
                                         </a>
@@ -429,7 +435,7 @@ export default function TimelinePage() {
                           {/* 右カラム (左寄せ) */}
                           <div className="flex flex-col gap-6 items-start w-full">
                             {rightEvents.map((ev, evIdx) => {
-                              const { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle } = getEventStyles(ev.importance);
+                              const { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle, thumbSizeClass } = getEventStyles(ev.importance);
                               return (
                                 <div key={`right-ev-${evIdx}`} className="relative w-full max-w-[90%] transition-all duration-300 hover:scale-[1.015]">
                                   {/* 天の川（中央）への水平接続線とドット */}
@@ -450,17 +456,17 @@ export default function TimelinePage() {
                                           href={ev.linkUrl}
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="block w-full sm:w-28 h-28 sm:h-16 rounded-lg overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative"
+                                          className={`block ${thumbSizeClass} overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative shadow-md`}
                                         >
                                           <img
                                             src={ev.thumbnailUrl}
-                                            alt="X Post Thumbnail"
+                                            alt="Thumbnail"
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
                                             loading="lazy"
                                           />
                                           <div className="absolute inset-0 bg-black/30 group-hover/thumb:bg-black/10 transition-colors flex items-center justify-center">
                                             <span className="text-[10px] text-white bg-black/60 px-1.5 py-0.5 rounded font-sans opacity-0 group-hover/thumb:opacity-100 transition-opacity">
-                                              🔗 Xで開く
+                                              🔗 開く
                                             </span>
                                           </div>
                                         </a>
@@ -481,7 +487,7 @@ export default function TimelinePage() {
                 <div className="block md:hidden space-y-8 w-full animate-fadeIn">
                   {events.map((event, index) => {
                     const imp = event.importance;
-                    const { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle } = getEventStyles(imp);
+                    const { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle, thumbSizeClass } = getEventStyles(imp);
 
                     return (
                       <div key={`mobile-${index}`} className="flex items-start relative w-full">
@@ -536,17 +542,17 @@ export default function TimelinePage() {
                                   href={event.linkUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="block w-full sm:w-28 h-28 sm:h-16 rounded-lg overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative shadow-md"
+                                  className={`block ${thumbSizeClass} overflow-hidden border border-white/10 hover:border-[#c9a64e]/50 transition-colors flex-shrink-0 group/thumb relative shadow-md`}
                                 >
                                   <img
                                     src={event.thumbnailUrl}
-                                    alt="X Post Thumbnail"
+                                    alt="Thumbnail"
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover/thumb:scale-105"
                                     loading="lazy"
                                   />
                                   <div className="absolute inset-0 bg-black/30 group-hover/thumb:bg-black/10 transition-colors flex items-center justify-center">
                                     <span className="text-[10px] text-white bg-black/60 px-1.5 py-0.5 rounded font-sans opacity-0 group-hover/thumb:opacity-100 transition-opacity">
-                                      🔗 Xで開く
+                                      🔗 開く
                                     </span>
                                   </div>
                                 </a>

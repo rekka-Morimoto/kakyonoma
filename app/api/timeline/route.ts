@@ -68,22 +68,35 @@ export async function GET() {
         const events: TimelineEvent[] = await Promise.all(
             rawEvents.map(async (event) => {
                 // twitter.com または x.com のリンクパターンを検出
-                const urlRegex = /(https?:\/\/(?:twitter\.com|x\.com)\/[a-zA-Z0-9_]+\/status\/(\d+))/;
-                const urlMatch = event.title.match(urlRegex);
+                const twitterRegex = /(https?:\/\/(?:twitter\.com|x\.com)\/[a-zA-Z0-9_]+\/status\/(\d+))/;
+                // youtube.com または youtu.be のリンクパターンを検出
+                const youtubeRegex = /(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_\-]+))/;
+
+                const twitterMatch = event.title.match(twitterRegex);
+                const youtubeMatch = event.title.match(youtubeRegex);
                 
                 let linkUrl: string | null = null;
                 let thumbnailUrl: string | null = null;
                 let cleanTitle = event.title;
 
-                if (urlMatch) {
-                    linkUrl = urlMatch[1];
-                    const tweetId = urlMatch[2];
+                if (twitterMatch) {
+                    linkUrl = twitterMatch[1];
+                    const tweetId = twitterMatch[2];
                     
                     // タイトルからURL部分を削除
-                    cleanTitle = event.title.replace(urlMatch[0], '').trim();
+                    cleanTitle = event.title.replace(twitterMatch[0], '').trim();
                     
                     // 画像の動的取得
                     thumbnailUrl = await getTwitterImage(tweetId);
+                } else if (youtubeMatch) {
+                    linkUrl = youtubeMatch[1];
+                    const videoId = youtubeMatch[2];
+
+                    // タイトルからURL部分を削除
+                    cleanTitle = event.title.replace(youtubeMatch[0], '').trim();
+
+                    // YouTubeのサムネイルを直接割り当て
+                    thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
                 }
 
                 return {
