@@ -500,7 +500,7 @@ export default function TimelinePage() {
                   rel="noopener noreferrer"
                   className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-[#c9a64e] via-[#e2c575] to-[#a06830] text-[#080d1a] font-black text-center shadow-lg hover:brightness-110 transition-all flex items-center justify-center gap-2 font-sans"
                 >
-                  🔗 リンク先を開く ({selectedEvent.linkUrl.includes('youtube') || selectedEvent.linkUrl.includes('youtu.be') ? 'YouTube' : 'X'})
+                  🔗 リンク先を開く ({selectedEvent.linkUrl.includes('youtube') || selectedEvent.linkUrl.includes('youtu.be') ? 'YouTube' : selectedEvent.linkUrl.includes('twitter.com') || selectedEvent.linkUrl.includes('x.com') ? 'X' : 'Web'})
                 </a>
               ) : null}
               <button

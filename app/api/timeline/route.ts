@@ -67,36 +67,32 @@ export async function GET() {
         // 各イベントのリンクと画像を並列で動的解決する
         const events: TimelineEvent[] = await Promise.all(
             rawEvents.map(async (event) => {
-                // twitter.com または x.com のリンクパターンを検出
-                const twitterRegex = /(https?:\/\/(?:twitter\.com|x\.com)\/[a-zA-Z0-9_]+\/status\/(\d+))/;
-                // youtube.com または youtu.be のリンクパターンを検出
-                const youtubeRegex = /(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_\-]+))/;
-
-                const twitterMatch = event.title.match(twitterRegex);
-                const youtubeMatch = event.title.match(youtubeRegex);
+                // http:// または https:// から始まり、空白（または行末）までの文字列全体を完全なURLとして抽出
+                const urlRegex = /(https?:\/\/\S+)/;
+                const urlMatch = event.title.match(urlRegex);
                 
                 let linkUrl: string | null = null;
                 let thumbnailUrl: string | null = null;
                 let cleanTitle = event.title;
 
-                if (twitterMatch) {
-                    linkUrl = twitterMatch[1];
-                    const tweetId = twitterMatch[2];
-                    
-                    // タイトルからURL部分を削除
-                    cleanTitle = event.title.replace(twitterMatch[0], '').trim();
-                    
-                    // 画像の動的取得
-                    thumbnailUrl = await getTwitterImage(tweetId);
-                } else if (youtubeMatch) {
-                    linkUrl = youtubeMatch[1];
-                    const videoId = youtubeMatch[2];
+                if (urlMatch) {
+                    linkUrl = urlMatch[1];
+                    // タイトルからURL全体を完全に削除
+                    cleanTitle = event.title.replace(urlMatch[0], '').trim();
 
-                    // タイトルからURL部分を削除
-                    cleanTitle = event.title.replace(youtubeMatch[0], '').trim();
-
-                    // YouTubeのサムネイルを直接割り当て
-                    thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                    // X (Twitter) ポストの判定と画像取得
+                    const twitterMatch = linkUrl.match(/https?:\/\/(?:twitter\.com|x\.com)\/[a-zA-Z0-9_]+\/status\/(\d+)/);
+                    if (twitterMatch) {
+                        const tweetId = twitterMatch[1];
+                        thumbnailUrl = await getTwitterImage(tweetId);
+                    } else {
+                        // YouTube 動画の判定
+                        const youtubeMatch = linkUrl.match(/https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_\-]+)/);
+                        if (youtubeMatch) {
+                            const videoId = youtubeMatch[1];
+                            thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                        }
+                    }
                 }
 
                 return {
