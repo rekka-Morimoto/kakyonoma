@@ -19,46 +19,77 @@ const STARS = Array.from({ length: 80 }, (_, i) => ({
   opacity: (((i * 31) % 70) + 30) / 100,
 }));
 
-interface GridRow {
-  left?: TimelineEvent;
-  right?: TimelineEvent;
-}
+const getEventStyles = (imp: number, title: string = '') => {
+  const isSpace = title.includes('#かきょすぺーす') || title.includes('かきょすぺーす');
+  const isStory = title.includes('#きょーのお話') || title.includes('きょーのお話');
 
-interface TimelineBlock {
-  type: 'full' | 'gridRows';
-  event?: TimelineEvent;
-  rows?: GridRow[];
-}
-
-const getEventStyles = (imp: number) => {
+  // ☆1を標準基準（コンパクト）として、☆2・☆3を明確に大きく拡大
   const cardClass = imp === 3
-    ? 'p-6 md:p-8 rounded-3xl border-2 border-[#c9a64e]/60 shadow-[0_4px_35px_rgba(201,166,78,0.2)] hover:shadow-[0_12px_50px_rgba(201,166,78,0.45),_0_0_30px_rgba(255,226,154,0.25)] relative overflow-hidden cursor-pointer group'
+    ? 'p-8 md:p-10 rounded-3xl border-2 shadow-[0_4px_45px_rgba(201,166,78,0.25)] hover:shadow-[0_12px_60px_rgba(201,166,78,0.5),_0_0_35px_rgba(255,226,154,0.3)] relative overflow-hidden cursor-pointer group'
     : imp === 2
-      ? 'p-4 md:p-5 rounded-2xl border border-white/15 hover:border-[#c9a64e]/50 shadow-md relative overflow-hidden cursor-pointer group'
-      : 'py-3 px-4 rounded-xl border border-white/10 hover:border-[#c9a64e]/40 relative overflow-hidden cursor-pointer group';
+      ? 'p-5 md:p-6 rounded-2xl border shadow-lg relative overflow-hidden cursor-pointer group'
+      : 'py-3 px-4 rounded-xl border relative overflow-hidden cursor-pointer group';
 
-  const cardBg = imp === 3
-    ? 'radial-gradient(circle at 90% 10%, rgba(251, 191, 36, 0.22) 0%, rgba(12, 19, 38, 0.96) 70%)'
-    : imp === 2
-      ? 'rgba(14, 25, 48, 0.75)'
-      : 'rgba(10, 18, 36, 0.65)';
+  // タグカラー分岐
+  let cardBg = '';
+  let borderClass = '';
+  let dateClass = '';
+  let overlayGradient = '';
+
+  if (isSpace) {
+    // #かきょすぺーす: 紫色テーマ
+    cardBg = imp === 3
+      ? 'radial-gradient(circle at 90% 10%, rgba(168, 85, 247, 0.35) 0%, rgba(24, 9, 43, 0.97) 70%)'
+      : imp === 2
+        ? 'rgba(38, 16, 64, 0.88)'
+        : 'rgba(28, 12, 48, 0.78)';
+    borderClass = imp === 3 ? 'border-purple-400/80' : imp === 2 ? 'border-purple-500/50 hover:border-purple-300/80' : 'border-purple-500/30 hover:border-purple-400/60';
+    dateClass = imp === 3
+      ? 'text-xs md:text-sm font-black text-purple-300 tracking-widest mb-2 font-sans'
+      : imp === 2
+        ? 'text-[11px] md:text-xs font-bold text-purple-300 tracking-wider mb-1 font-sans'
+        : 'text-[10px] md:text-[11px] font-bold text-purple-300/80 tracking-wide mb-0.5 font-sans';
+    overlayGradient = 'linear-gradient(to right, rgba(28, 12, 48, 0.98) 0%, rgba(28, 12, 48, 0.8) 40%, rgba(28, 12, 48, 0.3) 100%)';
+  } else if (isStory) {
+    // #きょーのお話: 青色テーマ
+    cardBg = imp === 3
+      ? 'radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.35) 0%, rgba(10, 25, 54, 0.97) 70%)'
+      : imp === 2
+        ? 'rgba(14, 35, 71, 0.88)'
+        : 'rgba(10, 24, 50, 0.78)';
+    borderClass = imp === 3 ? 'border-blue-400/80' : imp === 2 ? 'border-blue-500/50 hover:border-blue-300/80' : 'border-blue-500/30 hover:border-blue-400/60';
+    dateClass = imp === 3
+      ? 'text-xs md:text-sm font-black text-blue-300 tracking-widest mb-2 font-sans'
+      : imp === 2
+        ? 'text-[11px] md:text-xs font-bold text-blue-300 tracking-wider mb-1 font-sans'
+        : 'text-[10px] md:text-[11px] font-bold text-blue-300/80 tracking-wide mb-0.5 font-sans';
+    overlayGradient = 'linear-gradient(to right, rgba(10, 24, 50, 0.98) 0%, rgba(10, 24, 50, 0.8) 40%, rgba(10, 24, 50, 0.3) 100%)';
+  } else {
+    // 通常（金/紺テーマ）
+    cardBg = imp === 3
+      ? 'radial-gradient(circle at 90% 10%, rgba(251, 191, 36, 0.22) 0%, rgba(12, 19, 38, 0.96) 70%)'
+      : imp === 2
+        ? 'rgba(14, 25, 48, 0.8)'
+        : 'rgba(10, 18, 36, 0.7)';
+    borderClass = imp === 3 ? 'border-[#c9a64e]/70' : imp === 2 ? 'border-white/20 hover:border-[#c9a64e]/60' : 'border-white/10 hover:border-[#c9a64e]/40';
+    dateClass = imp === 3
+      ? 'text-xs md:text-sm font-black text-[#ffc56c] tracking-widest mb-2 font-sans'
+      : imp === 2
+        ? 'text-[11px] md:text-xs font-bold text-[#d4b26f] tracking-wider mb-1 font-sans'
+        : 'text-[10px] md:text-[11px] font-bold text-[#a0aec0] tracking-wide mb-0.5 font-sans';
+    overlayGradient = 'linear-gradient(to right, rgba(12, 19, 38, 0.98) 0%, rgba(12, 19, 38, 0.75) 40%, rgba(12, 19, 38, 0.3) 100%)';
+  }
 
   const titleClass = imp === 3
-    ? 'text-xl md:text-2xl font-black text-white leading-relaxed tracking-wider break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_10px_rgba(0,0,0,0.9)]'
+    ? 'text-2xl md:text-3xl font-black text-white leading-relaxed tracking-wider break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_12px_rgba(0,0,0,0.95)]'
     : imp === 2
-      ? 'text-sm md:text-base font-bold text-[#f1f5f9] leading-snug break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]'
-      : 'text-xs text-[#e2e8f0] font-medium leading-snug break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
-
-  const dateClass = imp === 3
-    ? 'text-xs md:text-sm font-black text-[#ffc56c] tracking-widest mb-2 font-sans [text-shadow:0_1px_5px_rgba(0,0,0,0.8)]'
-    : imp === 2
-      ? 'text-[11px] font-bold text-[#d4b26f] tracking-wider mb-1 font-sans [text-shadow:0_1px_5px_rgba(0,0,0,0.8)]'
-      : 'text-[10px] font-bold text-[#a0aec0] tracking-wide mb-0.5 font-sans [text-shadow:0_1px_4px_rgba(0,0,0,0.8)]';
+      ? 'text-base md:text-lg font-bold text-[#f8fafc] leading-relaxed break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]'
+      : 'text-xs md:text-sm text-[#e2e8f0] font-medium leading-snug break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
 
   const dotClass = imp === 3
-    ? 'w-6 h-6 rounded-full z-10 flex items-center justify-center'
+    ? 'w-7 h-7 rounded-full z-10 flex items-center justify-center'
     : imp === 2
-      ? 'w-3.5 h-3.5 rounded-full z-10'
+      ? 'w-4 h-4 rounded-full z-10'
       : 'w-2.5 h-2.5 rounded-full z-10';
 
   const dotStyle = imp === 3
@@ -68,15 +99,15 @@ const getEventStyles = (imp: number) => {
       }
     : imp === 2
       ? {
-          background: '#c9a64e',
-          boxShadow: '0 0 8px 2px rgba(201,166,78,0.5), 0 0 0 3px rgba(6,10,23,0.9)',
+          background: isSpace ? '#c084fc' : isStory ? '#60a5fa' : '#c9a64e',
+          boxShadow: `0 0 8px 2px ${isSpace ? 'rgba(192,132,252,0.5)' : isStory ? 'rgba(96,165,250,0.5)' : 'rgba(201,166,78,0.5)'}, 0 0 0 3px rgba(6,10,23,0.9)`,
         }
       : {
-          background: '#a0aec0',
+          background: isSpace ? '#a855f7' : isStory ? '#3b82f6' : '#a0aec0',
           boxShadow: '0 0 5px 1px rgba(160,174,192,0.4), 0 0 0 2px rgba(6,10,23,0.9)',
         };
 
-  return { cardClass, cardBg, titleClass, dateClass, dotClass, dotStyle };
+  return { cardClass: `${cardClass} ${borderClass}`, cardBg, titleClass, dateClass, dotClass, dotStyle, overlayGradient };
 };
 
 export default function TimelinePage() {
@@ -86,37 +117,6 @@ export default function TimelinePage() {
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
-
-  // 時系列順に整列されたイベントを、行(Row)単位のブロックへ変換
-  const blocks = React.useMemo<TimelineBlock[]>(() => {
-    const list: TimelineBlock[] = [];
-    let currentBatch: TimelineEvent[] = [];
-
-    const flushGridBatch = () => {
-      if (currentBatch.length === 0) return;
-      const rows: GridRow[] = [];
-      for (let i = 0; i < currentBatch.length; i += 2) {
-        rows.push({
-          left: currentBatch[i],
-          right: currentBatch[i + 1],
-        });
-      }
-      list.push({ type: 'gridRows', rows });
-      currentBatch = [];
-    };
-
-    events.forEach((event) => {
-      if (event.importance === 3) {
-        flushGridBatch();
-        list.push({ type: 'full', event });
-      } else {
-        currentBatch.push(event);
-      }
-    });
-
-    flushGridBatch();
-    return list;
-  }, [events]);
 
   useEffect(() => {
     setLoading(false);
@@ -151,9 +151,10 @@ export default function TimelinePage() {
   };
 
   // サムネイルとテキストの重ね合わせ表示コンポーネント
-  const renderCardInner = (event: TimelineEvent) => {
+  const renderCardInner = (event: TimelineEvent, overlayGrad?: string) => {
     const imp = event.importance;
-    const { titleClass, dateClass } = getEventStyles(imp);
+    const { titleClass, dateClass, overlayGradient } = getEventStyles(imp, event.title);
+    const grad = overlayGrad || overlayGradient;
 
     return (
       <>
@@ -163,9 +164,7 @@ export default function TimelinePage() {
             {/* グラデーションオーバーレイでテキスト可読性を100%確保 */}
             <div
               className="absolute inset-0 z-10"
-              style={{
-                background: 'linear-gradient(to right, rgba(12, 19, 38, 0.98) 0%, rgba(12, 19, 38, 0.75) 40%, rgba(12, 19, 38, 0.3) 100%)',
-              }}
+              style={{ background: grad }}
             />
             <img
               src={event.thumbnailUrl}
@@ -184,6 +183,9 @@ export default function TimelinePage() {
       </>
     );
   };
+
+  // 左右交互（千鳥配置）用インデックスカウンター
+  let nonStar3Counter = 0;
 
   return (
     <main className="min-h-screen bg-[#030712] text-gray-100 font-serif relative overflow-x-hidden selection:bg-[#c9a64e]/30 selection:text-amber-200">
@@ -286,18 +288,19 @@ export default function TimelinePage() {
                     filter: 'blur(1px)',
                   }} />
 
-                {/* ── PC表示 (md以上): 時系列順 行単位グリッド ── */}
-                <div className="hidden md:block space-y-8 relative w-full animate-fadeIn">
-                  {blocks.map((block, blockIdx) => {
-                    if (block.type === 'full' && block.event) {
-                      const ev = block.event;
-                      const { cardClass, cardBg, dotStyle } = getEventStyles(3);
+                {/* ── PC表示 (md以上): 時系列順 左右交互（千鳥・ジグザグ）配置 ── */}
+                <div className="hidden md:block space-y-3 relative w-full animate-fadeIn">
+                  {events.map((event, idx) => {
+                    const imp = event.importance;
+                    const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp, event.title);
 
+                    if (imp === 3) {
+                      // ☆3つ: 中央フル幅カード
                       return (
-                        <div key={`full-${blockIdx}`} className="relative w-full py-4 flex justify-center">
+                        <div key={`pc-${idx}`} className="relative w-full py-2 flex justify-center">
                           {/* 中央ドット */}
                           <div
-                            className="absolute left-1/2 -translate-x-1/2 -top-1 w-6 h-6 rounded-full z-20 flex items-center justify-center"
+                            className="absolute left-1/2 -translate-x-1/2 -top-1 w-7 h-7 rounded-full z-20 flex items-center justify-center"
                             style={dotStyle}
                           >
                             <span className="w-2.5 h-2.5 rounded-full bg-white opacity-90 animate-ping" />
@@ -307,12 +310,11 @@ export default function TimelinePage() {
                           <div
                             className={`${cardClass} w-full max-w-2xl transition-all duration-300 hover:scale-[1.015]`}
                             style={{ background: cardBg }}
-                            onClick={() => setSelectedEvent(ev)}
+                            onClick={() => setSelectedEvent(event)}
                           >
                             <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#c9a64e] to-transparent" />
                             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#c9a64e] to-transparent" />
                             
-                            {/* 三月と星屑の装飾 */}
                             <div className="absolute top-3 right-3 text-[#c9a64e]/50 pointer-events-none select-none animate-pulse z-10" style={{ animationDuration: '4s' }}>
                               <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
                                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
@@ -321,80 +323,41 @@ export default function TimelinePage() {
                             <span className="absolute top-2.5 left-2.5 text-[#c9a64e]/60 text-xs animate-pulse select-none z-10" style={{ animationDelay: '0.2s', animationDuration: '3s' }}>✦</span>
                             <span className="absolute bottom-3 right-5 text-[#c9a64e]/50 text-[10px] animate-pulse select-none z-10" style={{ animationDelay: '1.2s', animationDuration: '2.5s' }}>✦</span>
 
-                            {renderCardInner(ev)}
+                            {renderCardInner(event)}
                           </div>
                         </div>
                       );
-                    } else if (block.type === 'gridRows' && block.rows) {
+                    } else {
+                      // ☆1, ☆2: 左右交互 (千鳥) ジグザグ配置
+                      const isLeft = nonStar3Counter % 2 === 0;
+                      nonStar3Counter++;
+
                       return (
-                        <div key={`gridRows-${blockIdx}`} className="space-y-6 w-full">
-                          {block.rows.map((row, rowIdx) => (
-                            <div key={`row-${rowIdx}`} className="grid grid-cols-2 gap-x-12 w-full relative items-center">
-                              {/* 左カラム (右寄せ) */}
-                              <div className="flex justify-end w-full">
-                                {row.left ? (
-                                  (() => {
-                                    const ev = row.left;
-                                    const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(ev.importance);
-                                    return (
-                                      <div className="relative w-full max-w-[92%] transition-all duration-300 hover:scale-[1.02]">
-                                        <div className="absolute right-[-31px] top-1/2 -translate-y-1/2 flex items-center z-20 pointer-events-none">
-                                          <div className="w-[11px] h-px bg-[#c9a64e]/30" />
-                                          <div className={`rounded-full ${dotClass}`} style={dotStyle} />
-                                        </div>
+                        <div key={`pc-${idx}`} className={`flex ${isLeft ? 'justify-end pr-[calc(50%+28px)]' : 'justify-start pl-[calc(50%+28px)]'} w-full relative`}>
+                          {/* 天の川中央への水平接続線とドット */}
+                          <div className={`absolute ${isLeft ? 'right-1/2 translate-x-[14px]' : 'left-1/2 -translate-x-[14px] flex-row-reverse'} top-1/2 -translate-y-1/2 flex items-center z-20 pointer-events-none`}>
+                            <div className="w-[14px] h-px bg-white/20" />
+                            <div className={`rounded-full ${dotClass}`} style={dotStyle} />
+                          </div>
 
-                                        <div
-                                          className={`${cardClass} w-full text-right`}
-                                          style={{ background: cardBg }}
-                                          onClick={() => setSelectedEvent(ev)}
-                                        >
-                                          {renderCardInner(ev)}
-                                        </div>
-                                      </div>
-                                    );
-                                  })()
-                                ) : <div />}
-                              </div>
-
-                              {/* 右カラム (左寄せ) */}
-                              <div className="flex justify-start w-full">
-                                {row.right ? (
-                                  (() => {
-                                    const ev = row.right;
-                                    const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(ev.importance);
-                                    return (
-                                      <div className="relative w-full max-w-[92%] transition-all duration-300 hover:scale-[1.02]">
-                                        <div className="absolute left-[-31px] top-1/2 -translate-y-1/2 flex items-center flex-row-reverse z-20 pointer-events-none">
-                                          <div className="w-[11px] h-px bg-[#c9a64e]/30" />
-                                          <div className={`rounded-full ${dotClass}`} style={dotStyle} />
-                                        </div>
-
-                                        <div
-                                          className={`${cardClass} w-full text-left`}
-                                          style={{ background: cardBg }}
-                                          onClick={() => setSelectedEvent(ev)}
-                                        >
-                                          {renderCardInner(ev)}
-                                        </div>
-                                      </div>
-                                    );
-                                  })()
-                                ) : <div />}
-                              </div>
-                            </div>
-                          ))}
+                          <div
+                            className={`${cardClass} w-full max-w-md ${isLeft ? 'text-right' : 'text-left'} transition-all duration-300 hover:scale-[1.02]`}
+                            style={{ background: cardBg }}
+                            onClick={() => setSelectedEvent(event)}
+                          >
+                            {renderCardInner(event)}
+                          </div>
                         </div>
                       );
                     }
-                    return null;
                   })}
                 </div>
 
                 {/* ── モバイル表示 (md未満): 時系列順 縦並び ── */}
-                <div className="block md:hidden space-y-6 w-full animate-fadeIn">
+                <div className="block md:hidden space-y-3 w-full animate-fadeIn">
                   {events.map((event, index) => {
                     const imp = event.importance;
-                    const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp);
+                    const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp, event.title);
 
                     return (
                       <div key={`mobile-${index}`} className="flex items-center relative w-full">
