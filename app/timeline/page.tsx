@@ -206,6 +206,29 @@ export default function TimelinePage() {
         </svg>
       </div>
 
+      {/* ── キャラクター立ち絵（右下固定） ── */}
+      <div
+        className="fixed bottom-0 right-2 z-30 pointer-events-none select-none"
+        style={{
+          width: 'clamp(80px, 10vw, 140px)',
+          animation: 'characterFloat 5s ease-in-out infinite',
+        }}
+      >
+        <img
+          src="/kakyonenpyou.png"
+          alt="かきょキャラクター"
+          className="w-full h-auto object-contain drop-shadow-[0_4px_16px_rgba(100,120,255,0.35)]"
+          style={{ mixBlendMode: 'multiply' }}
+          draggable={false}
+        />
+      </div>
+      <style>{`
+        @keyframes characterFloat {
+          0%, 100% { transform: translateY(0px); }
+          50%       { transform: translateY(-8px); }
+        }
+      `}</style>
+
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-8 md:py-14 flex flex-col items-center min-h-screen">
         {/* ── 巻物の紙面 ── */}
         <div
