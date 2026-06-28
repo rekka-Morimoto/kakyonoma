@@ -217,101 +217,22 @@ export default function TimelinePage() {
         </svg>
       </div>
 
-      {/* ── キャラクター立ち絵（年表上に重ねて固定・クリックで検索） ── */}
-      <button
-        onClick={() => setShowCharSearch(true)}
-        className="fixed bottom-0 right-2 z-30 select-none focus:outline-none group"
-        style={{
-          width: 'clamp(80px, 10vw, 140px)',
-          animation: 'characterFloat 5s ease-in-out infinite',
-          background: 'none',
-          border: 'none',
-          padding: 0,
-          cursor: 'pointer',
-        }}
-        aria-label="かきょに何か聞く"
-      >
-        <img
-          src="/kakyonenpyou.png"
-          alt="かきょキャラクター"
-          className="w-full h-auto object-contain drop-shadow-[0_4px_16px_rgba(100,120,255,0.45)] transition-transform duration-200 group-hover:scale-105"
-          style={{ mixBlendMode: 'multiply' }}
-          draggable={false}
-        />
-      </button>
+
 
       {/* ── キャラクター検索モーダル ── */}
       {showCharSearch && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
-          style={{ background: 'rgba(2,4,10,0.88)' }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(2,4,10,0.85)' }}
           onClick={() => { setShowCharSearch(false); setSearchQuery(''); }}
         >
           <div
-            className="relative w-full max-w-lg flex flex-col sm:flex-row items-end sm:items-start gap-4"
+            className="relative w-full max-w-2xl flex flex-row items-end gap-4"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* キャラクター大きく表示 */}
-            <div className="flex-shrink-0 flex flex-col items-center" style={{ width: 'clamp(100px, 28vw, 200px)' }}>
-              {/* 吹き出し（ドット絵テイスト） */}
-              <div
-                style={{
-                  position: 'relative',
-                  background: '#fff',
-                  border: '3px solid #111',
-                  borderRadius: '4px',
-                  padding: '8px 10px',
-                  marginBottom: '4px',
-                  imageRendering: 'pixelated',
-                  boxShadow: '3px 3px 0 #111',
-                  width: '100%',
-                }}
-              >
-                {/* ドット枠の角ピクセル装飾 */}
-                <span style={{ position:'absolute', top:'-3px', left:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
-                <span style={{ position:'absolute', top:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
-                <span style={{ position:'absolute', bottom:'-3px', left:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
-                <span style={{ position:'absolute', bottom:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
-                <p style={{ fontFamily: "'Courier New', Courier, monospace", fontSize: '11px', fontWeight: 'bold', color: '#111', lineHeight: 1.6, letterSpacing: '0.02em', textShadow: '1px 1px 0 rgba(0,0,0,0.15)', margin: 0 }}>
-                  何探してるの？
-                </p>
-                {/* 吹き出しの三角（下向き） */}
-                <span style={{
-                  position: 'absolute',
-                  bottom: '-11px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  display: 'block',
-                  width: 0,
-                  height: 0,
-                  borderLeft: '5px solid transparent',
-                  borderRight: '5px solid transparent',
-                  borderTop: '8px solid #111',
-                }} />
-                <span style={{
-                  position: 'absolute',
-                  bottom: '-8px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  display: 'block',
-                  width: 0,
-                  height: 0,
-                  borderLeft: '4px solid transparent',
-                  borderRight: '4px solid transparent',
-                  borderTop: '7px solid #fff',
-                }} />
-              </div>
-              <img
-                src="/kakyonenpyou.png"
-                alt="かきょ"
-                style={{ width: '100%', height: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', filter: 'drop-shadow(0 6px 24px rgba(100,120,255,0.5))' }}
-                draggable={false}
-              />
-            </div>
-
-            {/* 検索パネル */}
+            {/* 検索パネル（左） */}
             <div
-              className="flex-1 w-full"
+              className="flex-1 min-w-0"
               style={{
                 background: 'rgba(8,13,26,0.97)',
                 border: '3px solid #c9a64e',
@@ -402,6 +323,45 @@ export default function TimelinePage() {
                 }}
               >[ESC] とじる</button>
             </div>
+
+            {/* キャラクター（右）・大きく表示 */}
+            <div className="flex-shrink-0 flex flex-col items-center justify-end" style={{ width: 'clamp(140px, 22vw, 260px)' }}>
+              {/* 吹き出し（ドット絵テイスト） */}
+              <div
+                style={{
+                  position: 'relative',
+                  background: '#fff',
+                  border: '3px solid #111',
+                  borderRadius: '4px',
+                  padding: '8px 12px',
+                  marginBottom: '12px',
+                  boxShadow: '3px 3px 0 #111',
+                  width: '100%',
+                }}
+              >
+                <span style={{ position:'absolute', top:'-3px', left:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
+                <span style={{ position:'absolute', top:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
+                <span style={{ position:'absolute', bottom:'-3px', left:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
+                <span style={{ position:'absolute', bottom:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
+                <p style={{ fontFamily:"'Courier New',Courier,monospace", fontSize:'12px', fontWeight:'bold', color:'#111', lineHeight:1.6, margin:0 }}>
+                  何探してるの？
+                </p>
+                {/* 吹き出し下トンガ（下向き・左寄り） */}
+                <span style={{ position:'absolute', bottom:'-11px', left:'24px', display:'block', width:0, height:0, borderLeft:'5px solid transparent', borderRight:'5px solid transparent', borderTop:'8px solid #111' }} />
+                <span style={{ position:'absolute', bottom:'-8px', left:'25px', display:'block', width:0, height:0, borderLeft:'4px solid transparent', borderRight:'4px solid transparent', borderTop:'7px solid #fff' }} />
+              </div>
+              <img
+                src="/kakyonenpyou.png"
+                alt="かきょ"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  objectFit: 'contain',
+                  filter: 'drop-shadow(0 8px 28px rgba(100,120,255,0.6))',
+                }}
+                draggable={false}
+              />
+            </div>
           </div>
         </div>
       )}
@@ -413,7 +373,7 @@ export default function TimelinePage() {
         }
       `}</style>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 py-8 md:py-14 flex flex-col items-center min-h-screen">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 py-8 md:py-14 flex flex-col items-center min-h-screen" style={{ position: 'relative' }}>
         {/* ── 巻物の紙面 ── */}
         <div
           className="w-full relative flex flex-col items-center transition-all duration-500"
@@ -621,7 +581,37 @@ export default function TimelinePage() {
           <div className="w-7 h-7 rounded-full shadow-inner" style={{ background: 'radial-gradient(circle at 35% 35%, #5c3010, #1c0c04)' }} />
           <div className="w-7 h-7 rounded-full shadow-inner" style={{ background: 'radial-gradient(circle at 35% 35%, #5c3010, #1c0c04)' }} />
         </div>
+
+        {/* ── キャラクター立ち絵（年表内・右下 sticky） ── */}
+        <button
+          onClick={() => setShowCharSearch(true)}
+          aria-label="かきょに何か聞く"
+          className="self-end focus:outline-none group"
+          style={{
+            position: 'sticky',
+            bottom: 0,
+            zIndex: 30,
+            width: 'clamp(100px, 13vw, 180px)',
+            animation: 'characterFloat 5s ease-in-out infinite',
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
+            marginTop: '-40px', // 巻物下端軸と自然に重なる
+          }}
+        >
+          <img
+            src="/kakyonenpyou.png"
+            alt="かきょキャラクター"
+            className="w-full h-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            style={{
+              filter: 'drop-shadow(0 4px 20px rgba(100,120,255,0.5)) drop-shadow(0 0 8px rgba(180,160,255,0.3))',
+            }}
+            draggable={false}
+          />
+        </button>
       </div>
+
 
       {/* ── 詳細拡大モーダル ── */}
       {selectedEvent && (
