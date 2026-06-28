@@ -248,40 +248,53 @@ export default function TimelinePage() {
       </div>
 
 
-      {/* ── キャラクター検索モーダル（年表幅いっぱイの大キャラ・検索窓重ね置き） ── */}
+      {/* ── キャラクター検索モーダル（全高キャラ＋左下に検索窓重ね） ── */}
       {showCharSearch && (
         <div
-          className="fixed inset-0 z-50 flex items-end md:items-center justify-center"
-          style={{ background: 'rgba(2,4,10,0.82)', backdropFilter: 'blur(4px)' }}
+          className="fixed inset-0 z-50 overflow-hidden"
+          style={{ background: 'rgba(2,4,10,0.88)', backdropFilter: 'blur(6px)' }}
           onClick={() => { setShowCharSearch(false); setSearchQuery(''); }}
         >
-          {/* 年表幅コンテナー */}
+          {/* キャラクター：右端・画面いっぱいの高さ */}
           <div
-            className="relative w-full max-w-4xl mx-auto px-4 pb-0 flex items-end justify-start"
-            style={{ minHeight: 'min(90vh, 600px)' }}
+            className="absolute right-0 top-0 bottom-0 pointer-events-none select-none"
+            style={{ width: '65vw', maxWidth: '720px', zIndex: 1 }}
+          >
+            {/* 左フェードマスク（白背景をなじませる） */}
+            <div
+              className="absolute inset-0 z-10"
+              style={{
+                background: 'linear-gradient(to right, rgba(2,4,10,1) 0%, rgba(2,4,10,0.6) 20%, rgba(2,4,10,0) 50%)',
+              }}
+            />
+            {/* 上フェードマスク */}
+            <div
+              className="absolute inset-0 z-10"
+              style={{
+                background: 'linear-gradient(to bottom, rgba(2,4,10,0.7) 0%, rgba(2,4,10,0) 15%, rgba(2,4,10,0) 80%, rgba(2,4,10,0.5) 100%)',
+              }}
+            />
+            <img
+              src="/kakyonenpyou.png"
+              alt="かきょ"
+              style={{
+                width: '100%',
+                height: '100vh',
+                objectFit: 'contain',
+                objectPosition: 'center center',
+                filter: 'drop-shadow(-8px 0 40px rgba(100,120,255,0.5))',
+              }}
+              draggable={false}
+            />
+          </div>
+
+          {/* 検索パネル：左下に固定（キャラの下半身に重なる） */}
+          <div
+            className="absolute bottom-8 left-0 right-0 flex justify-start px-6 md:px-12"
+            style={{ zIndex: 2 }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* キャラクター（年表幅近くまで大きく・右寄り・底関数） */}
-            <div
-              className="absolute bottom-0 right-4 pointer-events-none select-none"
-              style={{ width: 'min(55%, 420px)', zIndex: 1 }}
-            >
-              <img
-                src="/kakyonenpyou.png"
-                alt="かきょ"
-                className="w-full h-auto object-contain"
-                style={{
-                  filter: 'drop-shadow(0 8px 40px rgba(100,120,255,0.7)) drop-shadow(0 0 20px rgba(180,160,255,0.4))',
-                }}
-                draggable={false}
-              />
-            </div>
-
-            {/* 検索パネル（キャラの上に重ね置き） */}
-            <div
-              className="relative w-full md:max-w-sm mb-6 md:mb-8"
-              style={{ zIndex: 2 }}
-            >
+            <div style={{ width: '100%', maxWidth: '420px' }}>
               {/* 吹き出し（ドット絵テイスト） */}
               <div
                 style={{
@@ -290,7 +303,7 @@ export default function TimelinePage() {
                   background: '#fff',
                   border: '3px solid #111',
                   borderRadius: '4px',
-                  padding: '10px 14px',
+                  padding: '10px 16px',
                   marginBottom: '16px',
                   boxShadow: '4px 4px 0 #111',
                 }}
@@ -299,22 +312,21 @@ export default function TimelinePage() {
                 <span style={{ position:'absolute', top:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
                 <span style={{ position:'absolute', bottom:'-3px', left:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
                 <span style={{ position:'absolute', bottom:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
-                <p style={{ fontFamily:"'Courier New',Courier,monospace", fontSize:'13px', fontWeight:'bold', color:'#111', lineHeight:1.6, margin:0, whiteSpace:'nowrap' }}>
+                <p style={{ fontFamily:"'Courier New',Courier,monospace", fontSize:'14px', fontWeight:'bold', color:'#111', lineHeight:1.6, margin:0, whiteSpace:'nowrap' }}>
                   何探してるの？
                 </p>
-                {/* 吹き出し下トンガ */}
-                <span style={{ position:'absolute', bottom:'-11px', left:'20px', display:'block', width:0, height:0, borderLeft:'5px solid transparent', borderRight:'5px solid transparent', borderTop:'8px solid #111' }} />
-                <span style={{ position:'absolute', bottom:'-8px', left:'21px', display:'block', width:0, height:0, borderLeft:'4px solid transparent', borderRight:'4px solid transparent', borderTop:'7px solid #fff' }} />
+                <span style={{ position:'absolute', bottom:'-11px', left:'22px', display:'block', width:0, height:0, borderLeft:'5px solid transparent', borderRight:'5px solid transparent', borderTop:'8px solid #111' }} />
+                <span style={{ position:'absolute', bottom:'-8px', left:'23px', display:'block', width:0, height:0, borderLeft:'4px solid transparent', borderRight:'4px solid transparent', borderTop:'7px solid #fff' }} />
               </div>
 
               {/* 検索ウィンドウ */}
               <div
                 style={{
-                  background: 'rgba(6,10,23,0.94)',
+                  background: 'rgba(6,10,23,0.95)',
                   border: '3px solid #c9a64e',
                   borderRadius: '4px',
-                  boxShadow: '4px 4px 0 #5c3010, 0 0 40px rgba(201,166,78,0.3)',
-                  padding: '18px',
+                  boxShadow: '4px 4px 0 #5c3010, 0 0 50px rgba(201,166,78,0.35)',
+                  padding: '18px 20px',
                 }}
               >
                 {/* ドット絵風タイトルバー */}
@@ -337,10 +349,10 @@ export default function TimelinePage() {
                     background: '#0a1224',
                     border: '2px solid #c9a64e',
                     borderRadius: '2px',
-                    padding: '8px 12px',
+                    padding: '9px 13px',
                     color: '#ffe29a',
                     fontFamily: "'Courier New',Courier,monospace",
-                    fontSize: '13px',
+                    fontSize: '14px',
                     outline: 'none',
                     boxSizing: 'border-box',
                     boxShadow: 'inset 2px 2px 0 rgba(0,0,0,0.5)',
@@ -349,7 +361,7 @@ export default function TimelinePage() {
                 />
 
                 {/* 検索結果 */}
-                <div style={{ marginTop: '10px', maxHeight: '240px', overflowY: 'auto' }}>
+                <div style={{ marginTop:'10px', maxHeight:'220px', overflowY:'auto' }}>
                   {searchQuery.trim() === '' ? (
                     <p style={{ fontFamily:"'Courier New',monospace", fontSize:'11px', color:'#4a5568', textAlign:'center', padding:'12px 0' }}>▶ キーワードを入れてね</p>
                   ) : filteredEvents.length === 0 ? (
@@ -369,6 +381,7 @@ export default function TimelinePage() {
                             cursor: 'pointer',
                             transition: 'background 0.15s',
                             boxShadow: '2px 2px 0 rgba(90,48,16,0.4)',
+                            width: '100%',
                           }}
                           onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(201,166,78,0.2)')}
                           onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(201,166,78,0.08)')}
