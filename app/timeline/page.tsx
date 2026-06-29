@@ -248,53 +248,44 @@ export default function TimelinePage() {
       </div>
 
 
-      {/* ── キャラクター検索モーダル（全高キャラ＋左下に検索窓重ね） ── */}
+      {/* ── キャラクター検索モーダル（中央キャラ＋下半身に検索窓重ね） ── */}
       {showCharSearch && (
         <div
-          className="fixed inset-0 z-50 overflow-hidden"
-          style={{ background: 'rgba(2,4,10,0.88)', backdropFilter: 'blur(6px)' }}
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
+          style={{ background: 'rgba(2,4,10,0.82)', backdropFilter: 'blur(6px)' }}
           onClick={() => { setShowCharSearch(false); setSearchQuery(''); }}
         >
-          {/* キャラクター：右端・画面いっぱいの高さ */}
+          {/* キャラ＋検索窓の一体コンテナ（クリック伝播止め） */}
           <div
-            className="absolute right-0 top-0 bottom-0 pointer-events-none select-none"
-            style={{ width: '65vw', maxWidth: '720px', zIndex: 1 }}
+            className="relative flex-shrink-0"
+            style={{ height: '92vh', width: 'auto' }}
+            onClick={(e) => e.stopPropagation()}
           >
-            {/* 左フェードマスク（白背景をなじませる） */}
-            <div
-              className="absolute inset-0 z-10"
-              style={{
-                background: 'linear-gradient(to right, rgba(2,4,10,1) 0%, rgba(2,4,10,0.6) 20%, rgba(2,4,10,0) 50%)',
-              }}
-            />
-            {/* 上フェードマスク */}
-            <div
-              className="absolute inset-0 z-10"
-              style={{
-                background: 'linear-gradient(to bottom, rgba(2,4,10,0.7) 0%, rgba(2,4,10,0) 15%, rgba(2,4,10,0) 80%, rgba(2,4,10,0.5) 100%)',
-              }}
-            />
+            {/* キャラクター：中央・92vh */}
             <img
               src="/kakyonenpyou.png"
               alt="かきょ"
               style={{
-                width: '100%',
-                height: '100vh',
+                height: '92vh',
+                width: 'auto',
+                maxWidth: '92vw',
                 objectFit: 'contain',
-                objectPosition: 'center center',
-                filter: 'drop-shadow(-8px 0 40px rgba(100,120,255,0.5))',
+                display: 'block',
+                filter: 'drop-shadow(0 0 40px rgba(100,120,255,0.55)) drop-shadow(0 0 80px rgba(180,160,255,0.25))',
               }}
               draggable={false}
             />
-          </div>
 
-          {/* 検索パネル：左下に固定（キャラの下半身に重なる） */}
-          <div
-            className="absolute bottom-8 left-0 right-0 flex justify-start px-6 md:px-12"
-            style={{ zIndex: 2 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ width: '100%', maxWidth: '420px' }}>
+            {/* 検索パネル：下半身に重なる（top: 56%） */}
+            <div
+              className="absolute left-1/2"
+              style={{
+                top: '56%',
+                transform: 'translateX(-50%)',
+                width: 'clamp(260px, 90%, 420px)',
+                zIndex: 10,
+              }}
+            >
               {/* 吹き出し（ドット絵テイスト） */}
               <div
                 style={{
@@ -303,38 +294,39 @@ export default function TimelinePage() {
                   background: '#fff',
                   border: '3px solid #111',
                   borderRadius: '4px',
-                  padding: '10px 16px',
-                  marginBottom: '16px',
-                  boxShadow: '4px 4px 0 #111',
+                  padding: '8px 14px',
+                  marginBottom: '12px',
+                  boxShadow: '3px 3px 0 #111',
                 }}
               >
                 <span style={{ position:'absolute', top:'-3px', left:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
                 <span style={{ position:'absolute', top:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
                 <span style={{ position:'absolute', bottom:'-3px', left:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
                 <span style={{ position:'absolute', bottom:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
-                <p style={{ fontFamily:"'Courier New',Courier,monospace", fontSize:'14px', fontWeight:'bold', color:'#111', lineHeight:1.6, margin:0, whiteSpace:'nowrap' }}>
+                <p style={{ fontFamily:"'Courier New',Courier,monospace", fontSize:'13px', fontWeight:'bold', color:'#111', lineHeight:1.5, margin:0, whiteSpace:'nowrap' }}>
                   何探してるの？
                 </p>
-                <span style={{ position:'absolute', bottom:'-11px', left:'22px', display:'block', width:0, height:0, borderLeft:'5px solid transparent', borderRight:'5px solid transparent', borderTop:'8px solid #111' }} />
-                <span style={{ position:'absolute', bottom:'-8px', left:'23px', display:'block', width:0, height:0, borderLeft:'4px solid transparent', borderRight:'4px solid transparent', borderTop:'7px solid #fff' }} />
+                <span style={{ position:'absolute', bottom:'-11px', left:'20px', display:'block', width:0, height:0, borderLeft:'5px solid transparent', borderRight:'5px solid transparent', borderTop:'8px solid #111' }} />
+                <span style={{ position:'absolute', bottom:'-8px', left:'21px', display:'block', width:0, height:0, borderLeft:'4px solid transparent', borderRight:'4px solid transparent', borderTop:'7px solid #fff' }} />
               </div>
 
-              {/* 検索ウィンドウ */}
+              {/* 検索ウィンドウ（半透明） */}
               <div
                 style={{
-                  background: 'rgba(6,10,23,0.95)',
-                  border: '3px solid #c9a64e',
-                  borderRadius: '4px',
-                  boxShadow: '4px 4px 0 #5c3010, 0 0 50px rgba(201,166,78,0.35)',
-                  padding: '18px 20px',
+                  background: 'rgba(6,10,23,0.65)',
+                  border: '2px solid rgba(201,166,78,0.8)',
+                  borderRadius: '6px',
+                  boxShadow: '3px 3px 0 rgba(92,48,16,0.6), 0 0 40px rgba(201,166,78,0.25)',
+                  padding: '14px 16px',
+                  backdropFilter: 'blur(8px)',
                 }}
               >
                 {/* ドット絵風タイトルバー */}
-                <div style={{ display:'flex', alignItems:'center', gap:'6px', marginBottom:'12px' }}>
-                  <span style={{ display:'inline-block', width:'10px', height:'10px', background:'#c9a64e', border:'2px solid #5c3010', imageRendering:'pixelated' }} />
-                  <span style={{ display:'inline-block', width:'10px', height:'10px', background:'#a0aec0', border:'2px solid #4a5568', imageRendering:'pixelated' }} />
-                  <span style={{ display:'inline-block', width:'10px', height:'10px', background:'#4a5568', border:'2px solid #2d3748', imageRendering:'pixelated' }} />
-                  <span style={{ fontFamily:"'Courier New',monospace", fontSize:'11px', fontWeight:'bold', color:'#c9a64e', letterSpacing:'0.1em', marginLeft:'6px' }}>SEARCH.EXE</span>
+                <div style={{ display:'flex', alignItems:'center', gap:'5px', marginBottom:'10px' }}>
+                  <span style={{ display:'inline-block', width:'9px', height:'9px', background:'#c9a64e', border:'2px solid #5c3010', imageRendering:'pixelated' }} />
+                  <span style={{ display:'inline-block', width:'9px', height:'9px', background:'#a0aec0', border:'2px solid #4a5568', imageRendering:'pixelated' }} />
+                  <span style={{ display:'inline-block', width:'9px', height:'9px', background:'#4a5568', border:'2px solid #2d3748', imageRendering:'pixelated' }} />
+                  <span style={{ fontFamily:"'Courier New',monospace", fontSize:'10px', fontWeight:'bold', color:'#c9a64e', letterSpacing:'0.1em', marginLeft:'5px' }}>SEARCH.EXE</span>
                 </div>
 
                 {/* 検索入力 */}
@@ -346,48 +338,46 @@ export default function TimelinePage() {
                   placeholder="キーワードを入力..."
                   style={{
                     width: '100%',
-                    background: '#0a1224',
+                    background: 'rgba(10,18,36,0.8)',
                     border: '2px solid #c9a64e',
                     borderRadius: '2px',
-                    padding: '9px 13px',
+                    padding: '8px 12px',
                     color: '#ffe29a',
                     fontFamily: "'Courier New',Courier,monospace",
-                    fontSize: '14px',
+                    fontSize: '13px',
                     outline: 'none',
                     boxSizing: 'border-box',
-                    boxShadow: 'inset 2px 2px 0 rgba(0,0,0,0.5)',
                     letterSpacing: '0.05em',
                   }}
                 />
 
                 {/* 検索結果 */}
-                <div style={{ marginTop:'10px', maxHeight:'220px', overflowY:'auto' }}>
+                <div style={{ marginTop:'8px', maxHeight:'180px', overflowY:'auto' }}>
                   {searchQuery.trim() === '' ? (
-                    <p style={{ fontFamily:"'Courier New',monospace", fontSize:'11px', color:'#4a5568', textAlign:'center', padding:'12px 0' }}>▶ キーワードを入れてね</p>
+                    <p style={{ fontFamily:"'Courier New',monospace", fontSize:'10px', color:'#4a5568', textAlign:'center', padding:'10px 0' }}>▶ キーワードを入れてね</p>
                   ) : filteredEvents.length === 0 ? (
-                    <p style={{ fontFamily:"'Courier New',monospace", fontSize:'11px', color:'#e53e3e', textAlign:'center', padding:'12px 0' }}>× みつからなかった...</p>
+                    <p style={{ fontFamily:"'Courier New',monospace", fontSize:'10px', color:'#e53e3e', textAlign:'center', padding:'10px 0' }}>× みつからなかった...</p>
                   ) : (
-                    <div style={{ display:'flex', flexDirection:'column', gap:'6px' }}>
+                    <div style={{ display:'flex', flexDirection:'column', gap:'5px' }}>
                       {filteredEvents.map((ev, i) => (
                         <button
                           key={i}
                           onClick={() => { setSelectedEvent(ev); setShowCharSearch(false); setSearchQuery(''); }}
                           style={{
-                            background: 'rgba(201,166,78,0.08)',
-                            border: '2px solid rgba(201,166,78,0.35)',
-                            borderRadius: '2px',
-                            padding: '7px 10px',
+                            background: 'rgba(201,166,78,0.1)',
+                            border: '1px solid rgba(201,166,78,0.4)',
+                            borderRadius: '3px',
+                            padding: '6px 9px',
                             textAlign: 'left',
                             cursor: 'pointer',
                             transition: 'background 0.15s',
-                            boxShadow: '2px 2px 0 rgba(90,48,16,0.4)',
                             width: '100%',
                           }}
-                          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(201,166,78,0.2)')}
-                          onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(201,166,78,0.08)')}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(201,166,78,0.25)')}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(201,166,78,0.1)')}
                         >
-                          <div style={{ fontFamily:"'Courier New',monospace", fontSize:'10px', color:'#c9a64e', marginBottom:'2px' }}>{ev.date}</div>
-                          <div style={{ fontFamily:'sans-serif', fontSize:'12px', color:'#f1f5f9', lineHeight:1.4 }}>{ev.title}</div>
+                          <div style={{ fontFamily:"'Courier New',monospace", fontSize:'9px', color:'#c9a64e', marginBottom:'2px' }}>{ev.date}</div>
+                          <div style={{ fontFamily:'sans-serif', fontSize:'11px', color:'#f1f5f9', lineHeight:1.4 }}>{ev.title}</div>
                         </button>
                       ))}
                     </div>
@@ -398,16 +388,15 @@ export default function TimelinePage() {
                 <button
                   onClick={() => { setShowCharSearch(false); setSearchQuery(''); }}
                   style={{
-                    marginTop: '12px',
+                    marginTop: '10px',
                     fontFamily: "'Courier New',monospace",
-                    fontSize: '11px',
-                    color: '#a0aec0',
+                    fontSize: '10px',
+                    color: '#718096',
                     background: 'none',
-                    border: '2px solid #4a5568',
+                    border: '1px solid #4a5568',
                     borderRadius: '2px',
-                    padding: '5px 12px',
+                    padding: '4px 10px',
                     cursor: 'pointer',
-                    boxShadow: '2px 2px 0 #2d3748',
                     letterSpacing: '0.05em',
                   }}
                 >[ESC] とじる</button>
