@@ -276,39 +276,64 @@ export default function TimelinePage() {
               draggable={false}
             />
 
-            {/* 検索パネル：下半身に重なる（top: 56%） */}
+            {/* 吹き出し（ドット絵テイスト：キャラクターの顔の左側） */}
             <div
-              className="absolute left-1/2"
+              style={{
+                position: 'absolute',
+                top: '32%',
+                left: '30%',
+                zIndex: 15,
+                background: '#fff',
+                border: '3px solid #111',
+                borderRadius: '4px',
+                padding: '8px 14px',
+                boxShadow: '3px 3px 0 #111',
+              }}
+            >
+              <span style={{ position:'absolute', top:'-3px', left:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
+              <span style={{ position:'absolute', top:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
+              <span style={{ position:'absolute', bottom:'-3px', left:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
+              <span style={{ position:'absolute', bottom:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
+              <p style={{ fontFamily:"'Courier New',Courier,monospace", fontSize:'13px', fontWeight:'bold', color:'#111', lineHeight:1.5, margin:0, whiteSpace:'nowrap' }}>
+                何探してるの？
+              </p>
+              {/* キャラクターの顔（右側）に向けて伸びる三角しっぽ */}
+              <span style={{
+                position: 'absolute',
+                right: '-11px',
+                top: '60%',
+                transform: 'translateY(-50%)',
+                display: 'block',
+                width: 0,
+                height: 0,
+                borderTop: '6px solid transparent',
+                borderBottom: '6px solid transparent',
+                borderLeft: '9px solid #111',
+              }} />
+              <span style={{
+                position: 'absolute',
+                right: '-8px',
+                top: '60%',
+                transform: 'translateY(-50%)',
+                display: 'block',
+                width: 0,
+                height: 0,
+                borderTop: '5px solid transparent',
+                borderBottom: '5px solid transparent',
+                borderLeft: '8px solid #fff',
+              }} />
+            </div>
+
+            {/* 検索パネル：下半身に重なる（左端をつま先のあたり left: 12% に合わせる） */}
+            <div
+              className="absolute"
               style={{
                 top: '56%',
-                transform: 'translateX(-50%)',
-                width: 'clamp(260px, 90%, 420px)',
+                left: '12%',
+                width: 'clamp(260px, 80%, 400px)',
                 zIndex: 10,
               }}
             >
-              {/* 吹き出し（ドット絵テイスト） */}
-              <div
-                style={{
-                  position: 'relative',
-                  display: 'inline-block',
-                  background: '#fff',
-                  border: '3px solid #111',
-                  borderRadius: '4px',
-                  padding: '8px 14px',
-                  marginBottom: '12px',
-                  boxShadow: '3px 3px 0 #111',
-                }}
-              >
-                <span style={{ position:'absolute', top:'-3px', left:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
-                <span style={{ position:'absolute', top:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
-                <span style={{ position:'absolute', bottom:'-3px', left:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
-                <span style={{ position:'absolute', bottom:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
-                <p style={{ fontFamily:"'Courier New',Courier,monospace", fontSize:'13px', fontWeight:'bold', color:'#111', lineHeight:1.5, margin:0, whiteSpace:'nowrap' }}>
-                  何探してるの？
-                </p>
-                <span style={{ position:'absolute', bottom:'-11px', left:'20px', display:'block', width:0, height:0, borderLeft:'5px solid transparent', borderRight:'5px solid transparent', borderTop:'8px solid #111' }} />
-                <span style={{ position:'absolute', bottom:'-8px', left:'21px', display:'block', width:0, height:0, borderLeft:'4px solid transparent', borderRight:'4px solid transparent', borderTop:'7px solid #fff' }} />
-              </div>
 
               {/* 検索ウィンドウ（半透明） */}
               <div
