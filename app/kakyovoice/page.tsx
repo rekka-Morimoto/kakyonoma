@@ -75,12 +75,19 @@ export default function KakyoVoicePage() {
                 {sections.map((section, sIndex) => (
                   <div key={sIndex} className="flex flex-col">
                     <h3 className="text-lg font-serif font-bold text-[#c9a64e] mb-4 border-b border-[#c9a64e]/20 pb-2 flex items-center gap-2">
-                      {section.category === 'かきょみこ、ふたりのーと。' ? '📓' : '📝'} {section.category}
+                      {section.category === 'かきょみこ、ふたりのーと。' 
+                        ? '📓' 
+                        : section.category === 'おやすみかきょボイス' 
+                          ? '🌙' 
+                          : '📝'} {section.category}
                     </h3>
                     <div 
                       className="voice-scrollbar overflow-y-auto space-y-3 pr-2"
                       style={{ 
-                        maxHeight: section.category === 'かきょみこ、ふたりのーと。' ? '250px' : '350px' 
+                        maxHeight: 
+                          section.category === 'かきょみこ、ふたりのーと。' || section.category === 'おやすみかきょボイス' 
+                            ? '250px' 
+                            : '350px' 
                       }}
                     >
                       {section.items.map((voice, index) => {

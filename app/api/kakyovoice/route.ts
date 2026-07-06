@@ -23,16 +23,17 @@ export async function GET() {
         let currentCategory = "まいにちかきょボイス";
         let currentItems: VoiceItem[] = [];
 
-        const isUrl = (str: string) => str.startsWith('http://') || str.startsWith('https://');
+        const hasUrl = (str: string) => /https?:\/\//.test(str);
+        const isUrlOnly = (str: string) => str.startsWith('http://') || str.startsWith('https://');
 
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
 
             // セクションヘッダー判定:
             // 行が '#' で始まる、または
-            // URLではなく、かつ次の行もURLではない場合（ただし次の行が存在する場合）
+            // URLを含まず、かつ次の行もURLを含まない場合
             const isHeader = line.startsWith('#') || 
-                (!isUrl(line) && lines[i + 1] && !isUrl(lines[i + 1]));
+                (!hasUrl(line) && lines[i + 1] && !hasUrl(lines[i + 1]));
 
             if (isHeader) {
                 if (currentItems.length > 0) {
@@ -43,12 +44,25 @@ export async function GET() {
                     currentItems = [];
                 }
                 currentCategory = line.replace(/^#\s*/, '');
-            } else if (!isUrl(line) && lines[i + 1] && isUrl(lines[i + 1])) {
-                currentItems.push({
-                    title: line,
-                    url: lines[i + 1]
-                });
-                i++; // URLの行を消費
+            } else {
+                // 1行にタイトルとURLがまとまっている場合（例：おやすみかきょボイス）
+                const urlMatch = line.match(/(https?:\/\/\S+)/);
+                if (urlMatch) {
+                    const url = urlMatch[0];
+                    const title = line.replace(url, '').trim();
+                    currentItems.push({
+                        title: title || "無題",
+                        url: url
+                    });
+                }
+                // 2行構成の場合（例：まいにちかきょボイス）
+                else if (!isUrlOnly(line) && lines[i + 1] && isUrlOnly(lines[i + 1])) {
+                    currentItems.push({
+                        title: line,
+                        url: lines[i + 1]
+                    });
+                    i++; // URLの行を消費
+                }
             }
         }
 
