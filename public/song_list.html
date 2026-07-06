@@ -90,11 +90,41 @@
                 border: 2px solid #B2EBF2;
             }
         }
+        /* Search Bar Styles */
+        .search-container {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        #search-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border: 2px solid #B2EBF2;
+            border-radius: 30px;
+            outline: none;
+            transition: all 0.3s;
+            font-family: inherit;
+            box-shadow: 0 4px 10px rgba(178, 235, 242, 0.4);
+            color: #006064;
+            background-color: #fff;
+        }
+        #search-input::placeholder {
+            color: #80DEEA;
+        }
+        #search-input:focus {
+            border-color: #00BCD4;
+            box-shadow: 0 4px 15px rgba(0, 188, 212, 0.4);
+        }
     </style>
 </head>
 <body>
 
     <h1>佳鏡院さん歌枠セトリまとめ</h1>
+
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="曲名やアーティスト名で検索...">
+    </div>
 
     <div class="stream-section">
         <h2>【初歌枠】大好きな曲を歌うよ！！</h2>
@@ -463,6 +493,45 @@
         <div class="song-item"><div class="song-title">5.切札/V.W.P</div></div>
         <div class="song-item"><div class="song-title">6.未観測/花譜</div></div>
     </div>
+
+    <script>
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const sections = document.querySelectorAll('.stream-section');
+
+            sections.forEach(section => {
+                const items = section.querySelectorAll('.song-item');
+                let hasMatch = false;
+
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        item.style.display = '';
+                        hasMatch = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // 配信アーカイブリンク等の表示制御
+                const linkWrapper = section.querySelector('.song-link-wrapper');
+                if (linkWrapper) {
+                    if (query === '' || hasMatch) {
+                        linkWrapper.style.display = '';
+                    } else {
+                        linkWrapper.style.display = 'none';
+                    }
+                }
+
+                // 一致する曲があるか、クエリが空ならセクションを表示。なければ非表示。
+                if (hasMatch || query === '') {
+                    section.style.display = '';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>
