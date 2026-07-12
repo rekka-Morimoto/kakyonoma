@@ -37,8 +37,8 @@ const getTitleFontSize = (title: string, imp: number) => {
     return 'text-sm md:text-base font-bold text-[#f8fafc] leading-relaxed break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]';
   }
   // imp === 1
-  if (len > 25) return 'text-[11px] md:text-xs text-[#e2e8f0] font-medium leading-tight break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
-  return 'text-xs md:text-sm text-[#e2e8f0] font-medium leading-normal break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
+  if (len > 25) return 'text-[10px] md:text-[11px] text-[#e2e8f0] font-semibold tracking-wide truncate';
+  return 'text-[11px] md:text-xs text-[#e2e8f0] font-semibold tracking-wide truncate';
 };
 
 const getEventStyles = (imp: number, title: string = '') => {
@@ -51,7 +51,7 @@ const getEventStyles = (imp: number, title: string = '') => {
       ? 'p-8 md:p-10 rounded-3xl border-2 shadow-[0_4px_45px_rgba(201,166,78,0.25)] hover:shadow-[0_12px_60px_rgba(201,166,78,0.5),_0_0_35px_rgba(255,226,154,0.3)] relative overflow-hidden cursor-pointer group'
       : imp === 2
         ? 'p-5 md:p-6 rounded-2xl border shadow-xl relative overflow-hidden cursor-pointer group'
-        : 'py-3.5 px-4.5 rounded-xl border relative overflow-hidden cursor-pointer group flex flex-col justify-center';
+        : 'py-1 px-3 rounded-lg border relative overflow-hidden cursor-pointer group flex flex-col justify-center';
 
   let cardBg = '';
   let borderClass = '';
@@ -251,8 +251,8 @@ export default function TimelinePage() {
 
     return (
       <>
-        {/* サムネイル画像（右側背景レイヤーとして重ね合わせ・スペース有効活用） */}
-        {event.thumbnailUrl && (
+        {/* サムネイル画像（☆1以外でサムネイルがある場合に重ね合わせ） */}
+        {imp !== 1 && event.thumbnailUrl && (
           <div className="absolute right-0 top-0 bottom-0 w-1/2 md:w-5/12 h-full overflow-hidden pointer-events-none z-0">
             {/* グラデーションオーバーレイでテキスト可読性を100%確保 */}
             <div
@@ -268,11 +268,19 @@ export default function TimelinePage() {
           </div>
         )}
 
-        {/* テキストコンテンツ */}
-        <div className="relative z-10 flex flex-col justify-center w-full pr-4">
-          <div className={dateClass}>{event.date}</div>
-          <h3 className={titleClass}>{event.title}</h3>
-        </div>
+        {/* テキストコンテンツ (☆1なら横並びで省スペース化、その他は縦並び) */}
+        {imp === 1 ? (
+          <div className="relative z-10 flex items-center w-full text-left gap-2 pl-0.5 overflow-hidden">
+            <span className={`${dateClass} shrink-0 mb-0 leading-none text-[10px] md:text-[11px]`}>{event.date}</span>
+            <span className="text-[#ffe29a]/40 text-[9px] select-none leading-none">|</span>
+            <h3 className={`${titleClass} truncate flex-1 leading-none`}>{event.title}</h3>
+          </div>
+        ) : (
+          <div className="relative z-10 flex flex-col justify-center w-full pr-4">
+            <div className={dateClass}>{event.date}</div>
+            <h3 className={titleClass}>{event.title}</h3>
+          </div>
+        )}
       </>
     );
   };
@@ -615,50 +623,42 @@ export default function TimelinePage() {
                     let currentLeftRow = 1;
                     let currentRightRow = 1;
                     let lastRowStart = 1;
-                    let lastRowSpan = 10;
                     let nonStar3Counter = 0;
 
                     return events.map((event, idx) => {
                       const imp = event.importance;
                       const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp, event.title);
                       const id = `pc-${idx}`;
-                      const cardSpan = imp === 4 ? 28 : imp === 3 ? 24 : imp === 2 ? 14 : 9;
-                      const cardHeight = imp === 4 ? '256px' : imp === 3 ? '216px' : imp === 2 ? '116px' : '66px';
+                      const cardSpan = imp === 4 ? 28 : imp === 3 ? 24 : imp === 2 ? 14 : 7;
+                      const cardHeight = imp === 4 ? '256px' : imp === 3 ? '216px' : imp === 2 ? '116px' : '46px';
 
                       let rowStart = 1;
                       let isLeft = false;
 
                       if (imp === 4 || imp === 3) {
                         rowStart = Math.max(currentLeftRow, currentRightRow);
-                      } else {
-                        isLeft = nonStar3Counter % 2 === 0;
-                        nonStar3Counter++;
-                        rowStart = isLeft ? currentLeftRow : currentRightRow;
-                      }
-
-                      if (idx > 0) {
-                        // 前の日付ポイントのY位置 = lastRowStart + (lastRowSpan / 2)
-                        // 今回の日付ポイントのY位置 = rowStart + (cardSpan / 2)
-                        // ポイント同士が確実に 7.5スパン（75px）以上離れるように rowStart を引き上げる
-                        const minGap = 7.5;
-                        const requiredRowStart = lastRowStart + (lastRowSpan / 2) + minGap - (cardSpan / 2);
-                        rowStart = Math.max(rowStart, Math.ceil(requiredRowStart));
-                      }
-
-                      // current 行の更新
-                      if (imp === 4 || imp === 3) {
                         currentLeftRow = rowStart + cardSpan;
                         currentRightRow = rowStart + cardSpan;
                       } else {
+                        isLeft = nonStar3Counter % 2 === 0;
+                        nonStar3Counter++;
+
                         if (isLeft) {
+                          rowStart = currentLeftRow;
+                          if (idx > 0) {
+                            rowStart = Math.max(rowStart, lastRowStart + 4);
+                          }
                           currentLeftRow = rowStart + cardSpan;
                         } else {
+                          rowStart = currentRightRow;
+                          if (idx > 0) {
+                            rowStart = Math.max(rowStart, lastRowStart + 4);
+                          }
                           currentRightRow = rowStart + cardSpan;
                         }
                       }
                       
                       lastRowStart = rowStart;
-                      lastRowSpan = cardSpan;
 
                       if (imp === 4 || imp === 3) {
                         return (
@@ -742,12 +742,33 @@ export default function TimelinePage() {
                             >
                               {(() => {
                                 const patterns = [
-                                  { getPath: (w: number) => `M 0 15 L 9 6 L ${w - 9} 6 L ${w} 15`, getDots: (w: number) => [{ cx: 9, cy: 6 }, { cx: w - 9, cy: 6 }] },
-                                  { getPath: (w: number) => `M 0 15 L 9 24 L ${w - 9} 24 L ${w} 15`, getDots: (w: number) => [{ cx: 9, cy: 24 }, { cx: w - 9, cy: 24 }] },
-                                  { getPath: (w: number) => `M 0 15 L 8 7 L ${w - 8} 23 L ${w} 15`, getDots: (w: number) => [{ cx: 8, cy: 7 }, { cx: w - 8, cy: 23 }] }
+                                  {
+                                    getPath: (w: number, isL: boolean) => {
+                                      const startY = isL ? 15 : 25; // 右カード(ドットは左)の始点Yを下に10pxずらす
+                                      const endY = isL ? 5 : 15;    // 左カード(ドットは右)の終点Yを上に10pxずらす
+                                      return `M 0 ${startY} L 9 6 L ${w - 9} 6 L ${w} ${endY}`;
+                                    },
+                                    getDots: (w: number) => [{ cx: 9, cy: 6 }, { cx: w - 9, cy: 6 }]
+                                  },
+                                  {
+                                    getPath: (w: number, isL: boolean) => {
+                                      const startY = isL ? 15 : 25;
+                                      const endY = isL ? 5 : 15;
+                                      return `M 0 ${startY} L 9 24 L ${w - 9} 24 L ${w} ${endY}`;
+                                    },
+                                    getDots: (w: number) => [{ cx: 9, cy: 24 }, { cx: w - 9, cy: 24 }]
+                                  },
+                                  {
+                                    getPath: (w: number, isL: boolean) => {
+                                      const startY = isL ? 15 : 25;
+                                      const endY = isL ? 5 : 15;
+                                      return `M 0 ${startY} L 8 7 L ${w - 8} 23 L ${w} ${endY}`;
+                                    },
+                                    getDots: (w: number) => [{ cx: 8, cy: 7 }, { cx: w - 8, cy: 23 }]
+                                  }
                                 ];
                                 const pattern = patterns[idx % patterns.length];
-                                const d = pattern.getPath(connWidth);
+                                const d = pattern.getPath(connWidth, isLeft);
                                 const dots = pattern.getDots(connWidth);
                                 const starColors = [
                                   { color: "#9bb0ff", glow: "rgba(155, 176, 255, 0.75)" },
@@ -774,7 +795,18 @@ export default function TimelinePage() {
                                         );
                                       })}
                                     </svg>
-                                    <div className={`absolute top-1/2 -translate-y-1/2 ${isLeft ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'} ${dotClass}`} style={{ ...dotStyle, background: colorMain.color, boxShadow: `0 0 10px 3px ${colorMain.glow}, 0 0 0 2px rgba(6,10,23,0.9)`, margin: 0 }} />
+                                    <div 
+                                      className={`absolute top-1/2 ${dotClass}`} 
+                                      style={{ 
+                                        ...dotStyle, 
+                                        background: colorMain.color, 
+                                        boxShadow: `0 0 10px 3px ${colorMain.glow}, 0 0 0 2px rgba(6,10,23,0.9)`, 
+                                        margin: 0,
+                                        left: isLeft ? 'auto' : '0px',
+                                        right: isLeft ? '0px' : 'auto',
+                                        transform: isLeft ? 'translate(50%, -25px)' : 'translate(-50%, -5px)' // 左は上に10px, 右は下に10pxオフセットして被り防止
+                                      }} 
+                                    />
                                   </div>
                                 );
                               })()}
@@ -800,7 +832,7 @@ export default function TimelinePage() {
                   {events.map((event, index) => {
                     const imp = event.importance;
                     const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp, event.title);
-                    const cardHeight = imp === 4 ? '230px' : imp === 3 ? '190px' : imp === 2 ? '110px' : '66px';
+                    const cardHeight = imp === 4 ? '230px' : imp === 3 ? '190px' : imp === 2 ? '110px' : '46px';
 
                     return (
                       <div key={`mobile-${index}`} className="flex items-center relative w-full">
