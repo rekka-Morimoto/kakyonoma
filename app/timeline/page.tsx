@@ -571,155 +571,188 @@ export default function TimelinePage() {
                       zIndex: 5,
                     }} />
 
-                  {events.map((event, idx) => {
-                    const imp = event.importance;
-                    const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp, event.title);
-                    const id = `pc-${idx}`;
-                    const cardSpan = spans[id] || 15;
+                  {(() => {
+                    let currentLeftRow = 1;
+                    let currentRightRow = 1;
+                    let lastRowStart = 1;
+                    let nonStar3Counter = 0;
 
-                    if (imp === 3) {
-                      // ☆3つ: 中央フル幅カード
-                      return (
-                        <div 
-                          key={id} 
-                          ref={(el) => { cardRefs.current[id] = el; }}
-                          className="relative flex justify-center items-start z-10"
-                          style={{
-                            gridColumn: '1 / -1',
-                            gridRowEnd: `span ${cardSpan}`,
-                            paddingBottom: '24px', // 縦余白
-                          }}
-                        >
-                          {/* 中央ドット */}
-                          <div
-                            className="absolute left-1/2 -translate-x-1/2 -top-1 w-7 h-7 rounded-full z-20 flex items-center justify-center"
-                            style={dotStyle}
-                          >
-                            <span className="w-2.5 h-2.5 rounded-full bg-white opacity-90 animate-ping" />
-                          </div>
+                    return events.map((event, idx) => {
+                      const imp = event.importance;
+                      const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp, event.title);
+                      const id = `pc-${idx}`;
+                      const cardSpan = spans[id] || 15;
 
-                          {/* カード本体 */}
-                          <div
-                            className={`${cardClass} w-full max-w-2xl transition-all duration-300 hover:scale-[1.015]`}
-                            style={{ background: cardBg }}
-                            onClick={() => setSelectedEvent(event)}
+                      let rowStart = 1;
+                      let isLeft = false;
+
+                      if (imp === 3) {
+                        rowStart = Math.max(currentLeftRow, currentRightRow);
+                        currentLeftRow = rowStart + cardSpan;
+                        currentRightRow = rowStart + cardSpan;
+                      } else {
+                        isLeft = nonStar3Counter % 2 === 0;
+                        nonStar3Counter++;
+
+                        if (isLeft) {
+                          rowStart = currentLeftRow;
+                          if (idx > 0) {
+                            rowStart = Math.max(rowStart, lastRowStart + 4); // 40px分確実に縦にずらして重なり防止
+                          }
+                          currentLeftRow = rowStart + cardSpan;
+                        } else {
+                          rowStart = currentRightRow;
+                          if (idx > 0) {
+                            rowStart = Math.max(rowStart, lastRowStart + 4); // 40px分確実に縦にずらして重なり防止
+                          }
+                          currentRightRow = rowStart + cardSpan;
+                        }
+                      }
+                      
+                      lastRowStart = rowStart;
+
+                      if (imp === 3) {
+                        // ☆3つ: 中央フル幅カード
+                        return (
+                          <div 
+                            key={id} 
+                            ref={(el) => { cardRefs.current[id] = el; }}
+                            className="relative flex justify-center items-start z-10"
+                            style={{
+                              gridColumn: '1 / -1',
+                              gridRowStart: rowStart,
+                              gridRowEnd: `span ${cardSpan}`,
+                              paddingBottom: '24px', // 縦余白
+                            }}
                           >
-                            <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#c9a64e] to-transparent" />
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#c9a64e] to-transparent" />
-                            
-                            <div className="absolute top-3 right-3 text-[#c9a64e]/50 pointer-events-none select-none animate-pulse z-10" style={{ animationDuration: '4s' }}>
-                              <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                              </svg>
+                            {/* 中央ドット */}
+                            <div
+                              className="absolute left-1/2 -translate-x-1/2 -top-1 w-7 h-7 rounded-full z-20 flex items-center justify-center"
+                              style={dotStyle}
+                            >
+                              <span className="w-2.5 h-2.5 rounded-full bg-white opacity-90 animate-ping" />
                             </div>
-                            <span className="absolute top-2.5 left-2.5 text-[#c9a64e]/60 text-xs animate-pulse select-none z-10" style={{ animationDelay: '0.2s', animationDuration: '3s' }}>✦</span>
-                            <span className="absolute bottom-3 right-5 text-[#c9a64e]/50 text-[10px] animate-pulse select-none z-10" style={{ animationDelay: '1.2s', animationDuration: '2.5s' }}>✦</span>
 
-                            {renderCardInner(event)}
-                          </div>
-                        </div>
-                      );
-                    } else {
-                      // ☆1, ☆2: 左右交互 (千鳥) ジグザグ配置
-                      const isLeft = nonStar3Counter % 2 === 0;
-                      nonStar3Counter++;
-
-                      return (
-                        <div 
-                          key={id} 
-                          ref={(el) => { cardRefs.current[id] = el; }}
-                          className={`relative flex items-start ${isLeft ? 'justify-end' : 'justify-start'} z-10`}
-                          style={{
-                            gridColumn: isLeft ? '1' : '2',
-                            gridRowEnd: `span ${cardSpan}`,
-                            paddingBottom: '24px', // 縦余白
-                          }}
-                        >
-                          {/* 星座風の屈曲接続線（星座ラインとサブドット） */}
-                          {(() => {
-                            // パターン定義 (幅28px, 高さ30px, 中央Y=15)
-                            // 左カード基準 (X=0がカード端、X=28がタイムライン中心)
-                            const patterns = [
-                              {
-                                d: "M 0 15 L 9 6 L 19 6 L 28 15",
-                                dots: [{ cx: 9, cy: 6 }, { cx: 19, cy: 6 }]
-                              },
-                              {
-                                d: "M 0 15 L 9 24 L 19 24 L 28 15",
-                                dots: [{ cx: 9, cy: 24 }, { cx: 19, cy: 24 }]
-                              },
-                              {
-                                d: "M 0 15 L 8 7 L 20 23 L 28 15",
-                                dots: [{ cx: 8, cy: 7 }, { cx: 20, cy: 23 }]
-                              }
-                            ];
-                            const pattern = patterns[idx % patterns.length];
-
-                            return (
-                              <div
-                                className="absolute top-1/2 -translate-y-1/2 pointer-events-none z-20"
-                                style={{
-                                  right: isLeft ? '-28px' : 'auto',
-                                  left: isLeft ? 'auto' : '-28px',
-                                  width: '28px',
-                                  height: '30px',
-                                }}
-                              >
-                                <svg 
-                                  width="28" 
-                                  height="30" 
-                                  viewBox="0 0 28 30"
-                                  style={{
-                                    transform: isLeft ? 'none' : 'scaleX(-1)',
-                                  }}
-                                >
-                                  {/* 星座ライン（光る点線） */}
-                                  <path 
-                                    d={pattern.d} 
-                                    fill="none" 
-                                    stroke="rgba(201, 166, 78, 0.55)" 
-                                    strokeWidth="1.2" 
-                                    strokeDasharray="2, 2" 
-                                  />
-                                  <path 
-                                    d={pattern.d} 
-                                    fill="none" 
-                                    stroke="rgba(255, 255, 255, 0.25)" 
-                                    strokeWidth="0.8" 
-                                  />
-
-                                  {/* サブドット（星々） */}
-                                  {pattern.dots.map((dot, dIdx) => (
-                                    <g key={dIdx}>
-                                      <circle cx={dot.cx} cy={dot.cy} r="1.5" fill="#ffe29a" />
-                                      <circle cx={dot.cx} cy={dot.cy} r="3" fill="#c9a64e" className="animate-pulse" opacity="0.6" />
-                                    </g>
-                                  ))}
+                            {/* カード本体 */}
+                            <div
+                              className={`${cardClass} w-full max-w-2xl transition-all duration-300 hover:scale-[1.015]`}
+                              style={{ background: cardBg }}
+                              onClick={() => setSelectedEvent(event)}
+                            >
+                              <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#c9a64e] to-transparent" />
+                              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#c9a64e] to-transparent" />
+                              
+                              <div className="absolute top-3 right-3 text-[#c9a64e]/50 pointer-events-none select-none animate-pulse z-10" style={{ animationDuration: '4s' }}>
+                                <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                                 </svg>
-
-                                {/* 天の川上のメイン日付ドット */}
-                                <div 
-                                  className={`absolute top-1/2 -translate-y-1/2 ${isLeft ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'} ${dotClass}`} 
-                                  style={{
-                                    ...dotStyle,
-                                    margin: 0,
-                                  }}
-                                />
                               </div>
-                            );
-                          })()}
+                              <span className="absolute top-2.5 left-2.5 text-[#c9a64e]/60 text-xs animate-pulse select-none z-10" style={{ animationDelay: '0.2s', animationDuration: '3s' }}>✦</span>
+                              <span className="absolute bottom-3 right-5 text-[#c9a64e]/50 text-[10px] animate-pulse select-none z-10" style={{ animationDelay: '1.2s', animationDuration: '2.5s' }}>✦</span>
 
-                          <div
-                            className={`${cardClass} w-full max-w-md ${isLeft ? 'text-right' : 'text-left'} transition-all duration-300 hover:scale-[1.02] self-start`}
-                            style={{ background: cardBg }}
-                            onClick={() => setSelectedEvent(event)}
-                          >
-                            {renderCardInner(event)}
+                              {renderCardInner(event)}
+                            </div>
                           </div>
-                        </div>
-                      );
-                    }
-                  })}
+                        );
+                      } else {
+                        // ☆1, ☆2: 左右交互 (千鳥) ジグザグ配置
+                        return (
+                          <div 
+                            key={id} 
+                            ref={(el) => { cardRefs.current[id] = el; }}
+                            className={`relative flex items-start ${isLeft ? 'justify-end' : 'justify-start'} z-10`}
+                            style={{
+                              gridColumn: isLeft ? '1' : '2',
+                              gridRowStart: rowStart,
+                              gridRowEnd: `span ${cardSpan}`,
+                              paddingBottom: '24px', // 縦余白
+                            }}
+                          >
+                            {/* カード本体 (relativeにして、接続線をこの中に絶対配置) */}
+                            <div
+                              className={`${cardClass} w-full max-w-md ${isLeft ? 'text-right' : 'text-left'} transition-all duration-300 hover:scale-[1.02] self-start relative`}
+                              style={{ background: cardBg }}
+                              onClick={() => setSelectedEvent(event)}
+                            >
+                              {/* 星座風の屈曲接続線（星座ラインとサブドット） */}
+                              {(() => {
+                                const patterns = [
+                                  {
+                                    d: "M 0 15 L 9 6 L 19 6 L 28 15",
+                                    dots: [{ cx: 9, cy: 6 }, { cx: 19, cy: 6 }]
+                                  },
+                                  {
+                                    d: "M 0 15 L 9 24 L 19 24 L 28 15",
+                                    dots: [{ cx: 9, cy: 24 }, { cx: 19, cy: 24 }]
+                                  },
+                                  {
+                                    d: "M 0 15 L 8 7 L 20 23 L 28 15",
+                                    dots: [{ cx: 8, cy: 7 }, { cx: 20, cy: 23 }]
+                                  }
+                                ];
+                                const pattern = patterns[idx % patterns.length];
+
+                                return (
+                                  <div
+                                    className="absolute top-1/2 -translate-y-1/2 pointer-events-none z-20"
+                                    style={{
+                                      right: isLeft ? '-28px' : 'auto',
+                                      left: isLeft ? 'auto' : '-28px',
+                                      width: '28px',
+                                      height: '30px',
+                                    }}
+                                  >
+                                    <svg 
+                                      width="28" 
+                                      height="30" 
+                                      viewBox="0 0 28 30"
+                                      style={{
+                                        transform: isLeft ? 'none' : 'scaleX(-1)',
+                                      }}
+                                    >
+                                      {/* 星座ライン（光る点線） */}
+                                      <path 
+                                        d={pattern.d} 
+                                        fill="none" 
+                                        stroke="rgba(201, 166, 78, 0.55)" 
+                                        strokeWidth="1.2" 
+                                        strokeDasharray="2, 2" 
+                                      />
+                                      <path 
+                                        d={pattern.d} 
+                                        fill="none" 
+                                        stroke="rgba(255, 255, 255, 0.25)" 
+                                        strokeWidth="0.8" 
+                                      />
+
+                                      {/* サブドット（星々） */}
+                                      {pattern.dots.map((dot, dIdx) => (
+                                        <g key={dIdx}>
+                                          <circle cx={dot.cx} cy={dot.cy} r="1.5" fill="#ffe29a" />
+                                          <circle cx={dot.cx} cy={dot.cy} r="3" fill="#c9a64e" className="animate-pulse" opacity="0.6" />
+                                        </g>
+                                      ))}
+                                    </svg>
+
+                                    {/* 天の川上のメイン日付ドット */}
+                                    <div 
+                                      className={`absolute top-1/2 -translate-y-1/2 ${isLeft ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'} ${dotClass}`} 
+                                      style={{
+                                        ...dotStyle,
+                                        margin: 0,
+                                      }}
+                                    />
+                                  </div>
+                                );
+                              })()}
+
+                              {renderCardInner(event)}
+                            </div>
+                          </div>
+                        );
+                      }
+                    });
+                  })()}
                 </div>
 
                 {/* ── モバイル表示 (md未満): 時系列順 縦並び ── */}
