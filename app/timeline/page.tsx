@@ -583,7 +583,7 @@ export default function TimelinePage() {
                         <div 
                           key={id} 
                           ref={(el) => { cardRefs.current[id] = el; }}
-                          className="relative flex justify-center z-10"
+                          className="relative flex justify-center items-start z-10"
                           style={{
                             gridColumn: '1 / -1',
                             gridRowEnd: `span ${cardSpan}`,
@@ -628,14 +628,14 @@ export default function TimelinePage() {
                         <div 
                           key={id} 
                           ref={(el) => { cardRefs.current[id] = el; }}
-                          className={`relative flex ${isLeft ? 'justify-end' : 'justify-start'} z-10`}
+                          className={`relative flex items-start ${isLeft ? 'justify-end' : 'justify-start'} z-10`}
                           style={{
                             gridColumn: isLeft ? '1' : '2',
                             gridRowEnd: `span ${cardSpan}`,
                             paddingBottom: '24px', // 縦余白
                           }}
                         >
-                          {/* 天の川中央への水平接続線とドット */}
+                          {/* 天の川中央への斜めの接続線とドット */}
                           <div 
                             className="absolute top-1/2 -translate-y-1/2 flex items-center z-20 pointer-events-none"
                             style={{
@@ -644,12 +644,18 @@ export default function TimelinePage() {
                               flexDirection: isLeft ? 'row' : 'row-reverse',
                             }}
                           >
-                            <div className="w-[14px] h-px bg-white/20" />
+                            <div 
+                              className="w-[20px] h-px bg-white/30"
+                              style={{
+                                transform: isLeft ? 'rotate(25deg)' : 'rotate(-25deg)',
+                                transformOrigin: isLeft ? 'right center' : 'left center',
+                              }} 
+                            />
                             <div className={`rounded-full ${dotClass}`} style={dotStyle} />
                           </div>
 
                           <div
-                            className={`${cardClass} w-full max-w-md ${isLeft ? 'text-right' : 'text-left'} transition-all duration-300 hover:scale-[1.02]`}
+                            className={`${cardClass} w-full max-w-md ${isLeft ? 'text-right' : 'text-left'} transition-all duration-300 hover:scale-[1.02] self-start`}
                             style={{ background: cardBg }}
                             onClick={() => setSelectedEvent(event)}
                           >
