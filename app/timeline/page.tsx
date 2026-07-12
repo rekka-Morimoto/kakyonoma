@@ -658,9 +658,11 @@ export default function TimelinePage() {
                       isLeftList.push(isLeft);
 
                       // ☆1・☆2のみ日付ポイントを共有（☆3・☆4は独立）
+                      // 最小rowCenter（視覚上最も上に配置されるカード）を代表に選ぶ
                       if (imp === 1 || imp === 2) {
                         const rowCenter = rowStart + Math.floor(cardSpan / 2);
-                        if (!datePointRowMap[event.date]) {
+                        const existing = datePointRowMap[event.date];
+                        if (!existing || rowCenter < existing.rowCenter) {
                           datePointRowMap[event.date] = { rowCenter, firstIdx: idx };
                         }
                       }
@@ -679,13 +681,6 @@ export default function TimelinePage() {
                       // 同日付の代表ポイント情報（☆1・☆2のみ共有、☆3・☆4は常に独立扱い）
                       const dateInfo = (imp === 1 || imp === 2) ? datePointRowMap[event.date] : undefined;
                       const isFirstOfDate = !dateInfo || dateInfo.firstIdx === idx;
-                      // 同日付グループの代表ポイントのY位置（グリッド行）をカードのY中心から引いてオフセット算出
-                      const thisCardCenter = rowStart + Math.floor(cardSpan / 2);
-                      // dateInfoがundefinedの場合（☆3・☆4）はオフセット0（共有なし）
-                      const sharedDotRow = dateInfo ? dateInfo.rowCenter : thisCardCenter;
-                      // グリッド行 1行 = 10px (grid-rows-[10px])
-                      const rowHeightPx = 10;
-                      const dotYOffsetPx = (sharedDotRow - thisCardCenter) * rowHeightPx; // 正=下方向、負=上方向
 
                       if (imp === 4 || imp === 3) {
                         return (
@@ -750,21 +745,6 @@ export default function TimelinePage() {
                         const offsetX = imp === 1 ? ((idx * 17) % 3) * 15 : 0;
                         const connWidth = 28 + offsetX;
 
-                        // 接続線：カード中央→共有ドット位置 へ向かうパスを構築
-                        // SVG の高さは 30px 固定（カード中央基準）。
-                        // 共有ドットが別行にある場合、SVGをカードから縦に伸ばす必要があるため、
-                        // 高さを |dotYOffsetPx| + 30 に拡張し、始点・終点を調整する。
-                        const svgH = Math.abs(dotYOffsetPx) + 30;
-                        // カード中央のY（SVG内座標）
-                        const cardMidY = dotYOffsetPx >= 0 ? 15 : svgH - 15;
-                        // 共有ドットのY（SVG内座標）
-                        const dotMidY = dotYOffsetPx >= 0 ? svgH - 15 : 15;
-                        // 左右の終点オフセット（従来の±10px）を維持
-                        const endDotY = isLeft ? dotMidY - 10 : dotMidY + 10;
-                        const startY = isLeft ? cardMidY : cardMidY + 10;
-                        const midY1 = Math.round((startY + endDotY) / 2) - 8;
-                        const midY2 = Math.round((startY + endDotY) / 2) + 8;
-
                         const starColors = [
                           { color: "#9bb0ff", glow: "rgba(155, 176, 255, 0.75)" },
                           { color: "#ffffff", glow: "rgba(255, 255, 255, 0.8)" },
@@ -776,20 +756,36 @@ export default function TimelinePage() {
                         const color2 = starColors[(idx * 7) % starColors.length];
                         const colorMain = starColors[(idx * 11) % starColors.length];
 
-                        // 屈曲パスを動的生成（3パターン）
-                        const pathPatterns = [
-                          `M 0 ${startY} L 9 ${midY1} L ${connWidth - 9} ${midY1} L ${connWidth} ${endDotY}`,
-                          `M 0 ${startY} L 9 ${midY2} L ${connWidth - 9} ${midY2} L ${connWidth} ${endDotY}`,
-                          `M 0 ${startY} L 8 ${midY1} L ${connWidth - 8} ${midY2} L ${connWidth} ${endDotY}`,
+                        // 星座ライン：固定30px高さの元のパターンに戻す（クリップ問題・逆方向問題を解消）
+                        const patterns = [
+                          {
+                            getPath: (w: number, isL: boolean) => {
+                              const startY = isL ? 15 : 25;
+                              const endY = isL ? 5 : 15;
+                              return `M 0 ${startY} L 9 6 L ${w - 9} 6 L ${w} ${endY}`;
+                            },
+                            getDots: (w: number) => [{ cx: 9, cy: 6 }, { cx: w - 9, cy: 6 }]
+                          },
+                          {
+                            getPath: (w: number, isL: boolean) => {
+                              const startY = isL ? 15 : 25;
+                              const endY = isL ? 5 : 15;
+                              return `M 0 ${startY} L 9 24 L ${w - 9} 24 L ${w} ${endY}`;
+                            },
+                            getDots: (w: number) => [{ cx: 9, cy: 24 }, { cx: w - 9, cy: 24 }]
+                          },
+                          {
+                            getPath: (w: number, isL: boolean) => {
+                              const startY = isL ? 15 : 25;
+                              const endY = isL ? 5 : 15;
+                              return `M 0 ${startY} L 8 7 L ${w - 8} 23 L ${w} ${endY}`;
+                            },
+                            getDots: (w: number) => [{ cx: 8, cy: 7 }, { cx: w - 8, cy: 23 }]
+                          }
                         ];
-                        const pathD = pathPatterns[idx % pathPatterns.length];
-                        const dot1 = idx % 3 === 0 ? { cx: 9, cy: midY1 } : idx % 3 === 1 ? { cx: 9, cy: midY2 } : { cx: 8, cy: midY1 };
-                        const dot2 = idx % 3 === 0 ? { cx: connWidth - 9, cy: midY1 } : idx % 3 === 1 ? { cx: connWidth - 9, cy: midY2 } : { cx: connWidth - 8, cy: midY2 };
-
-                        // SVGコンテナのtopオフセット：カードの上端から見た位置
-                        // dotYOffsetPx >= 0（共有ドットが下）なら top:0 から開始でOK
-                        // dotYOffsetPx < 0（共有ドットが上）なら SVGを上にはみ出させる
-                        const svgTopOffset = dotYOffsetPx < 0 ? dotYOffsetPx : 0;
+                        const pattern = patterns[idx % patterns.length];
+                        const d = pattern.getPath(connWidth, isLeft);
+                        const dots = pattern.getDots(connWidth);
 
                         return (
                           <div 
@@ -809,27 +805,25 @@ export default function TimelinePage() {
                                 marginLeft: isLeft ? undefined : `${offsetX}px`,
                               }}
                             >
-                              {/* 星座接続ライン + 共有日付ドット */}
-                              <div 
-                                className="absolute pointer-events-none z-20"
+                              {/* 星座接続ライン + 日付ドット */}
+                              <div
+                                className="absolute top-1/2 -translate-y-1/2 pointer-events-none z-20"
                                 style={{
                                   right: isLeft ? `-${connWidth}px` : 'auto',
                                   left: isLeft ? 'auto' : `-${connWidth}px`,
                                   width: `${connWidth}px`,
-                                  height: `${svgH}px`,
-                                  top: `calc(50% + ${svgTopOffset}px)`,
-                                  transform: 'translateY(-50%)',
+                                  height: '30px',
                                 }}
                               >
-                                <svg 
-                                  width={connWidth} 
-                                  height={svgH} 
-                                  viewBox={`0 0 ${connWidth} ${svgH}`} 
-                                  style={{ transform: isLeft ? 'none' : 'scaleX(-1)' }}
+                                <svg
+                                  width={connWidth}
+                                  height="30"
+                                  viewBox={`0 0 ${connWidth} 30`}
+                                  style={{ transform: isLeft ? 'none' : 'scaleX(-1)', overflow: 'visible' }}
                                 >
-                                  <path d={pathD} fill="none" stroke="rgba(201, 166, 78, 0.55)" strokeWidth="1.2" strokeDasharray="2, 2" />
-                                  <path d={pathD} fill="none" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" />
-                                  {[dot1, dot2].map((dot, dIdx) => {
+                                  <path d={d} fill="none" stroke="rgba(201, 166, 78, 0.55)" strokeWidth="1.2" strokeDasharray="2, 2" />
+                                  <path d={d} fill="none" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" />
+                                  {dots.map((dot, dIdx) => {
                                     const sColor = dIdx === 0 ? color1 : color2;
                                     return (
                                       <g key={dIdx}>
@@ -839,20 +833,19 @@ export default function TimelinePage() {
                                     );
                                   })}
                                 </svg>
-                                {/* 同日付の最初のカードのみ日付ドットを表示。2枚目以降は非表示（共有） */}
+                                {/* 同日付グループで最も上にある代表カードのみドット表示 */}
                                 {isFirstOfDate && (
-                                  <div 
-                                    className={`absolute ${dotClass}`} 
-                                    style={{ 
-                                      ...dotStyle, 
-                                      background: colorMain.color, 
-                                      boxShadow: `0 0 10px 3px ${colorMain.glow}, 0 0 0 2px rgba(6,10,23,0.9)`, 
+                                  <div
+                                    className={`absolute top-1/2 ${dotClass}`}
+                                    style={{
+                                      ...dotStyle,
+                                      background: colorMain.color,
+                                      boxShadow: `0 0 10px 3px ${colorMain.glow}, 0 0 0 2px rgba(6,10,23,0.9)`,
                                       margin: 0,
                                       left: isLeft ? 'auto' : '0px',
                                       right: isLeft ? '0px' : 'auto',
-                                      top: `${endDotY}px`,
-                                      transform: isLeft ? 'translate(50%, -50%)' : 'translate(-50%, -50%)',
-                                    }} 
+                                      transform: isLeft ? 'translate(50%, -25px)' : 'translate(-50%, -5px)',
+                                    }}
                                   />
                                 )}
                               </div>
