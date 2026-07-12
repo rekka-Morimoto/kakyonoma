@@ -42,7 +42,7 @@ const getEventStyles = (imp: number, title: string = '') => {
       : imp === 2
         ? 'rgba(38, 16, 64, 0.88)'
         : 'rgba(28, 12, 48, 0.78)';
-    borderClass = imp === 3 ? 'border-purple-400/80' : imp === 2 ? 'border-purple-500/50 hover:border-purple-300/80' : 'border-purple-500/30 hover:border-purple-400/60';
+    borderClass = imp === 3 ? 'border-purple-400/80' : imp === 2 ? 'border-rose-500/50 hover:border-rose-400/80 shadow-[0_0_15px_rgba(244,63,94,0.15)]' : 'border-purple-500/30 hover:border-purple-400/60';
     dateClass = imp === 3
       ? 'text-xs md:text-sm font-black text-purple-300 tracking-widest mb-2 font-sans'
       : imp === 2
@@ -56,7 +56,7 @@ const getEventStyles = (imp: number, title: string = '') => {
       : imp === 2
         ? 'rgba(14, 35, 71, 0.88)'
         : 'rgba(10, 24, 50, 0.78)';
-    borderClass = imp === 3 ? 'border-blue-400/80' : imp === 2 ? 'border-blue-500/50 hover:border-blue-300/80' : 'border-blue-500/30 hover:border-blue-400/60';
+    borderClass = imp === 3 ? 'border-blue-400/80' : imp === 2 ? 'border-rose-500/50 hover:border-rose-400/80 shadow-[0_0_15px_rgba(244,63,94,0.15)]' : 'border-blue-500/30 hover:border-blue-400/60';
     dateClass = imp === 3
       ? 'text-xs md:text-sm font-black text-blue-300 tracking-widest mb-2 font-sans'
       : imp === 2
@@ -70,7 +70,7 @@ const getEventStyles = (imp: number, title: string = '') => {
       : imp === 2
         ? 'rgba(14, 25, 48, 0.8)'
         : 'rgba(10, 18, 36, 0.7)';
-    borderClass = imp === 3 ? 'border-[#c9a64e]/70' : imp === 2 ? 'border-white/20 hover:border-[#c9a64e]/60' : 'border-white/10 hover:border-[#c9a64e]/40';
+    borderClass = imp === 3 ? 'border-[#c9a64e]/70' : imp === 2 ? 'border-red-500/40 hover:border-red-400/70 shadow-[0_0_15px_rgba(239,68,68,0.15)]' : 'border-white/10 hover:border-[#c9a64e]/40';
     dateClass = imp === 3
       ? 'text-xs md:text-sm font-black text-[#ffc56c] tracking-widest mb-2 font-sans'
       : imp === 2
@@ -129,6 +129,7 @@ export default function TimelinePage() {
   }, [events, searchQuery]);
 
   const [spans, setSpans] = useState<{ [key: string]: number }>({});
+  const spansRef = React.useRef<{ [key: string]: number }>({});
   const cardRefs = React.useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const calculateSpans = React.useCallback(() => {
@@ -139,22 +140,28 @@ export default function TimelinePage() {
       const id = `pc-${idx}`;
       const element = cardRefs.current[id];
       if (element) {
-        const height = element.getBoundingClientRect().height || element.offsetHeight;
+        // グリッドスパンの影響を受けないカード本体の純粋な高さを測定
+        const cardBody = element.querySelector('.rounded-3xl, .rounded-lg, .rounded-2xl') as HTMLDivElement;
+        const height = cardBody 
+          ? (cardBody.getBoundingClientRect().height || cardBody.offsetHeight) 
+          : (element.getBoundingClientRect().height || element.offsetHeight);
+        
         // 1スパン = 10px。少しの余白を含めてスパン数を算出
-        const span = Math.ceil(height / 10) + 2;
-        if (spans[id] !== span) {
+        const span = Math.ceil(height / 10) + 3;
+        if (spansRef.current[id] !== span) {
           newSpans[id] = span;
           changed = true;
         } else {
-          newSpans[id] = spans[id];
+          newSpans[id] = spansRef.current[id];
         }
       }
     });
 
     if (changed) {
+      spansRef.current = newSpans;
       setSpans(newSpans);
     }
-  }, [events, spans]);
+  }, [events]);
 
   useEffect(() => {
     setLoading(false);
@@ -699,6 +706,18 @@ export default function TimelinePage() {
                                 const d = pattern.getPath(connWidth);
                                 const dots = pattern.getDots(connWidth);
 
+                                const starColors = [
+                                  { color: "#9bb0ff", glow: "rgba(155, 176, 255, 0.75)" }, // 青
+                                  { color: "#ffffff", glow: "rgba(255, 255, 255, 0.8)" },  // 白
+                                  { color: "#ffe29a", glow: "rgba(201, 166, 78, 0.75)" },  // 黄
+                                  { color: "#ffbb7b", glow: "rgba(255, 187, 123, 0.7)" },  // 橙
+                                  { color: "#ff8b8b", glow: "rgba(255, 139, 139, 0.75)" }  // 赤
+                                ];
+
+                                const color1 = starColors[(idx * 3) % starColors.length];
+                                const color2 = starColors[(idx * 7) % starColors.length];
+                                const colorMain = starColors[(idx * 11) % starColors.length];
+
                                 return (
                                   <div
                                     className="absolute top-1/2 -translate-y-1/2 pointer-events-none z-20"
@@ -733,12 +752,15 @@ export default function TimelinePage() {
                                       />
 
                                       {/* サブドット（星々） */}
-                                      {dots.map((dot, dIdx) => (
-                                        <g key={dIdx}>
-                                          <circle cx={dot.cx} cy={dot.cy} r="1.5" fill="#ffe29a" />
-                                          <circle cx={dot.cx} cy={dot.cy} r="3" fill="#c9a64e" className="animate-pulse" opacity="0.6" />
-                                        </g>
-                                      ))}
+                                      {dots.map((dot, dIdx) => {
+                                        const sColor = dIdx === 0 ? color1 : color2;
+                                        return (
+                                          <g key={dIdx}>
+                                            <circle cx={dot.cx} cy={dot.cy} r="1.5" fill={sColor.color} />
+                                            <circle cx={dot.cx} cy={dot.cy} r="3" fill={sColor.color} className="animate-pulse" opacity="0.6" />
+                                          </g>
+                                        );
+                                      })}
                                     </svg>
 
                                     {/* 天の川上のメイン日付ドット */}
@@ -746,6 +768,8 @@ export default function TimelinePage() {
                                       className={`absolute top-1/2 -translate-y-1/2 ${isLeft ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'} ${dotClass}`} 
                                       style={{
                                         ...dotStyle,
+                                        background: colorMain.color,
+                                        boxShadow: `0 0 10px 3px ${colorMain.glow}, 0 0 0 2px rgba(6,10,23,0.9)`,
                                         margin: 0,
                                       }}
                                     />
