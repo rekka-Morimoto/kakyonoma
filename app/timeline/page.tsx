@@ -251,8 +251,8 @@ export default function TimelinePage() {
 
     return (
       <>
-        {/* サムネイル画像（☆1以外でサムネイルがある場合に重ね合わせ） */}
-        {imp !== 1 && event.thumbnailUrl && (
+        {/* サムネイル画像（サムネイルがある場合に右側背景として重ね合わせ） */}
+        {event.thumbnailUrl && (
           <div className="absolute right-0 top-0 bottom-0 w-1/2 md:w-5/12 h-full overflow-hidden pointer-events-none z-0">
             {/* グラデーションオーバーレイでテキスト可読性を100%確保 */}
             <div
