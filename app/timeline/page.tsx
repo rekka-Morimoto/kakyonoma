@@ -635,24 +635,79 @@ export default function TimelinePage() {
                             paddingBottom: '24px', // 縦余白
                           }}
                         >
-                          {/* 天の川中央への斜めの接続線とドット */}
-                          <div 
-                            className="absolute top-1/2 -translate-y-1/2 flex items-center z-20 pointer-events-none"
-                            style={{
-                              right: isLeft ? '-28px' : 'auto',
-                              left: isLeft ? 'auto' : '-28px',
-                              flexDirection: isLeft ? 'row' : 'row-reverse',
-                            }}
-                          >
-                            <div 
-                              className="w-[20px] h-px bg-white/30"
-                              style={{
-                                transform: isLeft ? 'rotate(25deg)' : 'rotate(-25deg)',
-                                transformOrigin: isLeft ? 'right center' : 'left center',
-                              }} 
-                            />
-                            <div className={`rounded-full ${dotClass}`} style={dotStyle} />
-                          </div>
+                          {/* 星座風の屈曲接続線（星座ラインとサブドット） */}
+                          {(() => {
+                            // パターン定義 (幅28px, 高さ30px, 中央Y=15)
+                            // 左カード基準 (X=0がカード端、X=28がタイムライン中心)
+                            const patterns = [
+                              {
+                                d: "M 0 15 L 9 6 L 19 6 L 28 15",
+                                dots: [{ cx: 9, cy: 6 }, { cx: 19, cy: 6 }]
+                              },
+                              {
+                                d: "M 0 15 L 9 24 L 19 24 L 28 15",
+                                dots: [{ cx: 9, cy: 24 }, { cx: 19, cy: 24 }]
+                              },
+                              {
+                                d: "M 0 15 L 8 7 L 20 23 L 28 15",
+                                dots: [{ cx: 8, cy: 7 }, { cx: 20, cy: 23 }]
+                              }
+                            ];
+                            const pattern = patterns[idx % patterns.length];
+
+                            return (
+                              <div
+                                className="absolute top-1/2 -translate-y-1/2 pointer-events-none z-20"
+                                style={{
+                                  right: isLeft ? '-28px' : 'auto',
+                                  left: isLeft ? 'auto' : '-28px',
+                                  width: '28px',
+                                  height: '30px',
+                                }}
+                              >
+                                <svg 
+                                  width="28" 
+                                  height="30" 
+                                  viewBox="0 0 28 30"
+                                  style={{
+                                    transform: isLeft ? 'none' : 'scaleX(-1)',
+                                  }}
+                                >
+                                  {/* 星座ライン（光る点線） */}
+                                  <path 
+                                    d={pattern.d} 
+                                    fill="none" 
+                                    stroke="rgba(201, 166, 78, 0.55)" 
+                                    strokeWidth="1.2" 
+                                    strokeDasharray="2, 2" 
+                                  />
+                                  <path 
+                                    d={pattern.d} 
+                                    fill="none" 
+                                    stroke="rgba(255, 255, 255, 0.25)" 
+                                    strokeWidth="0.8" 
+                                  />
+
+                                  {/* サブドット（星々） */}
+                                  {pattern.dots.map((dot, dIdx) => (
+                                    <g key={dIdx}>
+                                      <circle cx={dot.cx} cy={dot.cy} r="1.5" fill="#ffe29a" />
+                                      <circle cx={dot.cx} cy={dot.cy} r="3" fill="#c9a64e" className="animate-pulse" opacity="0.6" />
+                                    </g>
+                                  ))}
+                                </svg>
+
+                                {/* 天の川上のメイン日付ドット */}
+                                <div 
+                                  className={`absolute top-1/2 -translate-y-1/2 ${isLeft ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'} ${dotClass}`} 
+                                  style={{
+                                    ...dotStyle,
+                                    margin: 0,
+                                  }}
+                                />
+                              </div>
+                            );
+                          })()}
 
                           <div
                             className={`${cardClass} w-full max-w-md ${isLeft ? 'text-right' : 'text-left'} transition-all duration-300 hover:scale-[1.02] self-start`}
