@@ -37,8 +37,8 @@ const getTitleFontSize = (title: string, imp: number) => {
     return 'text-sm md:text-base font-bold text-[#f8fafc] leading-relaxed break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]';
   }
   // imp === 1
-  if (len > 25) return 'text-[9px] md:text-[10px] text-[#e2e8f0] font-medium leading-tight break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
-  return 'text-[10px] md:text-xs text-[#e2e8f0] font-medium leading-normal break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
+  if (len > 25) return 'text-[11px] md:text-xs text-[#e2e8f0] font-medium leading-tight break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
+  return 'text-xs md:text-sm text-[#e2e8f0] font-medium leading-normal break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
 };
 
 const getEventStyles = (imp: number, title: string = '') => {
@@ -51,7 +51,7 @@ const getEventStyles = (imp: number, title: string = '') => {
       ? 'p-8 md:p-10 rounded-3xl border-2 shadow-[0_4px_45px_rgba(201,166,78,0.25)] hover:shadow-[0_12px_60px_rgba(201,166,78,0.5),_0_0_35px_rgba(255,226,154,0.3)] relative overflow-hidden cursor-pointer group'
       : imp === 2
         ? 'p-5 md:p-6 rounded-2xl border shadow-xl relative overflow-hidden cursor-pointer group'
-        : 'py-2 px-3 rounded-lg border relative overflow-hidden cursor-pointer group';
+        : 'py-3.5 px-4.5 rounded-xl border relative overflow-hidden cursor-pointer group flex flex-col justify-center';
 
   let cardBg = '';
   let borderClass = '';
@@ -66,7 +66,7 @@ const getEventStyles = (imp: number, title: string = '') => {
         : imp === 2
           ? 'rgba(38, 16, 64, 0.88)'
           : 'rgba(28, 12, 48, 0.78)';
-    borderClass = imp === 4 ? 'border-[#e9d5ff]/90 shadow-[0_0_40px_rgba(168,85,247,0.45)]' : imp === 3 ? 'border-purple-400/80' : imp === 2 ? 'border-rose-500/50 hover:border-rose-400/80 shadow-[0_0_15px_rgba(244,63,94,0.15)]' : 'border-purple-500/30 hover:border-purple-400/60';
+    borderClass = imp === 4 ? 'border-[#e9d5ff]/90 shadow-[0_0_40px_rgba(168, 85, 247, 0.45)]' : imp === 3 ? 'border-purple-400/80' : imp === 2 ? 'border-rose-500/50 hover:border-rose-400/80 shadow-[0_0_15px_rgba(244,63,94,0.15)]' : 'border-purple-500/30 hover:border-purple-400/60';
     dateClass = imp === 4
       ? 'text-xs md:text-sm font-black text-purple-200 tracking-[0.2em] mb-2 font-sans'
       : imp === 3
@@ -615,42 +615,50 @@ export default function TimelinePage() {
                     let currentLeftRow = 1;
                     let currentRightRow = 1;
                     let lastRowStart = 1;
+                    let lastRowSpan = 10;
                     let nonStar3Counter = 0;
 
                     return events.map((event, idx) => {
                       const imp = event.importance;
                       const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp, event.title);
                       const id = `pc-${idx}`;
-                      const cardSpan = imp === 4 ? 28 : imp === 3 ? 24 : imp === 2 ? 14 : 7;
-                      const cardHeight = imp === 4 ? '256px' : imp === 3 ? '216px' : imp === 2 ? '116px' : '46px';
+                      const cardSpan = imp === 4 ? 28 : imp === 3 ? 24 : imp === 2 ? 14 : 9;
+                      const cardHeight = imp === 4 ? '256px' : imp === 3 ? '216px' : imp === 2 ? '116px' : '66px';
 
                       let rowStart = 1;
                       let isLeft = false;
 
                       if (imp === 4 || imp === 3) {
                         rowStart = Math.max(currentLeftRow, currentRightRow);
-                        currentLeftRow = rowStart + cardSpan;
-                        currentRightRow = rowStart + cardSpan;
                       } else {
                         isLeft = nonStar3Counter % 2 === 0;
                         nonStar3Counter++;
+                        rowStart = isLeft ? currentLeftRow : currentRightRow;
+                      }
 
+                      if (idx > 0) {
+                        // 前の日付ポイントのY位置 = lastRowStart + (lastRowSpan / 2)
+                        // 今回の日付ポイントのY位置 = rowStart + (cardSpan / 2)
+                        // ポイント同士が確実に 7.5スパン（75px）以上離れるように rowStart を引き上げる
+                        const minGap = 7.5;
+                        const requiredRowStart = lastRowStart + (lastRowSpan / 2) + minGap - (cardSpan / 2);
+                        rowStart = Math.max(rowStart, Math.ceil(requiredRowStart));
+                      }
+
+                      // current 行の更新
+                      if (imp === 4 || imp === 3) {
+                        currentLeftRow = rowStart + cardSpan;
+                        currentRightRow = rowStart + cardSpan;
+                      } else {
                         if (isLeft) {
-                          rowStart = currentLeftRow;
-                          if (idx > 0) {
-                            rowStart = Math.max(rowStart, lastRowStart + 4);
-                          }
                           currentLeftRow = rowStart + cardSpan;
                         } else {
-                          rowStart = currentRightRow;
-                          if (idx > 0) {
-                            rowStart = Math.max(rowStart, lastRowStart + 4);
-                          }
                           currentRightRow = rowStart + cardSpan;
                         }
                       }
                       
                       lastRowStart = rowStart;
+                      lastRowSpan = cardSpan;
 
                       if (imp === 4 || imp === 3) {
                         return (
@@ -792,7 +800,7 @@ export default function TimelinePage() {
                   {events.map((event, index) => {
                     const imp = event.importance;
                     const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp, event.title);
-                    const cardHeight = imp === 4 ? '230px' : imp === 3 ? '190px' : imp === 2 ? '110px' : '46px';
+                    const cardHeight = imp === 4 ? '230px' : imp === 3 ? '190px' : imp === 2 ? '110px' : '66px';
 
                     return (
                       <div key={`mobile-${index}`} className="flex items-center relative w-full">
