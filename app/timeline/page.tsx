@@ -657,10 +657,12 @@ export default function TimelinePage() {
                       rowStartList.push(rowStart);
                       isLeftList.push(isLeft);
 
-                      // この日付の代表ポイント行を記録（初回のみ）
-                      const rowCenter = rowStart + Math.floor(cardSpan / 2);
-                      if (!datePointRowMap[event.date]) {
-                        datePointRowMap[event.date] = { rowCenter, firstIdx: idx };
+                      // ☆1・☆2のみ日付ポイントを共有（☆3・☆4は独立）
+                      if (imp === 1 || imp === 2) {
+                        const rowCenter = rowStart + Math.floor(cardSpan / 2);
+                        if (!datePointRowMap[event.date]) {
+                          datePointRowMap[event.date] = { rowCenter, firstIdx: idx };
+                        }
                       }
                     });
 
@@ -674,13 +676,13 @@ export default function TimelinePage() {
                       const rowStart = rowStartList[idx];
                       const isLeft = isLeftList[idx];
 
-                      // 同日付の代表ポイント情報
-                      const dateInfo = datePointRowMap[event.date];
-                      const isFirstOfDate = dateInfo.firstIdx === idx;
+                      // 同日付の代表ポイント情報（☆1・☆2のみ共有、☆3・☆4は常に独立扱い）
+                      const dateInfo = (imp === 1 || imp === 2) ? datePointRowMap[event.date] : undefined;
+                      const isFirstOfDate = !dateInfo || dateInfo.firstIdx === idx;
                       // 同日付グループの代表ポイントのY位置（グリッド行）をカードのY中心から引いてオフセット算出
-                      const sharedDotRow = dateInfo.rowCenter; // 代表ポイントの行中央
                       const thisCardCenter = rowStart + Math.floor(cardSpan / 2);
-                      // ガイドライン上の共有ドットのY位置を、このカードとの相対ピクセル差として計算
+                      // dateInfoがundefinedの場合（☆3・☆4）はオフセット0（共有なし）
+                      const sharedDotRow = dateInfo ? dateInfo.rowCenter : thisCardCenter;
                       // グリッド行 1行 = 10px (grid-rows-[10px])
                       const rowHeightPx = 10;
                       const dotYOffsetPx = (sharedDotRow - thisCardCenter) * rowHeightPx; // 正=下方向、負=上方向
