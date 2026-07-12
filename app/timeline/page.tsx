@@ -620,45 +620,70 @@ export default function TimelinePage() {
                     }} />
 
                   {(() => {
-                    let currentLeftRow = 1;
-                    let currentRightRow = 1;
-                    let lastRowStart = 1;
-                    let nonStar3Counter = 0;
+                    // ─── Pass 1: rowStart を全イベントについて計算し、日付ごとの代表ポイント行を記録 ───
+                    const pass1LeftRow = { v: 1 };
+                    const pass1RightRow = { v: 1 };
+                    let pass1LastRowStart = 1;
+                    let pass1NonStar3Counter = 0;
+                    // 日付 → { rowCenter: number (代表ドットのグリッド行中央), firstIdx: number }
+                    const datePointRowMap: Record<string, { rowCenter: number; firstIdx: number }> = {};
+                    const rowStartList: number[] = [];
+                    const isLeftList: boolean[] = [];
 
+                    events.forEach((event, idx) => {
+                      const imp = event.importance;
+                      const cardSpan = imp === 4 ? 28 : imp === 3 ? 24 : imp === 2 ? 14 : 7;
+                      let rowStart = 1;
+                      let isLeft = false;
+
+                      if (imp === 4 || imp === 3) {
+                        rowStart = Math.max(pass1LeftRow.v, pass1RightRow.v);
+                        pass1LeftRow.v = rowStart + cardSpan;
+                        pass1RightRow.v = rowStart + cardSpan;
+                      } else {
+                        isLeft = pass1NonStar3Counter % 2 === 0;
+                        pass1NonStar3Counter++;
+                        if (isLeft) {
+                          rowStart = pass1LeftRow.v;
+                          if (idx > 0) rowStart = Math.max(rowStart, pass1LastRowStart + 4);
+                          pass1LeftRow.v = rowStart + cardSpan;
+                        } else {
+                          rowStart = pass1RightRow.v;
+                          if (idx > 0) rowStart = Math.max(rowStart, pass1LastRowStart + 4);
+                          pass1RightRow.v = rowStart + cardSpan;
+                        }
+                      }
+                      pass1LastRowStart = rowStart;
+                      rowStartList.push(rowStart);
+                      isLeftList.push(isLeft);
+
+                      // この日付の代表ポイント行を記録（初回のみ）
+                      const rowCenter = rowStart + Math.floor(cardSpan / 2);
+                      if (!datePointRowMap[event.date]) {
+                        datePointRowMap[event.date] = { rowCenter, firstIdx: idx };
+                      }
+                    });
+
+                    // ─── Pass 2: 実際のレンダリング ───
                     return events.map((event, idx) => {
                       const imp = event.importance;
                       const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp, event.title);
                       const id = `pc-${idx}`;
                       const cardSpan = imp === 4 ? 28 : imp === 3 ? 24 : imp === 2 ? 14 : 7;
                       const cardHeight = imp === 4 ? '256px' : imp === 3 ? '216px' : imp === 2 ? '116px' : '46px';
+                      const rowStart = rowStartList[idx];
+                      const isLeft = isLeftList[idx];
 
-                      let rowStart = 1;
-                      let isLeft = false;
-
-                      if (imp === 4 || imp === 3) {
-                        rowStart = Math.max(currentLeftRow, currentRightRow);
-                        currentLeftRow = rowStart + cardSpan;
-                        currentRightRow = rowStart + cardSpan;
-                      } else {
-                        isLeft = nonStar3Counter % 2 === 0;
-                        nonStar3Counter++;
-
-                        if (isLeft) {
-                          rowStart = currentLeftRow;
-                          if (idx > 0) {
-                            rowStart = Math.max(rowStart, lastRowStart + 4);
-                          }
-                          currentLeftRow = rowStart + cardSpan;
-                        } else {
-                          rowStart = currentRightRow;
-                          if (idx > 0) {
-                            rowStart = Math.max(rowStart, lastRowStart + 4);
-                          }
-                          currentRightRow = rowStart + cardSpan;
-                        }
-                      }
-                      
-                      lastRowStart = rowStart;
+                      // 同日付の代表ポイント情報
+                      const dateInfo = datePointRowMap[event.date];
+                      const isFirstOfDate = dateInfo.firstIdx === idx;
+                      // 同日付グループの代表ポイントのY位置（グリッド行）をカードのY中心から引いてオフセット算出
+                      const sharedDotRow = dateInfo.rowCenter; // 代表ポイントの行中央
+                      const thisCardCenter = rowStart + Math.floor(cardSpan / 2);
+                      // ガイドライン上の共有ドットのY位置を、このカードとの相対ピクセル差として計算
+                      // グリッド行 1行 = 10px (grid-rows-[10px])
+                      const rowHeightPx = 10;
+                      const dotYOffsetPx = (sharedDotRow - thisCardCenter) * rowHeightPx; // 正=下方向、負=上方向
 
                       if (imp === 4 || imp === 3) {
                         return (
@@ -722,6 +747,48 @@ export default function TimelinePage() {
                       } else {
                         const offsetX = imp === 1 ? ((idx * 17) % 3) * 15 : 0;
                         const connWidth = 28 + offsetX;
+
+                        // 接続線：カード中央→共有ドット位置 へ向かうパスを構築
+                        // SVG の高さは 30px 固定（カード中央基準）。
+                        // 共有ドットが別行にある場合、SVGをカードから縦に伸ばす必要があるため、
+                        // 高さを |dotYOffsetPx| + 30 に拡張し、始点・終点を調整する。
+                        const svgH = Math.abs(dotYOffsetPx) + 30;
+                        // カード中央のY（SVG内座標）
+                        const cardMidY = dotYOffsetPx >= 0 ? 15 : svgH - 15;
+                        // 共有ドットのY（SVG内座標）
+                        const dotMidY = dotYOffsetPx >= 0 ? svgH - 15 : 15;
+                        // 左右の終点オフセット（従来の±10px）を維持
+                        const endDotY = isLeft ? dotMidY - 10 : dotMidY + 10;
+                        const startY = isLeft ? cardMidY : cardMidY + 10;
+                        const midY1 = Math.round((startY + endDotY) / 2) - 8;
+                        const midY2 = Math.round((startY + endDotY) / 2) + 8;
+
+                        const starColors = [
+                          { color: "#9bb0ff", glow: "rgba(155, 176, 255, 0.75)" },
+                          { color: "#ffffff", glow: "rgba(255, 255, 255, 0.8)" },
+                          { color: "#ffe29a", glow: "rgba(201, 166, 78, 0.75)" },
+                          { color: "#ffbb7b", glow: "rgba(255, 187, 123, 0.7)" },
+                          { color: "#ff8b8b", glow: "rgba(255, 139, 139, 0.75)" }
+                        ];
+                        const color1 = starColors[(idx * 3) % starColors.length];
+                        const color2 = starColors[(idx * 7) % starColors.length];
+                        const colorMain = starColors[(idx * 11) % starColors.length];
+
+                        // 屈曲パスを動的生成（3パターン）
+                        const pathPatterns = [
+                          `M 0 ${startY} L 9 ${midY1} L ${connWidth - 9} ${midY1} L ${connWidth} ${endDotY}`,
+                          `M 0 ${startY} L 9 ${midY2} L ${connWidth - 9} ${midY2} L ${connWidth} ${endDotY}`,
+                          `M 0 ${startY} L 8 ${midY1} L ${connWidth - 8} ${midY2} L ${connWidth} ${endDotY}`,
+                        ];
+                        const pathD = pathPatterns[idx % pathPatterns.length];
+                        const dot1 = idx % 3 === 0 ? { cx: 9, cy: midY1 } : idx % 3 === 1 ? { cx: 9, cy: midY2 } : { cx: 8, cy: midY1 };
+                        const dot2 = idx % 3 === 0 ? { cx: connWidth - 9, cy: midY1 } : idx % 3 === 1 ? { cx: connWidth - 9, cy: midY2 } : { cx: connWidth - 8, cy: midY2 };
+
+                        // SVGコンテナのtopオフセット：カードの上端から見た位置
+                        // dotYOffsetPx >= 0（共有ドットが下）なら top:0 から開始でOK
+                        // dotYOffsetPx < 0（共有ドットが上）なら SVGを上にはみ出させる
+                        const svgTopOffset = dotYOffsetPx < 0 ? dotYOffsetPx : 0;
+
                         return (
                           <div 
                             key={id} 
@@ -740,76 +807,53 @@ export default function TimelinePage() {
                                 marginLeft: isLeft ? undefined : `${offsetX}px`,
                               }}
                             >
-                              {(() => {
-                                const patterns = [
-                                  {
-                                    getPath: (w: number, isL: boolean) => {
-                                      const startY = isL ? 15 : 25; // 右カード(ドットは左)の始点Yを下に10pxずらす
-                                      const endY = isL ? 5 : 15;    // 左カード(ドットは右)の終点Yを上に10pxずらす
-                                      return `M 0 ${startY} L 9 6 L ${w - 9} 6 L ${w} ${endY}`;
-                                    },
-                                    getDots: (w: number) => [{ cx: 9, cy: 6 }, { cx: w - 9, cy: 6 }]
-                                  },
-                                  {
-                                    getPath: (w: number, isL: boolean) => {
-                                      const startY = isL ? 15 : 25;
-                                      const endY = isL ? 5 : 15;
-                                      return `M 0 ${startY} L 9 24 L ${w - 9} 24 L ${w} ${endY}`;
-                                    },
-                                    getDots: (w: number) => [{ cx: 9, cy: 24 }, { cx: w - 9, cy: 24 }]
-                                  },
-                                  {
-                                    getPath: (w: number, isL: boolean) => {
-                                      const startY = isL ? 15 : 25;
-                                      const endY = isL ? 5 : 15;
-                                      return `M 0 ${startY} L 8 7 L ${w - 8} 23 L ${w} ${endY}`;
-                                    },
-                                    getDots: (w: number) => [{ cx: 8, cy: 7 }, { cx: w - 8, cy: 23 }]
-                                  }
-                                ];
-                                const pattern = patterns[idx % patterns.length];
-                                const d = pattern.getPath(connWidth, isLeft);
-                                const dots = pattern.getDots(connWidth);
-                                const starColors = [
-                                  { color: "#9bb0ff", glow: "rgba(155, 176, 255, 0.75)" },
-                                  { color: "#ffffff", glow: "rgba(255, 255, 255, 0.8)" },
-                                  { color: "#ffe29a", glow: "rgba(201, 166, 78, 0.75)" },
-                                  { color: "#ffbb7b", glow: "rgba(255, 187, 123, 0.7)" },
-                                  { color: "#ff8b8b", glow: "rgba(255, 139, 139, 0.75)" }
-                                ];
-                                const color1 = starColors[(idx * 3) % starColors.length];
-                                const color2 = starColors[(idx * 7) % starColors.length];
-                                const colorMain = starColors[(idx * 11) % starColors.length];
-                                return (
-                                  <div className="absolute top-1/2 -translate-y-1/2 pointer-events-none z-20" style={{ right: isLeft ? `-${connWidth}px` : 'auto', left: isLeft ? 'auto' : `-${connWidth}px`, width: `${connWidth}px`, height: '30px' }}>
-                                    <svg width={connWidth} height="30" viewBox={`0 0 ${connWidth} 30`} style={{ transform: isLeft ? 'none' : 'scaleX(-1)' }}>
-                                      <path d={d} fill="none" stroke="rgba(201, 166, 78, 0.55)" strokeWidth="1.2" strokeDasharray="2, 2" />
-                                      <path d={d} fill="none" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" />
-                                      {dots.map((dot, dIdx) => {
-                                        const sColor = dIdx === 0 ? color1 : color2;
-                                        return (
-                                          <g key={dIdx}>
-                                            <circle cx={dot.cx} cy={dot.cy} r="1.5" fill={sColor.color} />
-                                            <circle cx={dot.cx} cy={dot.cy} r="3" fill={sColor.color} className="animate-pulse" opacity="0.6" />
-                                          </g>
-                                        );
-                                      })}
-                                    </svg>
-                                    <div 
-                                      className={`absolute top-1/2 ${dotClass}`} 
-                                      style={{ 
-                                        ...dotStyle, 
-                                        background: colorMain.color, 
-                                        boxShadow: `0 0 10px 3px ${colorMain.glow}, 0 0 0 2px rgba(6,10,23,0.9)`, 
-                                        margin: 0,
-                                        left: isLeft ? 'auto' : '0px',
-                                        right: isLeft ? '0px' : 'auto',
-                                        transform: isLeft ? 'translate(50%, -25px)' : 'translate(-50%, -5px)' // 左は上に10px, 右は下に10pxオフセットして被り防止
-                                      }} 
-                                    />
-                                  </div>
-                                );
-                              })()}
+                              {/* 星座接続ライン + 共有日付ドット */}
+                              <div 
+                                className="absolute pointer-events-none z-20"
+                                style={{
+                                  right: isLeft ? `-${connWidth}px` : 'auto',
+                                  left: isLeft ? 'auto' : `-${connWidth}px`,
+                                  width: `${connWidth}px`,
+                                  height: `${svgH}px`,
+                                  top: `calc(50% + ${svgTopOffset}px)`,
+                                  transform: 'translateY(-50%)',
+                                }}
+                              >
+                                <svg 
+                                  width={connWidth} 
+                                  height={svgH} 
+                                  viewBox={`0 0 ${connWidth} ${svgH}`} 
+                                  style={{ transform: isLeft ? 'none' : 'scaleX(-1)' }}
+                                >
+                                  <path d={pathD} fill="none" stroke="rgba(201, 166, 78, 0.55)" strokeWidth="1.2" strokeDasharray="2, 2" />
+                                  <path d={pathD} fill="none" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" />
+                                  {[dot1, dot2].map((dot, dIdx) => {
+                                    const sColor = dIdx === 0 ? color1 : color2;
+                                    return (
+                                      <g key={dIdx}>
+                                        <circle cx={dot.cx} cy={dot.cy} r="1.5" fill={sColor.color} />
+                                        <circle cx={dot.cx} cy={dot.cy} r="3" fill={sColor.color} className="animate-pulse" opacity="0.6" />
+                                      </g>
+                                    );
+                                  })}
+                                </svg>
+                                {/* 同日付の最初のカードのみ日付ドットを表示。2枚目以降は非表示（共有） */}
+                                {isFirstOfDate && (
+                                  <div 
+                                    className={`absolute ${dotClass}`} 
+                                    style={{ 
+                                      ...dotStyle, 
+                                      background: colorMain.color, 
+                                      boxShadow: `0 0 10px 3px ${colorMain.glow}, 0 0 0 2px rgba(6,10,23,0.9)`, 
+                                      margin: 0,
+                                      left: isLeft ? 'auto' : '0px',
+                                      right: isLeft ? '0px' : 'auto',
+                                      top: `${endDotY}px`,
+                                      transform: isLeft ? 'translate(50%, -50%)' : 'translate(-50%, -50%)',
+                                    }} 
+                                  />
+                                )}
+                              </div>
                               <div
                                 className={`${cardClass} w-full transition-all duration-300 hover:scale-[1.02] flex flex-col justify-center overflow-hidden`}
                                 style={{ background: cardBg, height: cardHeight }}
@@ -826,6 +870,7 @@ export default function TimelinePage() {
                     });
                   })()}
                 </div>
+
 
                 {/* ── モバイル表示 (md未満): 時系列順 縦並び ── */}
                 <div className="block md:hidden space-y-4 w-full animate-fadeIn">
