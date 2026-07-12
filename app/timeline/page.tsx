@@ -19,92 +19,125 @@ const STARS = Array.from({ length: 80 }, (_, i) => ({
   opacity: (((i * 31) % 70) + 30) / 100,
 }));
 
+const getTitleFontSize = (title: string, imp: number) => {
+  const len = title.length;
+  if (imp === 4) {
+    if (len > 35) return 'text-lg md:text-xl font-bold text-white leading-relaxed tracking-wider break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_12px_rgba(0,0,0,0.95)]';
+    if (len > 20) return 'text-xl md:text-2xl font-black text-white leading-relaxed tracking-wider break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_12px_rgba(0,0,0,0.95)]';
+    return 'text-2xl md:text-3.5xl font-black text-white leading-relaxed tracking-wider break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_12px_rgba(0,0,0,0.95)]';
+  }
+  if (imp === 3) {
+    if (len > 35) return 'text-base md:text-lg font-bold text-white leading-relaxed tracking-wider break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_12px_rgba(0,0,0,0.95)]';
+    if (len > 20) return 'text-lg md:text-xl font-bold text-white leading-relaxed tracking-wider break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_12px_rgba(0,0,0,0.95)]';
+    return 'text-xl md:text-2.5xl font-black text-white leading-relaxed tracking-wider break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_12px_rgba(0,0,0,0.95)]';
+  }
+  if (imp === 2) {
+    if (len > 35) return 'text-[11px] md:text-xs font-bold text-[#f8fafc] leading-snug break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]';
+    if (len > 20) return 'text-xs md:text-sm font-bold text-[#f8fafc] leading-normal break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]';
+    return 'text-sm md:text-base font-bold text-[#f8fafc] leading-relaxed break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]';
+  }
+  // imp === 1
+  if (len > 25) return 'text-[9px] md:text-[10px] text-[#e2e8f0] font-medium leading-tight break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
+  return 'text-[10px] md:text-xs text-[#e2e8f0] font-medium leading-normal break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
+};
+
 const getEventStyles = (imp: number, title: string = '') => {
   const isSpace = title.includes('#かきょすぺーす') || title.includes('かきょすぺーす');
   const isStory = title.includes('#きょーのお話') || title.includes('きょーのお話');
-    // ☆1を標準基準（コンパクト）として、☆2・☆3を明確に大きく拡大
-  const cardClass = imp === 3
-    ? 'p-8 md:p-10 rounded-3xl border-2 shadow-[0_4px_45px_rgba(201,166,78,0.25)] hover:shadow-[0_12px_60px_rgba(201,166,78,0.5),_0_0_35px_rgba(255,226,154,0.3)] relative overflow-hidden cursor-pointer group'
-    : imp === 2
-      ? 'p-6 md:p-8 rounded-3xl border shadow-xl relative overflow-hidden cursor-pointer group'
-      : 'py-2 px-3.5 rounded-lg border relative overflow-hidden cursor-pointer group';
+  
+  const cardClass = imp === 4
+    ? 'p-8 md:p-10 rounded-3xl border-2 relative overflow-visible cursor-pointer group'
+    : imp === 3
+      ? 'p-8 md:p-10 rounded-3xl border-2 shadow-[0_4px_45px_rgba(201,166,78,0.25)] hover:shadow-[0_12px_60px_rgba(201,166,78,0.5),_0_0_35px_rgba(255,226,154,0.3)] relative overflow-hidden cursor-pointer group'
+      : imp === 2
+        ? 'p-5 md:p-6 rounded-2xl border shadow-xl relative overflow-hidden cursor-pointer group'
+        : 'py-2 px-3 rounded-lg border relative overflow-hidden cursor-pointer group';
 
-  // タグカラー分岐
   let cardBg = '';
   let borderClass = '';
   let dateClass = '';
   let overlayGradient = '';
 
   if (isSpace) {
-    // #かきょすぺーす: 紫色テーマ
-    cardBg = imp === 3
-      ? 'radial-gradient(circle at 90% 10%, rgba(168, 85, 247, 0.35) 0%, rgba(24, 9, 43, 0.97) 70%)'
-      : imp === 2
-        ? 'rgba(38, 16, 64, 0.88)'
-        : 'rgba(28, 12, 48, 0.78)';
-    borderClass = imp === 3 ? 'border-purple-400/80' : imp === 2 ? 'border-rose-500/50 hover:border-rose-400/80 shadow-[0_0_15px_rgba(244,63,94,0.15)]' : 'border-purple-500/30 hover:border-purple-400/60';
-    dateClass = imp === 3
-      ? 'text-xs md:text-sm font-black text-purple-300 tracking-widest mb-2 font-sans'
-      : imp === 2
-        ? 'text-[11px] md:text-xs font-bold text-purple-300 tracking-wider mb-1 font-sans'
-        : 'text-[10px] md:text-[11px] font-bold text-purple-300/80 tracking-wide mb-0.5 font-sans';
+    cardBg = imp === 4
+      ? 'radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.45) 0%, rgba(20, 5, 35, 0.98) 70%)'
+      : imp === 3
+        ? 'radial-gradient(circle at 90% 10%, rgba(168, 85, 247, 0.35) 0%, rgba(24, 9, 43, 0.97) 70%)'
+        : imp === 2
+          ? 'rgba(38, 16, 64, 0.88)'
+          : 'rgba(28, 12, 48, 0.78)';
+    borderClass = imp === 4 ? 'border-[#e9d5ff]/90 shadow-[0_0_40px_rgba(168,85,247,0.45)]' : imp === 3 ? 'border-purple-400/80' : imp === 2 ? 'border-rose-500/50 hover:border-rose-400/80 shadow-[0_0_15px_rgba(244,63,94,0.15)]' : 'border-purple-500/30 hover:border-purple-400/60';
+    dateClass = imp === 4
+      ? 'text-xs md:text-sm font-black text-purple-200 tracking-[0.2em] mb-2 font-sans'
+      : imp === 3
+        ? 'text-xs md:text-sm font-black text-purple-300 tracking-widest mb-2 font-sans'
+        : imp === 2
+          ? 'text-[11px] md:text-xs font-bold text-purple-300 tracking-wider mb-1 font-sans'
+          : 'text-[10px] md:text-[11px] font-bold text-purple-300/80 tracking-wide mb-0.5 font-sans';
     overlayGradient = 'linear-gradient(to right, rgba(28, 12, 48, 0.98) 0%, rgba(28, 12, 48, 0.8) 40%, rgba(28, 12, 48, 0.3) 100%)';
   } else if (isStory) {
-    // #きょーのお話: 青色テーマ
-    cardBg = imp === 3
-      ? 'radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.35) 0%, rgba(10, 25, 54, 0.97) 70%)'
-      : imp === 2
-        ? 'rgba(14, 35, 71, 0.88)'
-        : 'rgba(10, 24, 50, 0.78)';
-    borderClass = imp === 3 ? 'border-blue-400/80' : imp === 2 ? 'border-rose-500/50 hover:border-rose-400/80 shadow-[0_0_15px_rgba(244,63,94,0.15)]' : 'border-blue-500/30 hover:border-blue-400/60';
-    dateClass = imp === 3
-      ? 'text-xs md:text-sm font-black text-blue-300 tracking-widest mb-2 font-sans'
-      : imp === 2
-        ? 'text-[11px] md:text-xs font-bold text-blue-300 tracking-wider mb-1 font-sans'
-        : 'text-[10px] md:text-[11px] font-bold text-blue-300/80 tracking-wide mb-0.5 font-sans';
+    cardBg = imp === 4
+      ? 'radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.45) 0%, rgba(5, 15, 45, 0.98) 70%)'
+      : imp === 3
+        ? 'radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.35) 0%, rgba(10, 25, 54, 0.97) 70%)'
+        : imp === 2
+          ? 'rgba(14, 35, 71, 0.88)'
+          : 'rgba(10, 24, 50, 0.78)';
+    borderClass = imp === 4 ? 'border-[#bfdbfe]/90 shadow-[0_0_40px_rgba(59, 130, 246, 0.45)]' : imp === 3 ? 'border-blue-400/80' : imp === 2 ? 'border-rose-500/50 hover:border-rose-400/80 shadow-[0_0_15px_rgba(244,63,94,0.15)]' : 'border-blue-500/30 hover:border-blue-400/60';
+    dateClass = imp === 4
+      ? 'text-xs md:text-sm font-black text-blue-200 tracking-[0.2em] mb-2 font-sans'
+      : imp === 3
+        ? 'text-xs md:text-sm font-black text-blue-300 tracking-widest mb-2 font-sans'
+        : imp === 2
+          ? 'text-[11px] md:text-xs font-bold text-blue-300 tracking-wider mb-1 font-sans'
+          : 'text-[10px] md:text-[11px] font-bold text-blue-300/80 tracking-wide mb-0.5 font-sans';
     overlayGradient = 'linear-gradient(to right, rgba(10, 24, 50, 0.98) 0%, rgba(10, 24, 50, 0.8) 40%, rgba(10, 24, 50, 0.3) 100%)';
   } else {
-    // 通常（金/紺テーマ）
-    cardBg = imp === 3
-      ? 'radial-gradient(circle at 90% 10%, rgba(251, 191, 36, 0.22) 0%, rgba(12, 19, 38, 0.96) 70%)'
-      : imp === 2
-        ? 'rgba(14, 25, 48, 0.8)'
-        : 'rgba(10, 18, 36, 0.7)';
-    borderClass = imp === 3 ? 'border-[#c9a64e]/70' : imp === 2 ? 'border-red-500/40 hover:border-red-400/70 shadow-[0_0_15px_rgba(239,68,68,0.15)]' : 'border-white/10 hover:border-[#c9a64e]/40';
-    dateClass = imp === 3
-      ? 'text-xs md:text-sm font-black text-[#ffc56c] tracking-widest mb-2 font-sans'
-      : imp === 2
-        ? 'text-[11px] md:text-xs font-bold text-[#d4b26f] tracking-wider mb-1 font-sans'
-        : 'text-[10px] md:text-[11px] font-bold text-[#a0aec0] tracking-wide mb-0.5 font-sans';
+    cardBg = imp === 4
+      ? 'radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.28) 0%, rgba(18, 9, 4, 0.98) 70%)'
+      : imp === 3
+        ? 'radial-gradient(circle at 90% 10%, rgba(251, 191, 36, 0.22) 0%, rgba(12, 19, 38, 0.96) 70%)'
+        : imp === 2
+          ? 'rgba(14, 25, 48, 0.8)'
+          : 'rgba(10, 18, 36, 0.7)';
+    borderClass = imp === 4 ? 'border-[#ffe29a]/90 shadow-[0_0_45px_rgba(251,191,36,0.4)]' : imp === 3 ? 'border-[#c9a64e]/70' : imp === 2 ? 'border-red-500/40 hover:border-red-400/70 shadow-[0_0_15px_rgba(239,68,68,0.15)]' : 'border-white/10 hover:border-[#c9a64e]/40';
+    dateClass = imp === 4
+      ? 'text-xs md:text-sm font-black text-[#ffc56c] tracking-[0.2em] mb-2 font-sans'
+      : imp === 3
+        ? 'text-xs md:text-sm font-black text-[#ffc56c] tracking-widest mb-2 font-sans'
+        : imp === 2
+          ? 'text-[11px] md:text-xs font-bold text-[#d4b26f] tracking-wider mb-1 font-sans'
+          : 'text-[10px] md:text-[11px] font-bold text-[#a0aec0] tracking-wide mb-0.5 font-sans';
     overlayGradient = 'linear-gradient(to right, rgba(12, 19, 38, 0.98) 0%, rgba(12, 19, 38, 0.75) 40%, rgba(12, 19, 38, 0.3) 100%)';
   }
 
-  const titleClass = imp === 3
-    ? 'text-2xl md:text-3xl font-black text-white leading-relaxed tracking-wider break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_12px_rgba(0,0,0,0.95)]'
-    : imp === 2
-      ? 'text-lg md:text-xl font-bold text-[#f8fafc] leading-relaxed break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]'
-      : 'text-[11px] md:text-xs text-[#e2e8f0] font-medium leading-snug break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
+  const titleClass = getTitleFontSize(title, imp);
 
-  const dotClass = imp === 3
+  const dotClass = imp === 4 || imp === 3
     ? 'w-7 h-7 rounded-full z-10 flex items-center justify-center'
     : imp === 2
       ? 'w-4 h-4 rounded-full z-10'
       : 'w-2.5 h-2.5 rounded-full z-10';
 
-  const dotStyle = imp === 3
+  const dotStyle = imp === 4
     ? {
-        background: 'radial-gradient(circle, #ffffff 0%, #c9a64e 60%, #5c3010 100%)',
-        boxShadow: '0 0 15px 5px rgba(255,255,255,0.65), 0 0 0 4px rgba(6,10,23,0.9)',
+        background: 'radial-gradient(circle, #ffffff 0%, #ffd700 40%, #ff4500 100%)',
+        boxShadow: '0 0 25px 8px rgba(255,226,154,0.85), 0 0 0 4px rgba(6,10,23,0.9)',
       }
-    : imp === 2
+    : imp === 3
       ? {
-          background: isSpace ? '#c084fc' : isStory ? '#60a5fa' : '#c9a64e',
-          boxShadow: `0 0 8px 2px ${isSpace ? 'rgba(192,132,252,0.5)' : isStory ? 'rgba(96,165,250,0.5)' : 'rgba(201,166,78,0.5)'}, 0 0 0 3px rgba(6,10,23,0.9)`,
+          background: 'radial-gradient(circle, #ffffff 0%, #c9a64e 60%, #5c3010 100%)',
+          boxShadow: '0 0 15px 5px rgba(255,255,255,0.65), 0 0 0 4px rgba(6,10,23,0.9)',
         }
-      : {
-          background: isSpace ? '#a855f7' : isStory ? '#3b82f6' : '#a0aec0',
-          boxShadow: '0 0 5px 1px rgba(160,174,192,0.4), 0 0 0 2px rgba(6,10,23,0.9)',
-        };
+      : imp === 2
+        ? {
+            background: isSpace ? '#c084fc' : isStory ? '#60a5fa' : '#c9a64e',
+            boxShadow: `0 0 8px 2px ${isSpace ? 'rgba(192,132,252,0.5)' : isStory ? 'rgba(96,165,250,0.5)' : 'rgba(201,166,78,0.5)'}, 0 0 0 3px rgba(6,10,23,0.9)`,
+          }
+        : {
+            background: isSpace ? '#a855f7' : isStory ? '#3b82f6' : '#a0aec0',
+            boxShadow: '0 0 5px 1px rgba(160,174,192,0.4), 0 0 0 2px rgba(6,10,23,0.9)',
+          };
 
   return { cardClass: `${cardClass} ${borderClass}`, cardBg, titleClass, dateClass, dotClass, dotStyle, overlayGradient };
 };
@@ -588,12 +621,13 @@ export default function TimelinePage() {
                       const imp = event.importance;
                       const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp, event.title);
                       const id = `pc-${idx}`;
-                      const cardSpan = spans[id] || 15;
+                      const cardSpan = imp === 4 ? 28 : imp === 3 ? 24 : imp === 2 ? 14 : 7;
+                      const cardHeight = imp === 4 ? '256px' : imp === 3 ? '216px' : imp === 2 ? '116px' : '46px';
 
                       let rowStart = 1;
                       let isLeft = false;
 
-                      if (imp === 3) {
+                      if (imp === 4 || imp === 3) {
                         rowStart = Math.max(currentLeftRow, currentRightRow);
                         currentLeftRow = rowStart + cardSpan;
                         currentRightRow = rowStart + cardSpan;
@@ -604,13 +638,13 @@ export default function TimelinePage() {
                         if (isLeft) {
                           rowStart = currentLeftRow;
                           if (idx > 0) {
-                            rowStart = Math.max(rowStart, lastRowStart + 4); // 40px分確実に縦にずらして重なり防止
+                            rowStart = Math.max(rowStart, lastRowStart + 4);
                           }
                           currentLeftRow = rowStart + cardSpan;
                         } else {
                           rowStart = currentRightRow;
                           if (idx > 0) {
-                            rowStart = Math.max(rowStart, lastRowStart + 4); // 40px分確実に縦にずらして重なり防止
+                            rowStart = Math.max(rowStart, lastRowStart + 4);
                           }
                           currentRightRow = rowStart + cardSpan;
                         }
@@ -618,21 +652,18 @@ export default function TimelinePage() {
                       
                       lastRowStart = rowStart;
 
-                      if (imp === 3) {
-                        // ☆3つ: 中央フル幅カード
+                      if (imp === 4 || imp === 3) {
                         return (
                           <div 
                             key={id} 
-                            ref={(el) => { cardRefs.current[id] = el; }}
                             className="relative flex justify-center items-start z-10"
                             style={{
                               gridColumn: '1 / -1',
                               gridRowStart: rowStart,
                               gridRowEnd: `span ${cardSpan}`,
-                              paddingBottom: '24px', // 縦余白
+                              paddingBottom: '24px',
                             }}
                           >
-                            {/* 中央ドット */}
                             <div
                               className="absolute left-1/2 -translate-x-1/2 -top-1 w-7 h-7 rounded-full z-20 flex items-center justify-center"
                               style={dotStyle}
@@ -640,15 +671,33 @@ export default function TimelinePage() {
                               <span className="w-2.5 h-2.5 rounded-full bg-white opacity-90 animate-ping" />
                             </div>
 
-                            {/* カード本体 */}
                             <div
-                              className={`${cardClass} w-full max-w-2xl transition-all duration-300 hover:scale-[1.015]`}
-                              style={{ background: cardBg }}
+                              className={`${cardClass} w-full max-w-2xl transition-all duration-300 hover:scale-[1.015] flex flex-col justify-center overflow-visible`}
+                              style={{ background: cardBg, height: cardHeight }}
                               onClick={() => setSelectedEvent(event)}
                             >
+                              {imp === 4 && (
+                                <div className="absolute inset-0 pointer-events-none border border-[#ffe29a]/60 rounded-3xl m-1.5 z-20">
+                                  <svg className="absolute -top-3.5 -left-3.5 w-7 h-7 text-[#ffe29a] animate-pulse" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2l2.4 7.2h7.6l-6.2 4.5 2.4 7.3-6.2-4.5-6.2 4.5 2.4-7.3-6.2-4.5h7.6z" />
+                                  </svg>
+                                  <svg className="absolute -top-3.5 -right-3.5 w-7 h-7 text-[#ffe29a] animate-pulse" viewBox="0 0 24 24" fill="currentColor" style={{ animationDelay: '0.4s' }}>
+                                    <path d="M12 2l2.4 7.2h7.6l-6.2 4.5 2.4 7.3-6.2-4.5-6.2 4.5 2.4-7.3-6.2-4.5h7.6z" />
+                                  </svg>
+                                  <svg className="absolute -bottom-3.5 -left-3.5 w-7 h-7 text-[#ffe29a] animate-pulse" viewBox="0 0 24 24" fill="currentColor" style={{ animationDelay: '0.8s' }}>
+                                    <path d="M12 2l2.4 7.2h7.6l-6.2 4.5 2.4 7.3-6.2-4.5-6.2 4.5 2.4-7.3-6.2-4.5h7.6z" />
+                                  </svg>
+                                  <svg className="absolute -bottom-3.5 -right-3.5 w-7 h-7 text-[#ffe29a] animate-pulse" viewBox="0 0 24 24" fill="currentColor" style={{ animationDelay: '1.2s' }}>
+                                    <path d="M12 2l2.4 7.2h7.6l-6.2 4.5 2.4 7.3-6.2-4.5-6.2 4.5 2.4-7.3-6.2-4.5h7.6z" />
+                                  </svg>
+                                  <div className="absolute top-1/2 left-0 -translate-y-1/2 w-4 h-px bg-[#ffe29a]/40" />
+                                  <div className="absolute top-1/2 right-0 -translate-y-1/2 w-4 h-px bg-[#ffe29a]/40" />
+                                  <div className="absolute left-1/2 top-0 -translate-x-1/2 h-4 w-px bg-[#ffe29a]/40" />
+                                  <div className="absolute left-1/2 bottom-0 -translate-x-1/2 h-4 w-px bg-[#ffe29a]/40" />
+                                </div>
+                              )}
                               <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#c9a64e] to-transparent" />
                               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#c9a64e] to-transparent" />
-                              
                               <div className="absolute top-3 right-3 text-[#c9a64e]/50 pointer-events-none select-none animate-pulse z-10" style={{ animationDuration: '4s' }}>
                                 <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
                                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
@@ -656,29 +705,26 @@ export default function TimelinePage() {
                               </div>
                               <span className="absolute top-2.5 left-2.5 text-[#c9a64e]/60 text-xs animate-pulse select-none z-10" style={{ animationDelay: '0.2s', animationDuration: '3s' }}>✦</span>
                               <span className="absolute bottom-3 right-5 text-[#c9a64e]/50 text-[10px] animate-pulse select-none z-10" style={{ animationDelay: '1.2s', animationDuration: '2.5s' }}>✦</span>
-
-                              {renderCardInner(event)}
+                              <div className="w-full h-full overflow-hidden flex flex-col justify-center">
+                                {renderCardInner(event)}
+                              </div>
                             </div>
                           </div>
                         );
                       } else {
-                        // ☆1, ☆2: 左右交互 (千鳥) ジグザグ配置
                         const offsetX = imp === 1 ? ((idx * 17) % 3) * 15 : 0;
                         const connWidth = 28 + offsetX;
-
                         return (
                           <div 
                             key={id} 
-                            ref={(el) => { cardRefs.current[id] = el; }}
                             className={`relative flex items-start ${isLeft ? 'justify-end' : 'justify-start'} z-10`}
                             style={{
                               gridColumn: isLeft ? '1' : '2',
                               gridRowStart: rowStart,
                               gridRowEnd: `span ${cardSpan}`,
-                              paddingBottom: '24px', // 縦余白
+                              paddingBottom: '24px',
                             }}
                           >
-                            {/* ラッパー div (相対配置、はみ出し接続線表示用。カード本体と同一幅になる) */}
                             <div 
                               className={`relative flex items-start self-start w-full ${imp === 2 ? 'max-w-md' : 'max-w-[298px]'} ${isLeft ? 'ml-auto' : 'mr-auto'}`}
                               style={{
@@ -686,72 +732,30 @@ export default function TimelinePage() {
                                 marginLeft: isLeft ? undefined : `${offsetX}px`,
                               }}
                             >
-                              {/* 星座風の屈曲接続線（星座ラインとサブドット） */}
                               {(() => {
                                 const patterns = [
-                                  {
-                                    getPath: (w: number) => `M 0 15 L 9 6 L ${w - 9} 6 L ${w} 15`,
-                                    getDots: (w: number) => [{ cx: 9, cy: 6 }, { cx: w - 9, cy: 6 }]
-                                  },
-                                  {
-                                    getPath: (w: number) => `M 0 15 L 9 24 L ${w - 9} 24 L ${w} 15`,
-                                    getDots: (w: number) => [{ cx: 9, cy: 24 }, { cx: w - 9, cy: 24 }]
-                                  },
-                                  {
-                                    getPath: (w: number) => `M 0 15 L 8 7 L ${w - 8} 23 L ${w} 15`,
-                                    getDots: (w: number) => [{ cx: 8, cy: 7 }, { cx: w - 8, cy: 23 }]
-                                  }
+                                  { getPath: (w: number) => `M 0 15 L 9 6 L ${w - 9} 6 L ${w} 15`, getDots: (w: number) => [{ cx: 9, cy: 6 }, { cx: w - 9, cy: 6 }] },
+                                  { getPath: (w: number) => `M 0 15 L 9 24 L ${w - 9} 24 L ${w} 15`, getDots: (w: number) => [{ cx: 9, cy: 24 }, { cx: w - 9, cy: 24 }] },
+                                  { getPath: (w: number) => `M 0 15 L 8 7 L ${w - 8} 23 L ${w} 15`, getDots: (w: number) => [{ cx: 8, cy: 7 }, { cx: w - 8, cy: 23 }] }
                                 ];
                                 const pattern = patterns[idx % patterns.length];
                                 const d = pattern.getPath(connWidth);
                                 const dots = pattern.getDots(connWidth);
-
                                 const starColors = [
-                                  { color: "#9bb0ff", glow: "rgba(155, 176, 255, 0.75)" }, // 青
-                                  { color: "#ffffff", glow: "rgba(255, 255, 255, 0.8)" },  // 白
-                                  { color: "#ffe29a", glow: "rgba(201, 166, 78, 0.75)" },  // 黄
-                                  { color: "#ffbb7b", glow: "rgba(255, 187, 123, 0.7)" },  // 橙
-                                  { color: "#ff8b8b", glow: "rgba(255, 139, 139, 0.75)" }  // 赤
+                                  { color: "#9bb0ff", glow: "rgba(155, 176, 255, 0.75)" },
+                                  { color: "#ffffff", glow: "rgba(255, 255, 255, 0.8)" },
+                                  { color: "#ffe29a", glow: "rgba(201, 166, 78, 0.75)" },
+                                  { color: "#ffbb7b", glow: "rgba(255, 187, 123, 0.7)" },
+                                  { color: "#ff8b8b", glow: "rgba(255, 139, 139, 0.75)" }
                                 ];
-
                                 const color1 = starColors[(idx * 3) % starColors.length];
                                 const color2 = starColors[(idx * 7) % starColors.length];
                                 const colorMain = starColors[(idx * 11) % starColors.length];
-
                                 return (
-                                  <div
-                                    className="absolute top-1/2 -translate-y-1/2 pointer-events-none z-20"
-                                    style={{
-                                      right: isLeft ? `-${connWidth}px` : 'auto',
-                                      left: isLeft ? 'auto' : `-${connWidth}px`,
-                                      width: `${connWidth}px`,
-                                      height: '30px',
-                                    }}
-                                  >
-                                    <svg 
-                                      width={connWidth} 
-                                      height="30" 
-                                      viewBox={`0 0 ${connWidth} 30`}
-                                      style={{
-                                        transform: isLeft ? 'none' : 'scaleX(-1)',
-                                      }}
-                                    >
-                                      {/* 星座ライン（光る点線） */}
-                                      <path 
-                                        d={d} 
-                                        fill="none" 
-                                        stroke="rgba(201, 166, 78, 0.55)" 
-                                        strokeWidth="1.2" 
-                                        strokeDasharray="2, 2" 
-                                      />
-                                      <path 
-                                        d={d} 
-                                        fill="none" 
-                                        stroke="rgba(255, 255, 255, 0.25)" 
-                                        strokeWidth="0.8" 
-                                      />
-
-                                      {/* サブドット（星々） */}
+                                  <div className="absolute top-1/2 -translate-y-1/2 pointer-events-none z-20" style={{ right: isLeft ? `-${connWidth}px` : 'auto', left: isLeft ? 'auto' : `-${connWidth}px`, width: `${connWidth}px`, height: '30px' }}>
+                                    <svg width={connWidth} height="30" viewBox={`0 0 ${connWidth} 30`} style={{ transform: isLeft ? 'none' : 'scaleX(-1)' }}>
+                                      <path d={d} fill="none" stroke="rgba(201, 166, 78, 0.55)" strokeWidth="1.2" strokeDasharray="2, 2" />
+                                      <path d={d} fill="none" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="0.8" />
                                       {dots.map((dot, dIdx) => {
                                         const sColor = dIdx === 0 ? color1 : color2;
                                         return (
@@ -762,28 +766,18 @@ export default function TimelinePage() {
                                         );
                                       })}
                                     </svg>
-
-                                    {/* 天の川上のメイン日付ドット */}
-                                    <div 
-                                      className={`absolute top-1/2 -translate-y-1/2 ${isLeft ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'} ${dotClass}`} 
-                                      style={{
-                                        ...dotStyle,
-                                        background: colorMain.color,
-                                        boxShadow: `0 0 10px 3px ${colorMain.glow}, 0 0 0 2px rgba(6,10,23,0.9)`,
-                                        margin: 0,
-                                      }}
-                                    />
+                                    <div className={`absolute top-1/2 -translate-y-1/2 ${isLeft ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'} ${dotClass}`} style={{ ...dotStyle, background: colorMain.color, boxShadow: `0 0 10px 3px ${colorMain.glow}, 0 0 0 2px rgba(6,10,23,0.9)`, margin: 0 }} />
                                   </div>
                                 );
                               })()}
-
-                              {/* カード本体 */}
                               <div
-                                className={`${cardClass} w-full transition-all duration-300 hover:scale-[1.02] self-start`}
-                                style={{ background: cardBg }}
+                                className={`${cardClass} w-full transition-all duration-300 hover:scale-[1.02] flex flex-col justify-center overflow-hidden`}
+                                style={{ background: cardBg, height: cardHeight }}
                                 onClick={() => setSelectedEvent(event)}
                               >
-                                {renderCardInner(event)}
+                                <div className="w-full h-full overflow-hidden flex flex-col justify-center">
+                                  {renderCardInner(event)}
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -794,10 +788,11 @@ export default function TimelinePage() {
                 </div>
 
                 {/* ── モバイル表示 (md未満): 時系列順 縦並び ── */}
-                <div className="block md:hidden space-y-3 w-full animate-fadeIn">
+                <div className="block md:hidden space-y-4 w-full animate-fadeIn">
                   {events.map((event, index) => {
                     const imp = event.importance;
                     const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp, event.title);
+                    const cardHeight = imp === 4 ? '230px' : imp === 3 ? '190px' : imp === 2 ? '110px' : '46px';
 
                     return (
                       <div key={`mobile-${index}`} className="flex items-center relative w-full">
@@ -809,17 +804,39 @@ export default function TimelinePage() {
                             boxShadow: dotStyle.boxShadow,
                           }}
                         >
-                          {imp === 3 && <span className="w-2.5 h-2.5 rounded-full bg-white opacity-90 animate-ping" />}
+                          {(imp === 4 || imp === 3) && <span className="w-2.5 h-2.5 rounded-full bg-white opacity-90 animate-ping" />}
                         </div>
 
                         {/* カード */}
                         <div className="w-[calc(100%-2.5rem)] ml-10">
                           <div
-                            className={`${cardClass} transition-all duration-300 active:scale-[0.98]`}
-                            style={{ background: cardBg }}
+                            className={`${cardClass} transition-all duration-300 active:scale-[0.98] flex flex-col justify-center overflow-visible`}
+                            style={{ background: cardBg, height: cardHeight }}
                             onClick={() => setSelectedEvent(event)}
                           >
-                            {imp === 3 && (
+                            {/* ☆4専用：ラグジュアリーな星座・星飾りイラストフレーム */}
+                            {imp === 4 && (
+                              <div className="absolute inset-0 pointer-events-none border border-[#ffe29a]/60 rounded-3xl m-1.5 z-20">
+                                {/* 左上星 */}
+                                <svg className="absolute -top-3 -left-3 w-5 h-5 text-[#ffe29a] animate-pulse" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M12 2l2.4 7.2h7.6l-6.2 4.5 2.4 7.3-6.2-4.5-6.2 4.5 2.4-7.3-6.2-4.5h7.6z" />
+                                </svg>
+                                {/* 右上星 */}
+                                <svg className="absolute -top-3 -right-3 w-5 h-5 text-[#ffe29a] animate-pulse" viewBox="0 0 24 24" fill="currentColor" style={{ animationDelay: '0.4s' }}>
+                                  <path d="M12 2l2.4 7.2h7.6l-6.2 4.5 2.4 7.3-6.2-4.5-6.2 4.5 2.4-7.3-6.2-4.5h7.6z" />
+                                </svg>
+                                {/* 左下星 */}
+                                <svg className="absolute -bottom-3 -left-3 w-5 h-5 text-[#ffe29a] animate-pulse" viewBox="0 0 24 24" fill="currentColor" style={{ animationDelay: '0.8s' }}>
+                                  <path d="M12 2l2.4 7.2h7.6l-6.2 4.5 2.4 7.3-6.2-4.5-6.2 4.5 2.4-7.3-6.2-4.5h7.6z" />
+                                </svg>
+                                {/* 右下星 */}
+                                <svg className="absolute -bottom-3 -right-3 w-5 h-5 text-[#ffe29a] animate-pulse" viewBox="0 0 24 24" fill="currentColor" style={{ animationDelay: '1.2s' }}>
+                                  <path d="M12 2l2.4 7.2h7.6l-6.2 4.5 2.4 7.3-6.2-4.5-6.2 4.5 2.4-7.3-6.2-4.5h7.6z" />
+                                </svg>
+                              </div>
+                            )}
+
+                            {(imp === 4 || imp === 3) && (
                               <>
                                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#c9a64e] to-transparent" />
                                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#c9a64e] to-transparent" />
@@ -831,7 +848,9 @@ export default function TimelinePage() {
                               </>
                             )}
 
-                            {renderCardInner(event)}
+                            <div className="w-full h-full overflow-hidden flex flex-col justify-center">
+                              {renderCardInner(event)}
+                            </div>
                           </div>
                         </div>
                       </div>
