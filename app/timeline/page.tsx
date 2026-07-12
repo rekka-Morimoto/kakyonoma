@@ -22,13 +22,12 @@ const STARS = Array.from({ length: 80 }, (_, i) => ({
 const getEventStyles = (imp: number, title: string = '') => {
   const isSpace = title.includes('#かきょすぺーす') || title.includes('かきょすぺーす');
   const isStory = title.includes('#きょーのお話') || title.includes('きょーのお話');
-
-  // ☆1を標準基準（コンパクト）として、☆2・☆3を明確に大きく拡大
+    // ☆1を標準基準（コンパクト）として、☆2・☆3を明確に大きく拡大
   const cardClass = imp === 3
     ? 'p-8 md:p-10 rounded-3xl border-2 shadow-[0_4px_45px_rgba(201,166,78,0.25)] hover:shadow-[0_12px_60px_rgba(201,166,78,0.5),_0_0_35px_rgba(255,226,154,0.3)] relative overflow-hidden cursor-pointer group'
     : imp === 2
-      ? 'p-5 md:p-6 rounded-2xl border shadow-lg relative overflow-hidden cursor-pointer group'
-      : 'py-3 px-4 rounded-xl border relative overflow-hidden cursor-pointer group';
+      ? 'p-6 md:p-8 rounded-3xl border shadow-xl relative overflow-hidden cursor-pointer group'
+      : 'py-2 px-3.5 rounded-lg border relative overflow-hidden cursor-pointer group';
 
   // タグカラー分岐
   let cardBg = '';
@@ -83,8 +82,8 @@ const getEventStyles = (imp: number, title: string = '') => {
   const titleClass = imp === 3
     ? 'text-2xl md:text-3xl font-black text-white leading-relaxed tracking-wider break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_12px_rgba(0,0,0,0.95)]'
     : imp === 2
-      ? 'text-base md:text-lg font-bold text-[#f8fafc] leading-relaxed break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]'
-      : 'text-xs md:text-sm text-[#e2e8f0] font-medium leading-snug break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
+      ? 'text-lg md:text-xl font-bold text-[#f8fafc] leading-relaxed break-keep [overflow-wrap:anywhere] [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]'
+      : 'text-[11px] md:text-xs text-[#e2e8f0] font-medium leading-snug break-keep [overflow-wrap:anywhere] [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]';
 
   const dotClass = imp === 3
     ? 'w-7 h-7 rounded-full z-10 flex items-center justify-center'
@@ -129,9 +128,52 @@ export default function TimelinePage() {
     );
   }, [events, searchQuery]);
 
+  const [spans, setSpans] = useState<{ [key: string]: number }>({});
+  const cardRefs = React.useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  const calculateSpans = React.useCallback(() => {
+    const newSpans: { [key: string]: number } = {};
+    let changed = false;
+
+    events.forEach((event, idx) => {
+      const id = `pc-${idx}`;
+      const element = cardRefs.current[id];
+      if (element) {
+        const height = element.getBoundingClientRect().height || element.offsetHeight;
+        // 1スパン = 10px。少しの余白を含めてスパン数を算出
+        const span = Math.ceil(height / 10) + 2;
+        if (spans[id] !== span) {
+          newSpans[id] = span;
+          changed = true;
+        } else {
+          newSpans[id] = spans[id];
+        }
+      }
+    });
+
+    if (changed) {
+      setSpans(newSpans);
+    }
+  }, [events, spans]);
+
   useEffect(() => {
     setLoading(false);
   }, []);
+
+  // イベント一覧が更新された時、またはウィンドウのリサイズ時に再計算
+  useEffect(() => {
+    if (events.length > 0) {
+      calculateSpans();
+    }
+  }, [events, calculateSpans]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      calculateSpans();
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [calculateSpans]);
 
   const fetchEvents = async () => {
     setLoading(true);
@@ -508,28 +550,46 @@ export default function TimelinePage() {
 
               {/* ── タイムライン ── */}
               <div className="relative pt-10 w-full">
-                {/* 天の川（Milky Way）ガイド線 */}
-                <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-8 md:-translate-x-1/2 pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(to bottom, transparent, rgba(160, 195, 255, 0.18) 5%, rgba(255, 255, 255, 0.28) 50%, rgba(200, 180, 255, 0.18) 95%, transparent)',
-                    filter: 'blur(6px)',
-                  }} />
-                <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 md:-translate-x-1/2 pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.35) 5%, rgba(255, 255, 255, 0.75) 50%, rgba(255, 255, 255, 0.35) 95%, transparent)',
-                    filter: 'blur(1px)',
-                  }} />
+                {/* ── PC表示 (md以上): 時系列順 グリッド Masonry 配置 ── */}
+                <div 
+                  className="hidden md:grid grid-cols-2 grid-auto-rows-[10px] gap-x-14 relative w-full animate-fadeIn"
+                  style={{ rowGap: '0px' }}
+                >
+                  {/* 天の川（Milky Way）ガイド線（グリッドの中央を通るように配置） */}
+                  <div className="absolute left-1/2 top-0 bottom-0 w-8 -translate-x-1/2 pointer-events-none"
+                    style={{
+                      background: 'linear-gradient(to bottom, transparent, rgba(160, 195, 255, 0.18) 5%, rgba(255, 255, 255, 0.28) 50%, rgba(200, 180, 255, 0.18) 95%, transparent)',
+                      filter: 'blur(6px)',
+                      gridColumn: '1 / -1',
+                      zIndex: 5,
+                    }} />
+                  <div className="absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2 pointer-events-none"
+                    style={{
+                      background: 'linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.35) 5%, rgba(255, 255, 255, 0.75) 50%, rgba(255, 255, 255, 0.35) 95%, transparent)',
+                      filter: 'blur(1px)',
+                      gridColumn: '1 / -1',
+                      zIndex: 5,
+                    }} />
 
-                {/* ── PC表示 (md以上): 時系列順 左右交互（千鳥・ジグザグ）配置 ── */}
-                <div className="hidden md:block space-y-3 relative w-full animate-fadeIn">
                   {events.map((event, idx) => {
                     const imp = event.importance;
                     const { cardClass, cardBg, dotClass, dotStyle } = getEventStyles(imp, event.title);
+                    const id = `pc-${idx}`;
+                    const cardSpan = spans[id] || 15;
 
                     if (imp === 3) {
                       // ☆3つ: 中央フル幅カード
                       return (
-                        <div key={`pc-${idx}`} className="relative w-full py-2 flex justify-center">
+                        <div 
+                          key={id} 
+                          ref={(el) => { cardRefs.current[id] = el; }}
+                          className="relative flex justify-center z-10"
+                          style={{
+                            gridColumn: '1 / -1',
+                            gridRowEnd: `span ${cardSpan}`,
+                            paddingBottom: '24px', // 縦余白
+                          }}
+                        >
                           {/* 中央ドット */}
                           <div
                             className="absolute left-1/2 -translate-x-1/2 -top-1 w-7 h-7 rounded-full z-20 flex items-center justify-center"
@@ -564,16 +624,26 @@ export default function TimelinePage() {
                       const isLeft = nonStar3Counter % 2 === 0;
                       nonStar3Counter++;
 
-                      const applyNegativeMargin = idx > 0 && events[idx - 1].importance !== 3;
-
                       return (
                         <div 
-                          key={`pc-${idx}`} 
-                          className={`flex ${isLeft ? 'justify-end pr-[calc(50%+28px)]' : 'justify-start pl-[calc(50%+28px)]'} w-full relative`}
-                          style={applyNegativeMargin ? { marginTop: '-65px' } : undefined}
+                          key={id} 
+                          ref={(el) => { cardRefs.current[id] = el; }}
+                          className={`relative flex ${isLeft ? 'justify-end' : 'justify-start'} z-10`}
+                          style={{
+                            gridColumn: isLeft ? '1' : '2',
+                            gridRowEnd: `span ${cardSpan}`,
+                            paddingBottom: '24px', // 縦余白
+                          }}
                         >
                           {/* 天の川中央への水平接続線とドット */}
-                          <div className={`absolute ${isLeft ? 'right-1/2 translate-x-[14px]' : 'left-1/2 -translate-x-[14px] flex-row-reverse'} top-1/2 -translate-y-1/2 flex items-center z-20 pointer-events-none`}>
+                          <div 
+                            className="absolute top-1/2 -translate-y-1/2 flex items-center z-20 pointer-events-none"
+                            style={{
+                              right: isLeft ? '-28px' : 'auto',
+                              left: isLeft ? 'auto' : '-28px',
+                              flexDirection: isLeft ? 'row' : 'row-reverse',
+                            }}
+                          >
                             <div className="w-[14px] h-px bg-white/20" />
                             <div className={`rounded-full ${dotClass}`} style={dotStyle} />
                           </div>
