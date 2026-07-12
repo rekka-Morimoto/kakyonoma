@@ -564,8 +564,14 @@ export default function TimelinePage() {
                       const isLeft = nonStar3Counter % 2 === 0;
                       nonStar3Counter++;
 
+                      const applyNegativeMargin = idx > 0 && events[idx - 1].importance !== 3;
+
                       return (
-                        <div key={`pc-${idx}`} className={`flex ${isLeft ? 'justify-end pr-[calc(50%+28px)]' : 'justify-start pl-[calc(50%+28px)]'} w-full relative`}>
+                        <div 
+                          key={`pc-${idx}`} 
+                          className={`flex ${isLeft ? 'justify-end pr-[calc(50%+28px)]' : 'justify-start pl-[calc(50%+28px)]'} w-full relative`}
+                          style={applyNegativeMargin ? { marginTop: '-65px' } : undefined}
+                        >
                           {/* 天の川中央への水平接続線とドット */}
                           <div className={`absolute ${isLeft ? 'right-1/2 translate-x-[14px]' : 'left-1/2 -translate-x-[14px] flex-row-reverse'} top-1/2 -translate-y-1/2 flex items-center z-20 pointer-events-none`}>
                             <div className="w-[14px] h-px bg-white/20" />
