@@ -656,6 +656,9 @@ export default function TimelinePage() {
                         );
                       } else {
                         // ☆1, ☆2: 左右交互 (千鳥) ジグザグ配置
+                        const offsetX = imp === 1 ? ((idx * 17) % 3) * 15 : 0;
+                        const connWidth = 28 + offsetX;
+
                         return (
                           <div 
                             key={id} 
@@ -668,65 +671,69 @@ export default function TimelinePage() {
                               paddingBottom: '24px', // 縦余白
                             }}
                           >
-                            {/* カード本体 (relativeにして、接続線をこの中に絶対配置) */}
-                            <div
-                              className={`${cardClass} w-full max-w-md ${isLeft ? 'text-right' : 'text-left'} transition-all duration-300 hover:scale-[1.02] self-start relative`}
-                              style={{ background: cardBg }}
-                              onClick={() => setSelectedEvent(event)}
+                            {/* ラッパー div (相対配置、はみ出し接続線表示用。カード本体と同一幅になる) */}
+                            <div 
+                              className={`relative flex items-start self-start w-full ${imp === 2 ? 'max-w-md' : 'max-w-[298px]'} ${isLeft ? 'ml-auto' : 'mr-auto'}`}
+                              style={{
+                                marginRight: isLeft ? `${offsetX}px` : undefined,
+                                marginLeft: isLeft ? undefined : `${offsetX}px`,
+                              }}
                             >
                               {/* 星座風の屈曲接続線（星座ラインとサブドット） */}
                               {(() => {
                                 const patterns = [
                                   {
-                                    d: "M 0 15 L 9 6 L 19 6 L 28 15",
-                                    dots: [{ cx: 9, cy: 6 }, { cx: 19, cy: 6 }]
+                                    getPath: (w: number) => `M 0 15 L 9 6 L ${w - 9} 6 L ${w} 15`,
+                                    getDots: (w: number) => [{ cx: 9, cy: 6 }, { cx: w - 9, cy: 6 }]
                                   },
                                   {
-                                    d: "M 0 15 L 9 24 L 19 24 L 28 15",
-                                    dots: [{ cx: 9, cy: 24 }, { cx: 19, cy: 24 }]
+                                    getPath: (w: number) => `M 0 15 L 9 24 L ${w - 9} 24 L ${w} 15`,
+                                    getDots: (w: number) => [{ cx: 9, cy: 24 }, { cx: w - 9, cy: 24 }]
                                   },
                                   {
-                                    d: "M 0 15 L 8 7 L 20 23 L 28 15",
-                                    dots: [{ cx: 8, cy: 7 }, { cx: 20, cy: 23 }]
+                                    getPath: (w: number) => `M 0 15 L 8 7 L ${w - 8} 23 L ${w} 15`,
+                                    getDots: (w: number) => [{ cx: 8, cy: 7 }, { cx: w - 8, cy: 23 }]
                                   }
                                 ];
                                 const pattern = patterns[idx % patterns.length];
+                                const d = pattern.getPath(connWidth);
+                                const dots = pattern.getDots(connWidth);
 
                                 return (
                                   <div
                                     className="absolute top-1/2 -translate-y-1/2 pointer-events-none z-20"
                                     style={{
-                                      right: isLeft ? '-28px' : 'auto',
-                                      left: isLeft ? 'auto' : '-28px',
-                                      width: '28px',
+                                      right: isLeft ? `-${connWidth}px` : 'auto',
+                                      left: isLeft ? 'auto' : `-${connWidth}px`,
+                                      width: `${connWidth}px`,
                                       height: '30px',
                                     }}
                                   >
                                     <svg 
-                                      width="28" 
+                                      width={connWidth} 
                                       height="30" 
-                                      viewBox="0 0 28 30"
+                                      viewBox={`0 0 ${connWidth} 30`}
                                       style={{
                                         transform: isLeft ? 'none' : 'scaleX(-1)',
                                       }}
                                     >
                                       {/* 星座ライン（光る点線） */}
                                       <path 
-                                        d={pattern.d} 
+                                        d={d} 
                                         fill="none" 
                                         stroke="rgba(201, 166, 78, 0.55)" 
                                         strokeWidth="1.2" 
                                         strokeDasharray="2, 2" 
                                       />
                                       <path 
-                                        d={pattern.d} 
+                                        d={d} 
                                         fill="none" 
                                         stroke="rgba(255, 255, 255, 0.25)" 
                                         strokeWidth="0.8" 
                                       />
 
                                       {/* サブドット（星々） */}
-                                      {pattern.dots.map((dot, dIdx) => (
+                                      {dots.map((dot, dIdx) => (
                                         <g key={dIdx}>
                                           <circle cx={dot.cx} cy={dot.cy} r="1.5" fill="#ffe29a" />
                                           <circle cx={dot.cx} cy={dot.cy} r="3" fill="#c9a64e" className="animate-pulse" opacity="0.6" />
@@ -746,7 +753,14 @@ export default function TimelinePage() {
                                 );
                               })()}
 
-                              {renderCardInner(event)}
+                              {/* カード本体 */}
+                              <div
+                                className={`${cardClass} w-full transition-all duration-300 hover:scale-[1.02] self-start`}
+                                style={{ background: cardBg }}
+                                onClick={() => setSelectedEvent(event)}
+                              >
+                                {renderCardInner(event)}
+                              </div>
                             </div>
                           </div>
                         );
