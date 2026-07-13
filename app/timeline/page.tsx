@@ -144,6 +144,45 @@ export default function TimelinePage() {
   const [showCharSearch, setShowCharSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // 流れ星アニメーション
+  type ShootingStar = {
+    id: number;
+    x: number;      // 開始位置 X (%)
+    y: number;      // 開始位置 Y (%)
+    angle: number;  // 射出角度 (deg)
+    length: number; // 尾の長さ (px)
+    duration: number; // アニメーション時間 (ms)
+  };
+  const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
+  const shootingStarIdRef = React.useRef(0);
+
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const schedule = () => {
+      // 3・5秒ごとに流れ星を発生（ランダム間隔）
+      const delay = 3000 + Math.random() * 6000;
+      timeoutId = setTimeout(() => {
+        const id = ++shootingStarIdRef.current;
+        const star: ShootingStar = {
+          id,
+          x: 5 + Math.random() * 70,       // 画面左5～75%の上部から
+          y: 2 + Math.random() * 35,        // 画面上部2～37%の下に向かって
+          angle: 20 + Math.random() * 30,   // 射出角度20～50度
+          length: 120 + Math.random() * 180,
+          duration: 700 + Math.random() * 500,
+        };
+        setShootingStars(prev => [...prev.slice(-2), star]); // 同時最大3本
+        // アニメ完了後に削除
+        setTimeout(() => {
+          setShootingStars(prev => prev.filter(s => s.id !== id));
+        }, star.duration + 200);
+        schedule();
+      }, delay);
+    };
+    schedule();
+    return () => clearTimeout(timeoutId);
+  }, []);
+
   // 検索フィルタリング済みイベント
   const filteredEvents = React.useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -301,6 +340,73 @@ export default function TimelinePage() {
             background: 'linear-gradient(to bottom, rgba(2,5,18,0.45) 0%, rgba(4,8,25,0.35) 40%, rgba(3,6,20,0.50) 100%)',
           }}
         />
+        {/* 流れ星レイヤー */}
+        <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'hidden' }}>
+          <defs>
+            <style>{`
+              @keyframes shootingstar {
+                0%   { opacity: 0; stroke-dashoffset: 0; }
+                8%   { opacity: 1; }
+                85%  { opacity: 0.9; }
+                100% { opacity: 0; stroke-dashoffset: -600; }
+              }
+              @keyframes shootingstarHead {
+                0%   { opacity: 0; r: 1; }
+                8%   { opacity: 1; r: 2.5; }
+                70%  { opacity: 0.8; r: 1.5; }
+                100% { opacity: 0; r: 0; }
+              }
+            `}</style>
+          </defs>
+          {shootingStars.map(star => {
+            const rad = (star.angle * Math.PI) / 180;
+            const vx = Math.cos(rad);
+            const vy = Math.sin(rad);
+            // SVG内の座標は% -> vw単位で計算
+            const x1 = `${star.x}vw`;
+            const y1 = `${star.y}vh`;
+            const dx = vx * star.length;
+            const dy = vy * star.length;
+            return (
+              <g key={star.id}>
+                {/* 尾流（ホワイトグラデーション） */}
+                <line
+                  x1={x1}
+                  y1={y1}
+                  x2={`calc(${star.x}vw + ${dx}px)`}
+                  y2={`calc(${star.y}vh + ${dy}px)`}
+                  stroke="url(#shootGrad)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  style={{
+                    animation: `shootingstar ${star.duration}ms ease-out forwards`,
+                    strokeDasharray: star.length,
+                    strokeDashoffset: 0,
+                  }}
+                />
+                {/* 先端の輝き */}
+                <circle
+                  cx={`calc(${star.x}vw + ${dx}px)`}
+                  cy={`calc(${star.y}vh + ${dy}px)`}
+                  r="2.5"
+                  fill="white"
+                  style={{
+                    animation: `shootingstarHead ${star.duration}ms ease-out forwards`,
+                    filter: 'drop-shadow(0 0 4px white)',
+                  }}
+                />
+              </g>
+            );
+          })}
+          {/* 尾流用グラデイエント定義 - SVGは相対座標なので繋り返し利用 */}
+          <defs>
+            <linearGradient id="shootGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="white" stopOpacity="0" />
+              <stop offset="60%" stopColor="white" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="white" stopOpacity="1" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
       {/* ── キャラクター立ち絵（常に画面右下・年表右端整列） ── */}
       <div className="fixed bottom-0 left-0 right-0 z-30 pointer-events-none">
