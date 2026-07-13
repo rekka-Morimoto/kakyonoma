@@ -10,25 +10,6 @@ interface TimelineEvent {
   thumbnailUrl?: string | null;
 }
 
-/* ─── 背景：満天の星空・天の川銀河のSVG生成データ ─── */
-// 通常の小星（白・青白・黄白）
-const STARS = Array.from({ length: 320 }, (_, i) => ({
-  id: i,
-  x: (Math.sin(i * 137.508 + 1.2) * 0.5 + 0.5) * 100,
-  y: (Math.cos(i * 97.311 + 0.7) * 0.5 + 0.5) * 100,
-  size: i % 9 === 0 ? 2.8 : i % 5 === 0 ? 2.0 : i % 3 === 0 ? 1.4 : 0.9,
-  opacity: (((i * 31) % 60) + 40) / 100,
-  color: i % 11 === 0 ? '#aac4ff' : i % 7 === 0 ? '#fff8dc' : i % 5 === 0 ? '#ffd6aa' : '#ffffff',
-}));
-// 大星（くっきり光るプリズム星）
-const BIG_STARS = Array.from({ length: 18 }, (_, i) => ({
-  id: i,
-  x: (Math.sin(i * 233.7 + 3.1) * 0.48 + 0.5) * 100,
-  y: (Math.cos(i * 181.4 + 1.9) * 0.48 + 0.5) * 100,
-  size: 2.2 + (i % 4) * 0.7,
-  color: i % 4 === 0 ? '#c8d8ff' : i % 3 === 0 ? '#ffeedd' : i % 2 === 0 ? '#ffe9a0' : '#ffffff',
-  glow: i % 4 === 0 ? 'rgba(150,180,255,0.8)' : i % 3 === 0 ? 'rgba(255,220,180,0.8)' : 'rgba(255,240,180,0.8)',
-}));
 
 const getTitleFontSize = (title: string, imp: number) => {
   const len = title.length;
@@ -301,115 +282,25 @@ export default function TimelinePage() {
 
   return (
     <main className="min-h-screen bg-[#030712] text-gray-100 font-serif relative overflow-x-hidden selection:bg-[#c9a64e]/30 selection:text-amber-200">
-      {/* ── 満天の星空・天の川銀河背景 ── */}
+      {/* ── 天の川星空写真背景 ── */}
       <div className="fixed inset-0 pointer-events-none z-0" aria-hidden>
-        {/* 基本背景グラデーション */}
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 120% 60% at 50% 0%, #0d1b4a 0%, #060c23 40%, #020509 100%)' }} />
-
-        {/* 天の川帯①：メインの属系帯（左下〜右上に流れる淡い光帯） */}
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <radialGradient id="mw1" cx="50%" cy="60%" r="70%">
-              <stop offset="0%" stopColor="#b8ceff" stopOpacity="0.13" />
-              <stop offset="40%" stopColor="#8aaeff" stopOpacity="0.07" />
-              <stop offset="100%" stopColor="#3355cc" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="mw2" cx="30%" cy="70%" r="55%">
-              <stop offset="0%" stopColor="#e8d5ff" stopOpacity="0.10" />
-              <stop offset="50%" stopColor="#c4aaff" stopOpacity="0.05" />
-              <stop offset="100%" stopColor="#8855cc" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="mw3" cx="70%" cy="40%" r="45%">
-              <stop offset="0%" stopColor="#d4eaff" stopOpacity="0.09" />
-              <stop offset="60%" stopColor="#aaccff" stopOpacity="0.04" />
-              <stop offset="100%" stopColor="#4477cc" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="nebula1" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#ff9966" stopOpacity="0.06" />
-              <stop offset="100%" stopColor="#ff6633" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="nebula2" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#66aaff" stopOpacity="0.07" />
-              <stop offset="100%" stopColor="#3366ff" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="nebula3" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#cc88ff" stopOpacity="0.06" />
-              <stop offset="100%" stopColor="#9933ff" stopOpacity="0" />
-            </radialGradient>
-            <filter id="blur4"><feGaussianBlur stdDeviation="4" /></filter>
-            <filter id="blur8"><feGaussianBlur stdDeviation="8" /></filter>
-            <filter id="blur16"><feGaussianBlur stdDeviation="16" /></filter>
-            <filter id="blur30"><feGaussianBlur stdDeviation="30" /></filter>
-          </defs>
-
-          {/* 天の川①: 幅広な入射角で流れる銀河帯 */}
-          <ellipse cx="500" cy="900" rx="600" ry="380" fill="url(#mw1)" filter="url(#blur30)" />
-          <ellipse cx="500" cy="500" rx="480" ry="200" fill="url(#mw1)" filter="url(#blur16)" opacity="0.8" />
-          <ellipse cx="460" cy="300" rx="350" ry="140" fill="url(#mw2)" filter="url(#blur16)" />
-          <ellipse cx="600" cy="700" rx="300" ry="120" fill="url(#mw3)" filter="url(#blur16)" />
-
-          {/* 天の川②: コア部分（光りの強い帯） */}
-          <ellipse cx="500" cy="600" rx="380" ry="90" fill="#a0c0ff" fillOpacity="0.045" filter="url(#blur16)" />
-          <ellipse cx="480" cy="400" rx="260" ry="60" fill="#c8d8ff" fillOpacity="0.05" filter="url(#blur8)" />
-
-          {/* 星雲（ネビュラ）カラー */}
-          <ellipse cx="200" cy="300" rx="180" ry="120" fill="url(#nebula3)" filter="url(#blur30)" />
-          <ellipse cx="780" cy="650" rx="160" ry="100" fill="url(#nebula1)" filter="url(#blur30)" />
-          <ellipse cx="650" cy="180" rx="140" ry="90" fill="url(#nebula2)" filter="url(#blur16)" />
-          <ellipse cx="120" cy="720" rx="120" ry="80" fill="url(#nebula1)" filter="url(#blur30)" opacity="0.7" />
-          <ellipse cx="850" cy="250" rx="130" ry="85" fill="url(#nebula3)" filter="url(#blur30)" opacity="0.6" />
-
-          {/* 小星雲クラスター */}
-          {[
-            { cx: 350, cy: 450, rx: 60, ry: 35, c: '#d0e8ff', o: 0.08 },
-            { cx: 680, cy: 320, rx: 70, ry: 40, c: '#ffe8c0', o: 0.07 },
-            { cx: 200, cy: 550, rx: 50, ry: 30, c: '#e0d0ff', o: 0.09 },
-            { cx: 820, cy: 480, rx: 65, ry: 38, c: '#c8e8ff', o: 0.08 },
-            { cx: 500, cy: 200, rx: 55, ry: 32, c: '#ffe0d8', o: 0.07 },
-          ].map((n, i) => (
-            <ellipse key={i} cx={n.cx} cy={n.cy} rx={n.rx} ry={n.ry}
-              fill={n.c} fillOpacity={n.o} filter="url(#blur8)" />
-          ))}
-
-          {/* 通常の小星 */}
-          {STARS.map((star) => (
-            <circle
-              key={star.id}
-              cx={`${star.x}%`}
-              cy={`${star.y}%`}
-              r={star.size}
-              fill={star.color}
-              opacity={star.opacity}
-            />
-          ))}
-
-          {/* 大星（輝き光るプリズム星） */}
-          {BIG_STARS.map((star) => (
-            <g key={star.id}>
-              {/* 光番 */}
-              <circle cx={`${star.x}%`} cy={`${star.y}%`} r={star.size * 3} fill={star.glow} filter="url(#blur4)" />
-              {/* 本体 */}
-              <circle cx={`${star.x}%`} cy={`${star.y}%`} r={star.size} fill={star.color} />
-              {/* 十字光芒（プリズム効果） */}
-              <line
-                x1={`${star.x - 0.8}%`} y1={`${star.y}%`}
-                x2={`${star.x + 0.8}%`} y2={`${star.y}%`}
-                stroke={star.color} strokeWidth="0.5" opacity="0.6"
-              />
-              <line
-                x1={`${star.x}%`} y1={`${star.y - 0.8}%`}
-                x2={`${star.x}%`} y2={`${star.y + 0.8}%`}
-                stroke={star.color} strokeWidth="0.5" opacity="0.6"
-              />
-            </g>
-          ))}
-        </svg>
-
-        {/* 辺縁の残像光：画面緣を暮れ色に */}
-        <div className="absolute inset-0" style={{
-          background: 'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(30,15,60,0.5) 0%, transparent 60%)',
-          pointerEvents: 'none',
-        }} />
+        {/* 写真バックグラウンド */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'url(/timeline-bg.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center top',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+        {/* コンテンツ可読性のためのダークオーバーレイ */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(2,5,18,0.45) 0%, rgba(4,8,25,0.35) 40%, rgba(3,6,20,0.50) 100%)',
+          }}
+        />
       </div>
       {/* ── キャラクター立ち絵（常に画面右下・年表右端整列） ── */}
       <div className="fixed bottom-0 left-0 right-0 z-30 pointer-events-none">
