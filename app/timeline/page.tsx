@@ -288,7 +288,7 @@ export default function TimelinePage() {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: 'url(/timeline-bg.jpg)',
+            backgroundImage: 'url(/timeline-bg.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center top',
             backgroundRepeat: 'no-repeat',
