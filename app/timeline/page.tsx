@@ -444,7 +444,6 @@ export default function TimelinePage() {
       {showCharSearch && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
-          style={{ background: 'rgba(2,4,10,0.82)', backdropFilter: 'blur(6px)' }}
           onClick={() => { setShowCharSearch(false); setSearchQuery(''); }}
         >
           {/* キャラ＋検索窓の一体コンテナ（クリック伝播止め） */}
