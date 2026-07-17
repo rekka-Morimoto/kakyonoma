@@ -321,9 +321,8 @@ export default function TimelinePage() {
 
   return (
     <main className="min-h-screen bg-[#030712] text-gray-100 font-serif relative overflow-x-hidden selection:bg-[#c9a64e]/30 selection:text-amber-200">
-      {/* ── 天の川星空写真背景 ── */}
+      {/* ── 天の川星空写真背景 (z-0) ── */}
       <div className="fixed inset-0 pointer-events-none z-0" aria-hidden>
-        {/* 写真バックグラウンド */}
         <div
           className="absolute inset-0"
           style={{
@@ -333,81 +332,100 @@ export default function TimelinePage() {
             backgroundRepeat: 'no-repeat',
           }}
         />
-        {/* コンテンツ可読性のためのダークオーバーレイ */}
         <div
           className="absolute inset-0"
           style={{
             background: 'linear-gradient(to bottom, rgba(2,5,18,0.45) 0%, rgba(4,8,25,0.35) 40%, rgba(3,6,20,0.50) 100%)',
           }}
         />
-        {/* 流れ星レイヤー */}
-        <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'hidden' }}>
-          <defs>
-            <style>{`
-              @keyframes shootingstar {
-                0%   { opacity: 0; stroke-dashoffset: 0; }
-                8%   { opacity: 1; }
-                85%  { opacity: 0.9; }
-                100% { opacity: 0; stroke-dashoffset: -600; }
-              }
-              @keyframes shootingstarHead {
-                0%   { opacity: 0; r: 1; }
-                8%   { opacity: 1; r: 2.5; }
-                70%  { opacity: 0.8; r: 1.5; }
-                100% { opacity: 0; r: 0; }
-              }
-            `}</style>
-          </defs>
-          {shootingStars.map(star => {
-            const rad = (star.angle * Math.PI) / 180;
-            const vx = Math.cos(rad);
-            const vy = Math.sin(rad);
-            // SVG内の座標は% -> vw単位で計算
-            const x1 = `${star.x}vw`;
-            const y1 = `${star.y}vh`;
-            const dx = vx * star.length;
-            const dy = vy * star.length;
-            return (
-              <g key={star.id}>
-                {/* 尾流（ホワイトグラデーション） */}
-                <line
-                  x1={x1}
-                  y1={y1}
-                  x2={`calc(${star.x}vw + ${dx}px)`}
-                  y2={`calc(${star.y}vh + ${dy}px)`}
-                  stroke="url(#shootGrad)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  style={{
-                    animation: `shootingstar ${star.duration}ms ease-out forwards`,
-                    strokeDasharray: star.length,
-                    strokeDashoffset: 0,
-                  }}
-                />
-                {/* 先端の輝き */}
-                <circle
-                  cx={`calc(${star.x}vw + ${dx}px)`}
-                  cy={`calc(${star.y}vh + ${dy}px)`}
-                  r="2.5"
-                  fill="white"
-                  style={{
-                    animation: `shootingstarHead ${star.duration}ms ease-out forwards`,
-                    filter: 'drop-shadow(0 0 4px white)',
-                  }}
-                />
-              </g>
-            );
-          })}
-          {/* 尾流用グラデイエント定義 - SVGは相対座標なので繋り返し利用 */}
-          <defs>
-            <linearGradient id="shootGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="white" stopOpacity="0" />
-              <stop offset="60%" stopColor="white" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="white" stopOpacity="1" />
-            </linearGradient>
-          </defs>
-        </svg>
       </div>
+
+      {/* ── モーダル表示時の年表カバー (z-40): 背景写真だけ透けさせ年表を隠す ── */}
+      {showCharSearch && (
+        <div className="fixed inset-0 pointer-events-none z-40" aria-hidden>
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: 'url(/timeline-bg.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center top',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(to bottom, rgba(2,5,18,0.45) 0%, rgba(4,8,25,0.35) 40%, rgba(3,6,20,0.50) 100%)',
+            }}
+          />
+        </div>
+      )}
+
+      {/* ── 流れ星レイヤー (z-[45]): カバーより上・モーダルより下で常に表示 ── */}
+      <svg
+        className="fixed inset-0 w-full h-full pointer-events-none"
+        style={{ zIndex: 45, overflow: 'hidden' }}
+        aria-hidden
+      >
+        <defs>
+          <style>{`
+            @keyframes shootingstar {
+              0%   { opacity: 0; stroke-dashoffset: 0; }
+              8%   { opacity: 1; }
+              85%  { opacity: 0.9; }
+              100% { opacity: 0; stroke-dashoffset: -600; }
+            }
+            @keyframes shootingstarHead {
+              0%   { opacity: 0; r: 1; }
+              8%   { opacity: 1; r: 2.5; }
+              70%  { opacity: 0.8; r: 1.5; }
+              100% { opacity: 0; r: 0; }
+            }
+          `}</style>
+          <linearGradient id="shootGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="white" stopOpacity="0" />
+            <stop offset="60%" stopColor="white" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="white" stopOpacity="1" />
+          </linearGradient>
+        </defs>
+        {shootingStars.map(star => {
+          const rad = (star.angle * Math.PI) / 180;
+          const vx = Math.cos(rad);
+          const vy = Math.sin(rad);
+          const x1 = `${star.x}vw`;
+          const y1 = `${star.y}vh`;
+          const dx = vx * star.length;
+          const dy = vy * star.length;
+          return (
+            <g key={star.id}>
+              <line
+                x1={x1} y1={y1}
+                x2={`calc(${star.x}vw + ${dx}px)`}
+                y2={`calc(${star.y}vh + ${dy}px)`}
+                stroke="url(#shootGrad)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                style={{
+                  animation: `shootingstar ${star.duration}ms ease-out forwards`,
+                  strokeDasharray: star.length,
+                  strokeDashoffset: 0,
+                }}
+              />
+              <circle
+                cx={`calc(${star.x}vw + ${dx}px)`}
+                cy={`calc(${star.y}vh + ${dy}px)`}
+                r="2.5"
+                fill="white"
+                style={{
+                  animation: `shootingstarHead ${star.duration}ms ease-out forwards`,
+                  filter: 'drop-shadow(0 0 4px white)',
+                }}
+              />
+            </g>
+          );
+        })}
+      </svg>
+
       {/* ── キャラクター立ち絵（常に画面右下・年表右端整列） ── */}
       <div className="fixed bottom-0 left-0 right-0 z-30 pointer-events-none">
         <div className="max-w-4xl mx-auto px-2">
