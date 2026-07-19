@@ -681,53 +681,56 @@ export default function TimelinePage() {
           style={{
             background: 'linear-gradient(to bottom, rgba(6,10,23,0.82) 0%, rgba(13,23,46,0.80) 40%, rgba(8,15,29,0.82) 100%)',
             boxShadow: 'inset 0 0 100px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.7), 0 0 15px rgba(201,166,78,0.15)',
-            borderLeft: isScrollAnimating ? 'none' : '4px solid #1a0f05',
-            borderRight: isScrollAnimating ? 'none' : '4px solid #1a0f05',
+            borderTop: isScrollAnimating ? 'none' : '4px solid #1a0f05',
+            borderBottom: isScrollAnimating ? 'none' : '4px solid #1a0f05',
+            borderLeft: '1px solid rgba(201,166,78,0.1)',
+            borderRight: '1px solid rgba(201,166,78,0.1)',
             borderRadius: '16px',
             padding: '24px 16px',
             // アニメーション用のスタイル
-            transition: 'width 1.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s ease',
-            width: isScrollAnimating ? (scrollOpened ? '100%' : '60px') : '100%',
+            transition: 'clip-path 1.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s ease, min-height 1.2s cubic-bezier(0.25, 1, 0.5, 1)',
+            clipPath: isScrollAnimating ? (scrollOpened ? 'inset(0% 0%)' : 'inset(50% 0%)') : 'none',
+            width: '100%',
             opacity: isScrollAnimating ? (scrollOpened ? 1 : 0) : 1,
             overflow: isScrollAnimating && !scrollOpened ? 'hidden' : 'visible',
-            minHeight: isScrollAnimating ? '600px' : 'auto',
+            minHeight: isScrollAnimating ? (scrollOpened ? '600px' : '80px') : 'auto',
           }}
         >
-          {/* 巻物の軸（左右のローラー） - アニメーション中のみ表示 */}
+          {/* 巻物の軸（上下のローラー） - アニメーション中のみ表示 */}
           {isScrollAnimating && (
             <>
-              {/* 左の軸 */}
+              {/* 上の軸 */}
               <div
-                className="absolute top-0 bottom-0 w-8 pointer-events-none z-30"
+                className="absolute left-0 right-0 h-8 pointer-events-none z-30"
                 style={{
-                  left: scrollOpened ? '-16px' : 'calc(50% - 16px)',
-                  transition: 'left 1.2s cubic-bezier(0.25, 1, 0.5, 1)',
-                  background: 'linear-gradient(to right, #3d2314, #8a5a36, #c9a64e, #8a5a36, #3d2314)',
+                  top: scrollOpened ? '-16px' : 'calc(50% - 16px)',
+                  transition: 'top 1.2s cubic-bezier(0.25, 1, 0.5, 1)',
+                  background: 'linear-gradient(to bottom, #3d2314, #8a5a36, #c9a64e, #8a5a36, #3d2314)',
                   borderRadius: '4px',
-                  boxShadow: '-4px 0 10px rgba(0,0,0,0.5)',
+                  boxShadow: '0 -4px 10px rgba(0,0,0,0.5)',
                 }}
               >
-                {/* 上の金キャップ */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-10 h-3 bg-gradient-to-r from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-t-full border-b border-[#3d2314]" />
-                {/* 下の金キャップ */}
-                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-10 h-3 bg-gradient-to-r from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-b-full border-t border-[#3d2314]" />
+                {/* 左の金キャップ */}
+                <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-3 h-10 bg-gradient-to-b from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-l-full border-r border-[#3d2314]" />
+                {/* 右の金キャップ */}
+                <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-3 h-10 bg-gradient-to-b from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-r-full border-l border-[#3d2314]" />
               </div>
 
-              {/* 右の軸 */}
+              {/* 下の軸 */}
               <div
-                className="absolute top-0 bottom-0 w-8 pointer-events-none z-30"
+                className="absolute left-0 right-0 h-8 pointer-events-none z-30"
                 style={{
-                  right: scrollOpened ? '-16px' : 'calc(50% - 16px)',
-                  transition: 'right 1.2s cubic-bezier(0.25, 1, 0.5, 1)',
-                  background: 'linear-gradient(to right, #3d2314, #8a5a36, #c9a64e, #8a5a36, #3d2314)',
+                  bottom: scrollOpened ? '-16px' : 'calc(50% - 16px)',
+                  transition: 'bottom 1.2s cubic-bezier(0.25, 1, 0.5, 1)',
+                  background: 'linear-gradient(to bottom, #3d2314, #8a5a36, #c9a64e, #8a5a36, #3d2314)',
                   borderRadius: '4px',
-                  boxShadow: '4px 0 10px rgba(0,0,0,0.5)',
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
                 }}
               >
-                {/* 上の金キャップ */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-10 h-3 bg-gradient-to-r from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-t-full border-b border-[#3d2314]" />
-                {/* 下の金キャップ */}
-                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-10 h-3 bg-gradient-to-r from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-b-full border-t border-[#3d2314]" />
+                {/* 左の金キャップ */}
+                <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-3 h-10 bg-gradient-to-b from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-l-full border-r border-[#3d2314]" />
+                {/* 右の金キャップ */}
+                <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-3 h-10 bg-gradient-to-b from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-r-full border-l border-[#3d2314]" />
               </div>
             </>
           )}
