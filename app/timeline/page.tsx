@@ -143,6 +143,8 @@ export default function TimelinePage() {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [showCharSearch, setShowCharSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isScrollAnimating, setIsScrollAnimating] = useState(false);
+  const [scrollOpened, setScrollOpened] = useState(false);
 
   // 流れ星アニメーション
   type ShootingStar = {
@@ -228,7 +230,32 @@ export default function TimelinePage() {
   }, [events]);
 
   useEffect(() => {
-    setLoading(false);
+    const isAuthed = sessionStorage.getItem('timeline_auth') === '5226';
+    if (isAuthed) {
+      setIsAuthenticated(true);
+      fetchEvents();
+      
+      const shouldAnimate = sessionStorage.getItem('timeline_scroll_animate') === 'true';
+      if (shouldAnimate) {
+        setIsScrollAnimating(true);
+        sessionStorage.removeItem('timeline_scroll_animate');
+        
+        const timer1 = setTimeout(() => {
+          setScrollOpened(true);
+        }, 150);
+        
+        const timer2 = setTimeout(() => {
+          setIsScrollAnimating(false);
+        }, 1500);
+        
+        return () => {
+          clearTimeout(timer1);
+          clearTimeout(timer2);
+        };
+      }
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   // イベント一覧が更新された時、またはウィンドウのリサイズ時に再計算
@@ -650,16 +677,60 @@ export default function TimelinePage() {
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-8 md:py-14 flex flex-col items-center min-h-screen" style={{ position: 'relative' }}>
         {/* ── 巻物の紙面 ── */}
         <div
-          className="w-full relative flex flex-col items-center transition-all duration-500"
+          className="w-full relative flex flex-col items-center"
           style={{
             background: 'linear-gradient(to bottom, rgba(6,10,23,0.82) 0%, rgba(13,23,46,0.80) 40%, rgba(8,15,29,0.82) 100%)',
             boxShadow: 'inset 0 0 100px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.7), 0 0 15px rgba(201,166,78,0.15)',
-            borderLeft: '4px solid #1a0f05',
-            borderRight: '4px solid #1a0f05',
+            borderLeft: isScrollAnimating ? 'none' : '4px solid #1a0f05',
+            borderRight: isScrollAnimating ? 'none' : '4px solid #1a0f05',
             borderRadius: '16px',
             padding: '24px 16px',
+            // アニメーション用のスタイル
+            transition: 'width 1.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s ease',
+            width: isScrollAnimating ? (scrollOpened ? '100%' : '60px') : '100%',
+            opacity: isScrollAnimating ? (scrollOpened ? 1 : 0) : 1,
+            overflow: isScrollAnimating && !scrollOpened ? 'hidden' : 'visible',
+            minHeight: isScrollAnimating ? '600px' : 'auto',
           }}
         >
+          {/* 巻物の軸（左右のローラー） - アニメーション中のみ表示 */}
+          {isScrollAnimating && (
+            <>
+              {/* 左の軸 */}
+              <div
+                className="absolute top-0 bottom-0 w-8 pointer-events-none z-30"
+                style={{
+                  left: scrollOpened ? '-16px' : 'calc(50% - 16px)',
+                  transition: 'left 1.2s cubic-bezier(0.25, 1, 0.5, 1)',
+                  background: 'linear-gradient(to right, #3d2314, #8a5a36, #c9a64e, #8a5a36, #3d2314)',
+                  borderRadius: '4px',
+                  boxShadow: '-4px 0 10px rgba(0,0,0,0.5)',
+                }}
+              >
+                {/* 上の金キャップ */}
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-10 h-3 bg-gradient-to-r from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-t-full border-b border-[#3d2314]" />
+                {/* 下の金キャップ */}
+                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-10 h-3 bg-gradient-to-r from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-b-full border-t border-[#3d2314]" />
+              </div>
+
+              {/* 右の軸 */}
+              <div
+                className="absolute top-0 bottom-0 w-8 pointer-events-none z-30"
+                style={{
+                  right: scrollOpened ? '-16px' : 'calc(50% - 16px)',
+                  transition: 'right 1.2s cubic-bezier(0.25, 1, 0.5, 1)',
+                  background: 'linear-gradient(to right, #3d2314, #8a5a36, #c9a64e, #8a5a36, #3d2314)',
+                  borderRadius: '4px',
+                  boxShadow: '4px 0 10px rgba(0,0,0,0.5)',
+                }}
+              >
+                {/* 上の金キャップ */}
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-10 h-3 bg-gradient-to-r from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-t-full border-b border-[#3d2314]" />
+                {/* 下の金キャップ */}
+                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-10 h-3 bg-gradient-to-r from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-b-full border-t border-[#3d2314]" />
+              </div>
+            </>
+          )}
           {/* 金の細フレームライン */}
           <div className="absolute inset-2 border border-[#c9a64e]/30 pointer-events-none rounded-lg" />
           <div className="absolute inset-3 border border-[#c9a64e]/15 pointer-events-none rounded-lg" />
@@ -706,7 +777,13 @@ export default function TimelinePage() {
             </div>
           ) : (
             /* ── 年表コンテンツ ── */
-            <div className="w-full">
+            <div
+              className="w-full"
+              style={{
+                opacity: isScrollAnimating ? (scrollOpened ? 1 : 0) : 1,
+                transition: 'opacity 0.6s ease-out 0.6s',
+              }}
+            >
               {/* ヘッダー */}
               <header className="text-center pb-8 mb-4 border-b-2 border-[#c9a64e]/20 relative">
                 <p className="text-[10px] text-[#c9a64e]/70 tracking-[0.6em] uppercase font-sans mb-2">Maison de Kyo</p>

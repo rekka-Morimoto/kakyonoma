@@ -1,8 +1,26 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authPassword, setAuthPassword] = useState('');
+  const [authError, setAuthError] = useState('');
+
+  const handleAuthSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (authPassword === '5226') {
+      sessionStorage.setItem('timeline_auth', '5226');
+      sessionStorage.setItem('timeline_scroll_animate', 'true');
+      setShowAuthModal(false);
+      router.push('/timeline');
+    } else {
+      setAuthError('暗証番号が正しくありません。');
+    }
+  };
+
   return (
     <main className="min-h-screen bg-transparent flex flex-col items-center justify-center p-6 relative overflow-x-hidden">
       {/* Decorative corner ornaments */}
@@ -186,22 +204,42 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/timeline" className="group">
+          <div
+            onClick={() => setShowAuthModal(true)}
+            className="group cursor-pointer"
+          >
             <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
-              <div className="mb-0 group-hover:scale-110 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500 text-6xl select-none">
-                📜
+              <div className="mb-0 group-hover:scale-110 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 duration-500">
+                {/* CSSアート：巻いた状態の巻物 */}
+                <div className="relative w-40 h-24 flex items-center justify-center">
+                  {/* 軸のウッドキャップ（左） */}
+                  <div className="absolute left-4 w-2 h-16 bg-gradient-to-b from-[#5c3c26] via-[#c9a64e] to-[#5c3c26] rounded-sm shadow-md" />
+                  {/* 軸のウッドキャップ（右） */}
+                  <div className="absolute right-4 w-2 h-16 bg-gradient-to-b from-[#5c3c26] via-[#c9a64e] to-[#5c3c26] rounded-sm shadow-md" />
+                  {/* 本体（巻かれた紙） */}
+                  <div className="w-24 h-12 bg-gradient-to-b from-[#e3d1b6] via-[#f7ebd9] to-[#e3d1b6] rounded-md shadow-lg border border-[#c9a64e]/30 relative flex items-center justify-center">
+                    {/* 金の細ライン */}
+                    <div className="absolute inset-x-0 top-0.5 h-[1px] bg-[#c9a64e]/20" />
+                    <div className="absolute inset-x-0 bottom-0.5 h-[1px] bg-[#c9a64e]/20" />
+                    {/* 赤いリボン */}
+                    <div className="absolute inset-y-0 w-2.5 bg-gradient-to-r from-[#b31c1c] to-[#e63939] shadow-inner left-[calc(50%-5px)] z-10 flex items-center justify-center">
+                      <div className="absolute w-4 h-4 bg-[#b31c1c] rounded-full border border-[#ffe29a]/40 rotate-45 transform translate-y-1 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="relative z-10 mt-28 md:mt-44 flex flex-col items-center">
-                <h3 className="text-3xl md:text-4xl font-black text-white font-serif mb-4 text-outline whitespace-nowrap">coming soon</h3>
+                <h3 className="text-3xl md:text-4xl font-black text-white font-serif mb-4 text-outline whitespace-nowrap">かきょ年表</h3>
                 <p className="text-[#d4c5b0] text-base md:text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                  （新しい記録を準備中です。公開までお待ちください。）
+                  かきょの軌跡を紐解く年表。<br className="hidden md:block" />
+                  歴史と星々が交差します。
                 </p>
-                <div className="text-[#c9a64e]/60 font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
-                  Locked →
+                <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
+                  Open →
                 </div>
               </div>
             </div>
-          </Link>
+          </div>
 
         </div>
 
@@ -220,6 +258,70 @@ export default function Home() {
         </div>
 
       </div>
+
+      {/* ── パスワード入力モーダル ── */}
+      {showAuthModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-filter backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="relative max-w-md w-full glass-panel p-8 md:p-10 rounded-[2.5rem] border-[#c9a64e]/30 shadow-2xl text-center space-y-6 animate-in zoom-in-95 duration-300">
+            {/* 装飾の角枠 */}
+            <div className="absolute inset-4 border border-[#c9a64e]/20 rounded-[1.8rem] pointer-events-none" />
+            
+            <div className="space-y-2">
+              <div className="text-4xl">📜</div>
+              <h3 className="text-2xl font-serif font-black text-[#ffe29a] tracking-widest text-glow">
+                かきょ年表の紐解き
+              </h3>
+              <p className="text-xs text-[#c9a64e] tracking-wider uppercase font-sans">
+                Scroll Authentication
+              </p>
+            </div>
+
+            <p className="text-[#d4c5b0] text-sm leading-relaxed font-serif">
+              かきょの歴史を刻んだ年表を紐解くには、<br />
+              四桁の暗証番号が必要です。
+            </p>
+
+            <form onSubmit={handleAuthSubmit} className="space-y-4 pt-2">
+              <input
+                autoFocus
+                type="password"
+                value={authPassword}
+                onChange={(e) => {
+                  setAuthPassword(e.target.value);
+                  setAuthError('');
+                }}
+                placeholder="暗証番号を入力"
+                className="w-full px-5 py-3 rounded-xl bg-[#080d1a]/85 border border-[#c9a64e]/40 text-center text-lg text-white tracking-[0.3em] focus:outline-none focus:border-[#c9a64e] focus:ring-2 focus:ring-[#c9a64e]/20 transition-all font-sans shadow-inner placeholder:tracking-normal placeholder:text-gray-600"
+              />
+              {authError && (
+                <p className="text-rose-400 text-xs font-sans animate-bounce">
+                  {authError}
+                </p>
+              )}
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAuthModal(false);
+                    setAuthPassword('');
+                    setAuthError('');
+                  }}
+                  className="flex-1 py-3 rounded-xl border border-white/10 text-white/70 hover:bg-white/5 active:scale-[0.98] transition-all tracking-wider text-sm font-bold font-sans"
+                >
+                  閉じる
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#c9a64e] via-[#e2c575] to-[#a06830] text-[#080d1a] font-black tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_4px_15px_rgba(201,166,78,0.3)] text-sm font-sans"
+                >
+                  紐解く
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </main>
   );
 }
