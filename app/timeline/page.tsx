@@ -143,8 +143,7 @@ export default function TimelinePage() {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [showCharSearch, setShowCharSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isScrollAnimating, setIsScrollAnimating] = useState(false);
-  const [scrollOpened, setScrollOpened] = useState(false);
+  const [showScrollVideo, setShowScrollVideo] = useState(false);
 
   // 流れ星アニメーション
   type ShootingStar = {
@@ -234,24 +233,10 @@ export default function TimelinePage() {
     if (isAuthed) {
       setIsAuthenticated(true);
       fetchEvents();
-      
       const shouldAnimate = sessionStorage.getItem('timeline_scroll_animate') === 'true';
       if (shouldAnimate) {
-        setIsScrollAnimating(true);
         sessionStorage.removeItem('timeline_scroll_animate');
-        
-        const timer1 = setTimeout(() => {
-          setScrollOpened(true);
-        }, 150);
-        
-        const timer2 = setTimeout(() => {
-          setIsScrollAnimating(false);
-        }, 1500);
-        
-        return () => {
-          clearTimeout(timer1);
-          clearTimeout(timer2);
-        };
+        setShowScrollVideo(true);
       }
     } else {
       setLoading(false);
@@ -452,6 +437,33 @@ export default function TimelinePage() {
           );
         })}
       </svg>
+
+      {/* ── 巻物オープニング動画オーバーレイ ── */}
+      {showScrollVideo && (
+        <div
+          className="fixed inset-0 pointer-events-auto"
+          style={{ zIndex: 55 }}
+          onClick={() => setShowScrollVideo(false)}
+        >
+          <video
+            key="scroll-opening"
+            autoPlay
+            playsInline
+            muted
+            onEnded={() => setShowScrollVideo(false)}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              background: 'transparent',
+            }}
+          >
+            <source src="/0001-0120.mp4" type="video/mp4" />
+          </video>
+        </div>
+      )}
 
       {/* ── キャラクター立ち絵（常に画面右下・年表右端整列） ── */}
       <div className="fixed bottom-0 left-0 right-0 z-30 pointer-events-none">
@@ -681,59 +693,11 @@ export default function TimelinePage() {
           style={{
             background: 'linear-gradient(to bottom, rgba(6,10,23,0.82) 0%, rgba(13,23,46,0.80) 40%, rgba(8,15,29,0.82) 100%)',
             boxShadow: 'inset 0 0 100px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.7), 0 0 15px rgba(201,166,78,0.15)',
-            borderTop: isScrollAnimating ? 'none' : '4px solid #1a0f05',
-            borderBottom: isScrollAnimating ? 'none' : '4px solid #1a0f05',
-            borderLeft: '1px solid rgba(201,166,78,0.1)',
-            borderRight: '1px solid rgba(201,166,78,0.1)',
+            border: '4px solid #1a0f05',
             borderRadius: '16px',
             padding: '24px 16px',
-            // アニメーション用のスタイル
-            transition: 'clip-path 1.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s ease, min-height 1.2s cubic-bezier(0.25, 1, 0.5, 1)',
-            clipPath: isScrollAnimating ? (scrollOpened ? 'inset(0% 0%)' : 'inset(50% 0%)') : 'none',
-            width: '100%',
-            opacity: isScrollAnimating ? (scrollOpened ? 1 : 0) : 1,
-            overflow: isScrollAnimating && !scrollOpened ? 'hidden' : 'visible',
-            minHeight: isScrollAnimating ? (scrollOpened ? '600px' : '80px') : 'auto',
           }}
         >
-          {/* 巻物の軸（上下のローラー） - アニメーション中のみ表示 */}
-          {isScrollAnimating && (
-            <>
-              {/* 上の軸 */}
-              <div
-                className="absolute left-0 right-0 h-8 pointer-events-none z-30"
-                style={{
-                  top: scrollOpened ? '-16px' : 'calc(50% - 16px)',
-                  transition: 'top 1.2s cubic-bezier(0.25, 1, 0.5, 1)',
-                  background: 'linear-gradient(to bottom, #3d2314, #8a5a36, #c9a64e, #8a5a36, #3d2314)',
-                  borderRadius: '4px',
-                  boxShadow: '0 -4px 10px rgba(0,0,0,0.5)',
-                }}
-              >
-                {/* 左の金キャップ */}
-                <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-3 h-10 bg-gradient-to-b from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-l-full border-r border-[#3d2314]" />
-                {/* 右の金キャップ */}
-                <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-3 h-10 bg-gradient-to-b from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-r-full border-l border-[#3d2314]" />
-              </div>
-
-              {/* 下の軸 */}
-              <div
-                className="absolute left-0 right-0 h-8 pointer-events-none z-30"
-                style={{
-                  bottom: scrollOpened ? '-16px' : 'calc(50% - 16px)',
-                  transition: 'bottom 1.2s cubic-bezier(0.25, 1, 0.5, 1)',
-                  background: 'linear-gradient(to bottom, #3d2314, #8a5a36, #c9a64e, #8a5a36, #3d2314)',
-                  borderRadius: '4px',
-                  boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
-                }}
-              >
-                {/* 左の金キャップ */}
-                <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-3 h-10 bg-gradient-to-b from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-l-full border-r border-[#3d2314]" />
-                {/* 右の金キャップ */}
-                <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-3 h-10 bg-gradient-to-b from-[#8a5a36] via-[#ffe29a] to-[#8a5a36] rounded-r-full border-l border-[#3d2314]" />
-              </div>
-            </>
-          )}
           {/* 金の細フレームライン */}
           <div className="absolute inset-2 border border-[#c9a64e]/30 pointer-events-none rounded-lg" />
           <div className="absolute inset-3 border border-[#c9a64e]/15 pointer-events-none rounded-lg" />
@@ -780,13 +744,7 @@ export default function TimelinePage() {
             </div>
           ) : (
             /* ── 年表コンテンツ ── */
-            <div
-              className="w-full"
-              style={{
-                opacity: isScrollAnimating ? (scrollOpened ? 1 : 0) : 1,
-                transition: 'opacity 0.6s ease-out 0.6s',
-              }}
-            >
+            <div className="w-full">
               {/* ヘッダー */}
               <header className="text-center pb-8 mb-4 border-b-2 border-[#c9a64e]/20 relative">
                 <p className="text-[10px] text-[#c9a64e]/70 tracking-[0.6em] uppercase font-sans mb-2">Maison de Kyo</p>
