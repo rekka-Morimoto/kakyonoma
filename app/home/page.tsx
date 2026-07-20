@@ -111,6 +111,68 @@ export default function Home() {
         {/* Navigation Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
 
+          {/* ── かきょ年表（アニバーサリー特別横長タイル） ── */}
+          <div
+            onClick={() => setShowAuthModal(true)}
+            className="group cursor-pointer md:col-span-2 lg:col-span-3"
+          >
+            <div className="glass-panel p-6 md:p-10 h-full flex flex-col md:flex-row items-center justify-between hover:scale-[1.01] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/60 relative overflow-hidden bg-gradient-to-r from-[#0a1224]/90 via-[#18233c]/80 to-[#0a1224]/90 border border-[#c9a64e]/30 shadow-[0_0_30px_rgba(201,166,78,0.15)] min-h-[220px]">
+              
+              {/* ギフトリボン・アニバーサリー演出 */}
+              <div className="absolute top-0 left-0 w-32 h-32 overflow-hidden pointer-events-none z-20">
+                <div className="absolute top-6 left-[-35px] w-[160px] text-center bg-gradient-to-r from-[#a06830] via-[#c9a64e] to-[#a06830] text-[#080d1a] font-serif text-[10px] md:text-xs font-black uppercase tracking-widest py-1.5 -rotate-45 shadow-[0_2px_8px_rgba(0,0,0,0.5)] border-y border-[#ffe29a]/40">
+                  Anniversary
+                </div>
+              </div>
+              
+              <div className="absolute top-4 right-12 text-[#c9a64e]/30 text-xl animate-pulse select-none pointer-events-none">✦</div>
+              <div className="absolute bottom-6 left-1/3 text-[#c9a64e]/20 text-2xl animate-bounce select-none pointer-events-none" style={{ animationDuration: '4s' }}>✦</div>
+              
+              {/* 左側：巻物画像 */}
+              <div className="flex-shrink-0 relative w-full md:w-1/3 h-40 md:h-full flex items-center justify-center mb-6 md:mb-0">
+                <div className="absolute w-1.5 h-full bg-gradient-to-b from-rose-700 via-rose-500 to-rose-700 opacity-60 z-0" />
+                <div className="absolute h-1.5 w-full bg-gradient-to-r from-rose-700 via-rose-500 to-rose-700 opacity-60 z-0" />
+                <div className="absolute w-32 h-32 bg-[#c9a64e]/10 rounded-full blur-2xl group-hover:bg-[#c9a64e]/20 transition-all duration-700 z-0" />
+                
+                <div className="relative z-10 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-500 w-36 h-36 flex items-center justify-center">
+                  <img
+                    src="/makimono.webp"
+                    alt="かきょ年表"
+                    className="w-full h-full object-contain drop-shadow-[0_10px_20px_rgba(201,166,78,0.4)]"
+                  />
+                  <div className="absolute -bottom-1 -right-1 bg-rose-600 text-[10px] text-white font-serif px-2 py-0.5 rounded border border-rose-400 shadow-md">
+                    GIFT ✦
+                  </div>
+                </div>
+              </div>
+
+              {/* 右側：テキストコンテンツ */}
+              <div className="flex-1 md:pl-10 text-center md:text-left relative z-10 flex flex-col justify-center h-full">
+                <div className="flex items-center justify-center md:justify-start gap-3 mb-2 flex-wrap">
+                  <span className="bg-[#c9a64e]/20 text-[#ffe29a] text-[10px] md:text-xs tracking-wider px-3 py-1 rounded-full border border-[#c9a64e]/40 font-serif">
+                    特別記念絵巻
+                  </span>
+                  <span className="text-[#ffe29a] text-xs">🎉 Anniversary Edition</span>
+                </div>
+                
+                <h3 className="text-3xl md:text-4xl font-black text-white font-serif mb-4 text-outline tracking-wider" style={{ textShadow: '0 0 15px rgba(255,226,154,0.15)' }}>
+                  かきょ年表
+                </h3>
+                
+                <p className="text-[#d4c5b0] text-sm md:text-base leading-relaxed mb-6 max-w-xl">
+                  かきょの記念すべき軌跡を紐解く、特別な年表ギフト。<br className="hidden lg:block" />
+                  これまでの大切な想い出と歩みが、美しい天の川に沿って開かれます。
+                </p>
+                
+                <div className="text-[#c9a64e] font-bold text-lg border-b border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest inline-flex items-center gap-2 self-center md:self-start cursor-pointer">
+                  <span>絵巻を紐解く (Open)</span>
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
           <Link href="/register" className="group">
             <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
               <div className="mb-0 group-hover:rotate-6 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
@@ -236,27 +298,6 @@ export default function Home() {
               </div>
             </div>
           </Link>
-
-          <div
-            onClick={() => setShowAuthModal(true)}
-            className="group cursor-pointer"
-          >
-            <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
-              <div className="mb-0 group-hover:-rotate-6 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
-                <img src="/makimono.webp" alt="かきょ年表" className="w-full h-full object-contain drop-shadow-2xl" />
-              </div>
-              <div className="relative z-10 mt-28 md:mt-44 flex flex-col items-center">
-                <h3 className="text-3xl md:text-4xl font-black text-white font-serif mb-4 text-outline whitespace-nowrap">かきょ年表</h3>
-                <p className="text-[#d4c5b0] text-base md:text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                  かきょの軌跡を紐解く年表。<br className="hidden md:block" />
-                  歴史と星々が交差します。
-                </p>
-                <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
-                  Open →
-                </div>
-              </div>
-            </div>
-          </div>
 
         </div>
 

@@ -655,6 +655,17 @@ export default function TimelinePage() {
       `}</style>
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-8 md:py-14 flex flex-col items-center min-h-screen" style={{ position: 'relative' }}>
+        {/* ── ホームへ戻るボタン ── */}
+        <div className="w-full flex justify-start mb-4 md:mb-6 animate-fadeIn">
+          <Link
+            href="/home"
+            className="flex items-center gap-2 text-[#c9a64e]/90 hover:text-[#ffe29a] transition-all font-serif text-sm border border-[#c9a64e]/40 px-5 py-2 rounded-full bg-[#0c1326]/70 backdrop-blur-md hover:bg-[#0c1326]/90 hover:border-[#ffe29a]/60 shadow-[0_0_15px_rgba(201,166,78,0.15)] group pointer-events-auto"
+          >
+            <span className="group-hover:-translate-x-1 transition-transform">←</span>
+            <span>庵に戻る (Home)</span>
+          </Link>
+        </div>
+
         {/* ── 巻物の紙面 ── */}
         <div
           className="w-full relative flex flex-col items-center"
