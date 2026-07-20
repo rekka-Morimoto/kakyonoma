@@ -489,6 +489,15 @@ function HomeMessage() {
           📜
         </div>
 
+        {/* ハンコ画像 */}
+        <div className="absolute bottom-6 right-8 w-28 h-28 pointer-events-none select-none z-20">
+          <img
+            src="/hanko.webp"
+            alt="管理委員会之印"
+            className="w-full h-full object-contain transform rotate-[8deg] opacity-90"
+          />
+        </div>
+
         <div className="relative z-10 space-y-8">
           <div className="flex flex-col items-center gap-2">
             <div className="text-[#c9a64e] text-sm tracking-[0.4em] font-black uppercase opacity-80">Announcements</div>

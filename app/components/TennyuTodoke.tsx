@@ -285,23 +285,11 @@ export default function TennyuTodoke({
                     </div>
 
                     <div className="absolute -top-12 -right-4 w-44 h-44 pointer-events-none select-none z-10">
-                        <div className="w-full h-full rounded-full flex flex-col items-center justify-center font-black stamp-texture transform -rotate-[12deg] relative" 
-                             style={{ 
-                                 color: 'rgba(168, 64, 50, 0.85)',
-                                 backgroundColor: 'rgba(168, 64, 50, 0.03)',
-                             }}>
-                            <div className="absolute inset-0 rounded-full border-none z-0">
-                                <div className="absolute inset-0 rounded-full border-transparent" style={{ boxShadow: 'inset 0 0 0 2.5px rgba(168, 64, 50, 0.5)' }} />
-                                <div className="absolute inset-3.5 rounded-full border-transparent" style={{ boxShadow: 'inset 0 0 0 1px rgba(168, 64, 50, 0.2)' }} />
-                            </div>
-                            <div className="relative z-10 flex flex-col items-center">
-                                <span className="text-[6px] tracking-[0.4em] font-black opacity-60 uppercase mb-1.5 leading-none">Maison de Kyo Seal</span>
-                                <div className="w-12 h-px bg-[rgba(168, 64, 50, 0.2)] mb-1.5" />
-                                <span className="text-3xl block leading-none tracking-[0.4em] pr-[-0.4em]">承認済</span>
-                                <div className="w-12 h-px bg-[rgba(168, 64, 50, 0.2)] mt-1.5" />
-                                <span className="text-[8px] mt-1.5 font-bold opacity-40 tracking-widest leading-none">管理委員会之印</span>
-                            </div>
-                        </div>
+                        <img 
+                            src="/hanko.webp" 
+                            alt="承認印" 
+                            className="w-full h-full object-contain transform -rotate-[12deg]"
+                        />
                     </div>
                 </div>
             </footer>
