@@ -9,6 +9,7 @@ export default function Home() {
   const [authPassword, setAuthPassword] = useState('');
   const [authError, setAuthError] = useState('');
   const [showScrollVideo, setShowScrollVideo] = useState(false);
+  const [showWhiteout, setShowWhiteout] = useState(false);
 
   const handleAuthSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,8 +23,11 @@ export default function Home() {
   };
 
   const handleVideoEnd = () => {
-    setShowScrollVideo(false);
-    router.push('/timeline');
+    // ホワイトアウト開始→完了待ち後に遷移
+    setShowWhiteout(true);
+    setTimeout(() => {
+      router.push('/timeline');
+    }, 500);
   };
 
   return (
@@ -327,13 +331,13 @@ export default function Home() {
         </div>
       )}
 
-      {/* ── 巻物オープニング動画オーバーレイ（背景＋枠＋透過動画） ── */}
+      {/* ── 巻物オープニング動画オーバーレイ（宇宙背景＋枠＋透過動画） ── */}
       {showScrollVideo && (
         <div
           className="fixed inset-0"
           style={{ zIndex: 100 }}
         >
-          {/* 背景：星空写真 */}
+          {/* 背景：星空写真（ダークオーバーレイなし） */}
           <div
             className="absolute inset-0"
             style={{
@@ -341,13 +345,6 @@ export default function Home() {
               backgroundSize: 'cover',
               backgroundPosition: 'center top',
               backgroundRepeat: 'no-repeat',
-            }}
-          />
-          {/* ダークオーバーレイ */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: 'linear-gradient(to bottom, rgba(2,5,18,0.45) 0%, rgba(4,8,25,0.35) 40%, rgba(3,6,20,0.50) 100%)',
             }}
           />
 
@@ -378,6 +375,16 @@ export default function Home() {
             <source src="/0001-0120.webm" type="video/webm" />
             <source src="/0001-0120.mp4" type="video/mp4" />
           </video>
+
+          {/* ホワイトアウトオーバーレイ */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'white',
+              opacity: showWhiteout ? 1 : 0,
+              transition: 'opacity 0.45s ease-in',
+            }}
+          />
 
           {/* スキップヒント */}
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-[#c9a64e]/50 text-xs tracking-widest font-sans pointer-events-none">
