@@ -91,13 +91,12 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="space-y-4 px-4 overflow-hidden">
-            <h1 className="text-white tracking-tight leading-none text-outline title-elegant flex justify-center w-full">
-              <span className="block text-3xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl whitespace-nowrap drop-shadow-2xl mx-auto max-w-full break-keep overflow-anywhere tracking-tight md:tracking-normal">メゾン・ド・きょー</span>
-            </h1>
-            <div className="text-xs md:text-base tracking-[0.6em] md:tracking-[0.8em] text-[#c9a64e] font-serif uppercase font-bold drop-shadow-lg">
-              Maison de Kyo
-            </div>
+          <div className="flex justify-center px-4 overflow-hidden">
+            <img
+              src="/maison de kyo.webp"
+              alt="メゾン・ド・きょー (Maison de Kyo)"
+              className="w-full max-w-[280px] xs:max-w-[380px] sm:max-w-[480px] md:max-w-[580px] lg:max-w-[680px] h-auto object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.65)] animate-in fade-in zoom-in-95 duration-1000"
+            />
           </div>
 
           <div className="max-w-3xl mx-auto px-6">
