@@ -438,18 +438,18 @@ export default function TimelinePage() {
         })}
       </svg>
 
-      {/* ── 巻物オープニング動画オーバーレイ ── */}
+      {/* ── 巻物オープニング動画オーバーレイ（透過WebM） ── */}
       {showScrollVideo && (
         <div
-          className="fixed inset-0 pointer-events-auto"
-          style={{ zIndex: 55 }}
-          onClick={() => setShowScrollVideo(false)}
+          className="fixed inset-0 pointer-events-none"
+          style={{ zIndex: 55, background: 'transparent' }}
         >
           <video
             key="scroll-opening"
             autoPlay
             playsInline
             muted
+            onClick={() => setShowScrollVideo(false)}
             onEnded={() => setShowScrollVideo(false)}
             style={{
               position: 'absolute',
@@ -458,8 +458,11 @@ export default function TimelinePage() {
               height: '100%',
               objectFit: 'contain',
               background: 'transparent',
+              cursor: 'pointer',
+              pointerEvents: 'auto',
             }}
           >
+            <source src="/0001-0120.webm" type="video/webm" />
             <source src="/0001-0120.mp4" type="video/mp4" />
           </video>
         </div>
