@@ -111,38 +111,60 @@ export default function Home() {
         {/* Navigation Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
 
-          {/* ── かきょ年表（アニバーサリー特別横長タイル） ── */}
+          {/* ── かきょ年表（星空・星座あしらい横長タイル） ── */}
           <div
             onClick={() => setShowAuthModal(true)}
             className="group cursor-pointer md:col-span-2 lg:col-span-3"
           >
-            <div className="glass-panel p-6 md:p-10 h-full flex flex-col md:flex-row items-center justify-between hover:scale-[1.01] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/60 relative overflow-hidden bg-gradient-to-r from-[#0a1224]/90 via-[#18233c]/80 to-[#0a1224]/90 border border-[#c9a64e]/30 shadow-[0_0_30px_rgba(201,166,78,0.15)] min-h-[220px]">
+            <div className="glass-panel p-6 md:p-10 h-full flex flex-col md:flex-row items-center justify-between hover:scale-[1.01] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/60 relative overflow-hidden bg-gradient-to-r from-[#0a1224]/95 via-[#131f38]/90 to-[#0a1224]/95 border border-[#c9a64e]/30 shadow-[0_0_30px_rgba(201,166,78,0.2)] min-h-[220px]">
               
-              {/* ギフトリボン・アニバーサリー演出 */}
-              <div className="absolute top-0 left-0 w-32 h-32 overflow-hidden pointer-events-none z-20">
-                <div className="absolute top-6 left-[-35px] w-[160px] text-center bg-gradient-to-r from-[#a06830] via-[#c9a64e] to-[#a06830] text-[#080d1a] font-serif text-[10px] md:text-xs font-black uppercase tracking-widest py-1.5 -rotate-45 shadow-[0_2px_8px_rgba(0,0,0,0.5)] border-y border-[#ffe29a]/40">
-                  Anniversary
-                </div>
-              </div>
-              
-              <div className="absolute top-4 right-12 text-[#c9a64e]/30 text-xl animate-pulse select-none pointer-events-none">✦</div>
-              <div className="absolute bottom-6 left-1/3 text-[#c9a64e]/20 text-2xl animate-bounce select-none pointer-events-none" style={{ animationDuration: '4s' }}>✦</div>
-              
-              {/* 左側：巻物画像 */}
-              <div className="flex-shrink-0 relative w-full md:w-1/3 h-40 md:h-full flex items-center justify-center mb-6 md:mb-0">
-                <div className="absolute w-1.5 h-full bg-gradient-to-b from-rose-700 via-rose-500 to-rose-700 opacity-60 z-0" />
-                <div className="absolute h-1.5 w-full bg-gradient-to-r from-rose-700 via-rose-500 to-rose-700 opacity-60 z-0" />
-                <div className="absolute w-32 h-32 bg-[#c9a64e]/10 rounded-full blur-2xl group-hover:bg-[#c9a64e]/20 transition-all duration-700 z-0" />
+              {/* 背景：星空写真を透過ブレンド */}
+              <div 
+                className="absolute inset-0 opacity-30 pointer-events-none mix-blend-screen bg-cover bg-center"
+                style={{ backgroundImage: 'url(/timeline-bg.png)' }}
+              />
+
+              {/* 星座を結ぶ線のグラフィック */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40 z-0">
+                <circle cx="15%" cy="35%" r="2" fill="#ffe29a" className="animate-pulse" style={{ animationDuration: '2s' }} />
+                <circle cx="22%" cy="18%" r="1.5" fill="#ffe29a" className="animate-pulse" style={{ animationDuration: '3s' }} />
+                <circle cx="30%" cy="50%" r="2.5" fill="#ffe29a" className="animate-pulse" style={{ animationDuration: '4s' }} />
+                <circle cx="40%" cy="20%" r="2" fill="#ffe29a" className="animate-pulse" style={{ animationDuration: '2.5s' }} />
+                <circle cx="55%" cy="60%" r="1.5" fill="#ffe29a" className="animate-pulse" style={{ animationDuration: '3.5s' }} />
+                <circle cx="70%" cy="25%" r="2" fill="#ffe29a" className="animate-pulse" style={{ animationDuration: '3s' }} />
+                <circle cx="85%" cy="45%" r="1.5" fill="#ffe29a" className="animate-pulse" style={{ animationDuration: '2s' }} />
                 
-                <div className="relative z-10 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-500 w-36 h-36 flex items-center justify-center">
+                <line x1="15%" y1="35%" x2="22%" y2="18%" stroke="#c9a64e" strokeWidth="0.5" strokeOpacity="0.4" />
+                <line x1="22%" y1="18%" x2="40%" y2="20%" stroke="#c9a64e" strokeWidth="0.5" strokeOpacity="0.4" />
+                <line x1="40%" y1="20%" x2="30%" y2="50%" stroke="#c9a64e" strokeWidth="0.5" strokeOpacity="0.4" />
+                <line x1="30%" y1="50%" x2="55%" y2="60%" stroke="#c9a64e" strokeWidth="0.5" strokeOpacity="0.4" />
+                <line x1="55%" y1="60%" x2="70%" y2="25%" stroke="#c9a64e" strokeWidth="0.5" strokeOpacity="0.4" />
+                <line x1="70%" y1="25%" x2="85%" y2="45%" stroke="#c9a64e" strokeWidth="0.5" strokeOpacity="0.4" />
+                
+                <style>{`
+                  @keyframes tileStarFlow {
+                    0% { transform: translate(0, 0) rotate(-30deg); opacity: 0; }
+                    5% { opacity: 0.8; }
+                    15% { opacity: 0; transform: translate(120px, 70px) rotate(-30deg); }
+                    100% { opacity: 0; transform: translate(120px, 70px) rotate(-30deg); }
+                  }
+                `}</style>
+                <line x1="75%" y1="15%" x2="85%" y2="40%" stroke="white" strokeWidth="1" strokeDasharray="25" strokeDashoffset="0" className="opacity-0" style={{ animation: 'tileStarFlow 7s infinite ease-out', transformOrigin: 'top left' }} />
+              </svg>
+
+              <div className="absolute top-4 right-12 text-[#c9a64e]/30 text-xl animate-pulse select-none pointer-events-none">✦</div>
+              <div className="absolute bottom-6 left-1/4 text-[#c9a64e]/20 text-2xl animate-bounce select-none pointer-events-none" style={{ animationDuration: '5s' }}>✦</div>
+              
+              {/* 左側：巻物画像（大きく表示） */}
+              <div className="flex-shrink-0 relative w-full md:w-1/3 h-44 md:h-full flex items-center justify-center mb-6 md:mb-0 z-10">
+                <div className="absolute w-36 h-36 bg-[#c9a64e]/10 rounded-full blur-2xl group-hover:bg-[#c9a64e]/20 transition-all duration-700 z-0" />
+                
+                <div className="relative z-10 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-500 w-44 h-44 flex items-center justify-center">
                   <img
                     src="/makimono.webp"
                     alt="かきょ年表"
-                    className="w-full h-full object-contain drop-shadow-[0_10px_20px_rgba(201,166,78,0.4)]"
+                    className="w-full h-full object-contain drop-shadow-[0_10px_25px_rgba(201,166,78,0.35)]"
                   />
-                  <div className="absolute -bottom-1 -right-1 bg-rose-600 text-[10px] text-white font-serif px-2 py-0.5 rounded border border-rose-400 shadow-md">
-                    GIFT ✦
-                  </div>
                 </div>
               </div>
 
@@ -150,18 +172,16 @@ export default function Home() {
               <div className="flex-1 md:pl-10 text-center md:text-left relative z-10 flex flex-col justify-center h-full">
                 <div className="flex items-center justify-center md:justify-start gap-3 mb-2 flex-wrap">
                   <span className="bg-[#c9a64e]/20 text-[#ffe29a] text-[10px] md:text-xs tracking-wider px-3 py-1 rounded-full border border-[#c9a64e]/40 font-serif">
-                    特別記念絵巻
+                    Maison de Kyo
                   </span>
-                  <span className="text-[#ffe29a] text-xs">🎉 Anniversary Edition</span>
                 </div>
                 
                 <h3 className="text-3xl md:text-4xl font-black text-white font-serif mb-4 text-outline tracking-wider" style={{ textShadow: '0 0 15px rgba(255,226,154,0.15)' }}>
                   かきょ年表
                 </h3>
                 
-                <p className="text-[#d4c5b0] text-sm md:text-base leading-relaxed mb-6 max-w-xl">
-                  かきょの記念すべき軌跡を紐解く、特別な年表ギフト。<br className="hidden lg:block" />
-                  これまでの大切な想い出と歩みが、美しい天の川に沿って開かれます。
+                <p className="text-[#d4c5b0] text-sm md:text-base leading-relaxed mb-6 max-w-xl font-serif">
+                  これまでの活動の軌跡を年表と共に振り返る。
                 </p>
                 
                 <div className="text-[#c9a64e] font-bold text-lg border-b border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest inline-flex items-center gap-2 self-center md:self-start cursor-pointer">
