@@ -284,7 +284,7 @@ export default function TennyuTodoke({
                         <h2 className="text-2xl font-black tracking-[0.5em] text-[#2d2418] leading-none opacity-90 whitespace-nowrap">メゾン・ド・きょー管理委員会</h2>
                     </div>
 
-                    <div className="absolute -top-12 -right-4 w-44 h-44 pointer-events-none select-none z-10">
+                    <div className="absolute -top-16 -right-6 w-60 h-60 pointer-events-none select-none z-10">
                         <img 
                             src="/hanko.webp" 
                             alt="承認印" 

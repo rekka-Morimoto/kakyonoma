@@ -490,7 +490,7 @@ function HomeMessage() {
         </div>
 
         {/* ハンコ画像 */}
-        <div className="absolute bottom-6 right-8 w-28 h-28 pointer-events-none select-none z-20">
+        <div className="absolute bottom-6 right-8 w-40 h-40 pointer-events-none select-none z-20">
           <img
             src="/hanko.webp"
             alt="管理委員会之印"
