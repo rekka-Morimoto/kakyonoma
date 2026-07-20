@@ -22,12 +22,36 @@ export default function Home() {
     }
   };
 
-  const handleVideoEnd = () => {
-    // ホワイトアウト開始→完了待ち後に遷移
+  const handleVideoEnded = () => {
+    // 動画が通常終了したときは、すでに timeupdate によってホワイトアウトが完了しているため即時遷移
+    setShowWhiteout(true);
+    router.push('/timeline');
+    setTimeout(() => {
+      setShowScrollVideo(false);
+      setShowWhiteout(false);
+    }, 1000);
+  };
+
+  const handleVideoSkip = () => {
+    // スキップされた場合はその場でホワイトアウトを開始し、フェード完了後(0.45秒)に遷移
     setShowWhiteout(true);
     setTimeout(() => {
       router.push('/timeline');
-    }, 500);
+      setTimeout(() => {
+        setShowScrollVideo(false);
+        setShowWhiteout(false);
+      }, 500);
+    }, 450);
+  };
+
+  const handleTimeUpdate = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    const video = e.currentTarget;
+    if (video.duration) {
+      // 動画終了の0.45秒前にホワイトアウトを開始する
+      if (video.currentTime >= video.duration - 0.45) {
+        setShowWhiteout(true);
+      }
+    }
   };
 
   return (
@@ -218,24 +242,8 @@ export default function Home() {
             className="group cursor-pointer"
           >
             <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
-              <div className="mb-0 group-hover:scale-110 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 duration-500">
-                {/* CSSアート：巻いた状態の巻物 */}
-                <div className="relative w-40 h-24 flex items-center justify-center">
-                  {/* 軸のウッドキャップ（左） */}
-                  <div className="absolute left-4 w-2 h-16 bg-gradient-to-b from-[#5c3c26] via-[#c9a64e] to-[#5c3c26] rounded-sm shadow-md" />
-                  {/* 軸のウッドキャップ（右） */}
-                  <div className="absolute right-4 w-2 h-16 bg-gradient-to-b from-[#5c3c26] via-[#c9a64e] to-[#5c3c26] rounded-sm shadow-md" />
-                  {/* 本体（巻かれた紙） */}
-                  <div className="w-24 h-12 bg-gradient-to-b from-[#e3d1b6] via-[#f7ebd9] to-[#e3d1b6] rounded-md shadow-lg border border-[#c9a64e]/30 relative flex items-center justify-center">
-                    {/* 金の細ライン */}
-                    <div className="absolute inset-x-0 top-0.5 h-[1px] bg-[#c9a64e]/20" />
-                    <div className="absolute inset-x-0 bottom-0.5 h-[1px] bg-[#c9a64e]/20" />
-                    {/* 赤いリボン */}
-                    <div className="absolute inset-y-0 w-2.5 bg-gradient-to-r from-[#b31c1c] to-[#e63939] shadow-inner left-[calc(50%-5px)] z-10 flex items-center justify-center">
-                      <div className="absolute w-4 h-4 bg-[#b31c1c] rounded-full border border-[#ffe29a]/40 rotate-45 transform translate-y-1 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
-                    </div>
-                  </div>
-                </div>
+              <div className="mb-0 group-hover:-rotate-6 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
+                <img src="/makimono.webp" alt="かきょ年表" className="w-full h-full object-contain drop-shadow-2xl" />
               </div>
               <div className="relative z-10 mt-28 md:mt-44 flex flex-col items-center">
                 <h3 className="text-3xl md:text-4xl font-black text-white font-serif mb-4 text-outline whitespace-nowrap">かきょ年表</h3>
@@ -363,8 +371,9 @@ export default function Home() {
             autoPlay
             playsInline
             muted
-            onClick={handleVideoEnd}
-            onEnded={handleVideoEnd}
+            onClick={handleVideoSkip}
+            onTimeUpdate={handleTimeUpdate}
+            onEnded={handleVideoEnded}
             className="absolute inset-0 w-full h-full"
             style={{
               objectFit: 'contain',
