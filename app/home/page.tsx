@@ -8,17 +8,22 @@ export default function Home() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authPassword, setAuthPassword] = useState('');
   const [authError, setAuthError] = useState('');
+  const [showScrollVideo, setShowScrollVideo] = useState(false);
 
   const handleAuthSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (authPassword === '5226') {
       sessionStorage.setItem('timeline_auth', '5226');
-      sessionStorage.setItem('timeline_scroll_animate', 'true');
       setShowAuthModal(false);
-      router.push('/timeline');
+      setShowScrollVideo(true);
     } else {
       setAuthError('暗証番号が正しくありません。');
     }
+  };
+
+  const handleVideoEnd = () => {
+    setShowScrollVideo(false);
+    router.push('/timeline');
   };
 
   return (
@@ -318,6 +323,65 @@ export default function Home() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── 巻物オープニング動画オーバーレイ（背景＋枠＋透過動画） ── */}
+      {showScrollVideo && (
+        <div
+          className="fixed inset-0"
+          style={{ zIndex: 100 }}
+        >
+          {/* 背景：星空写真 */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: 'url(/timeline-bg.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center top',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
+          {/* ダークオーバーレイ */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(to bottom, rgba(2,5,18,0.45) 0%, rgba(4,8,25,0.35) 40%, rgba(3,6,20,0.50) 100%)',
+            }}
+          />
+
+          {/* 装飾フレーム */}
+          <div className="absolute inset-6 border border-[#c9a64e]/30 pointer-events-none rounded-lg" />
+          <div className="absolute inset-8 border border-[#c9a64e]/15 pointer-events-none rounded-lg" />
+          {/* 四隅の装飾 */}
+          <div className="absolute top-6 left-6 w-16 h-16 border-t-2 border-l-2 border-[#c9a64e]/60 pointer-events-none" />
+          <div className="absolute top-6 right-6 w-16 h-16 border-t-2 border-r-2 border-[#c9a64e]/60 pointer-events-none" />
+          <div className="absolute bottom-6 left-6 w-16 h-16 border-b-2 border-l-2 border-[#c9a64e]/60 pointer-events-none" />
+          <div className="absolute bottom-6 right-6 w-16 h-16 border-b-2 border-r-2 border-[#c9a64e]/60 pointer-events-none" />
+
+          {/* 透過WebM動画 */}
+          <video
+            key="scroll-opening"
+            autoPlay
+            playsInline
+            muted
+            onClick={handleVideoEnd}
+            onEnded={handleVideoEnd}
+            className="absolute inset-0 w-full h-full"
+            style={{
+              objectFit: 'contain',
+              background: 'transparent',
+              cursor: 'pointer',
+            }}
+          >
+            <source src="/0001-0120.webm" type="video/webm" />
+            <source src="/0001-0120.mp4" type="video/mp4" />
+          </video>
+
+          {/* スキップヒント */}
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-[#c9a64e]/50 text-xs tracking-widest font-sans pointer-events-none">
+            クリックでスキップ
           </div>
         </div>
       )}

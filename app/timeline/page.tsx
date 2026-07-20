@@ -143,7 +143,6 @@ export default function TimelinePage() {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [showCharSearch, setShowCharSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showScrollVideo, setShowScrollVideo] = useState(false);
 
   // 流れ星アニメーション
   type ShootingStar = {
@@ -233,11 +232,6 @@ export default function TimelinePage() {
     if (isAuthed) {
       setIsAuthenticated(true);
       fetchEvents();
-      const shouldAnimate = sessionStorage.getItem('timeline_scroll_animate') === 'true';
-      if (shouldAnimate) {
-        sessionStorage.removeItem('timeline_scroll_animate');
-        setShowScrollVideo(true);
-      }
     } else {
       setLoading(false);
     }
@@ -438,35 +432,6 @@ export default function TimelinePage() {
         })}
       </svg>
 
-      {/* ── 巻物オープニング動画オーバーレイ（透過WebM） ── */}
-      {showScrollVideo && (
-        <div
-          className="fixed inset-0 pointer-events-none"
-          style={{ zIndex: 55, background: 'transparent' }}
-        >
-          <video
-            key="scroll-opening"
-            autoPlay
-            playsInline
-            muted
-            onClick={() => setShowScrollVideo(false)}
-            onEnded={() => setShowScrollVideo(false)}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              background: 'transparent',
-              cursor: 'pointer',
-              pointerEvents: 'auto',
-            }}
-          >
-            <source src="/0001-0120.webm" type="video/webm" />
-            <source src="/0001-0120.mp4" type="video/mp4" />
-          </video>
-        </div>
-      )}
 
       {/* ── キャラクター立ち絵（常に画面右下・年表右端整列） ── */}
       <div className="fixed bottom-0 left-0 right-0 z-30 pointer-events-none">
