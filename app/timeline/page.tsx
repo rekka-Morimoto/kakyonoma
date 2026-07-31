@@ -135,9 +135,6 @@ const getEventStyles = (imp: number, title: string = '') => {
 };
 
 export default function TimelinePage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
@@ -228,13 +225,7 @@ export default function TimelinePage() {
   }, [events]);
 
   useEffect(() => {
-    const isAuthed = sessionStorage.getItem('timeline_auth') === '5226';
-    if (isAuthed) {
-      setIsAuthenticated(true);
-      fetchEvents();
-    } else {
-      setLoading(false);
-    }
+    fetchEvents();
   }, []);
 
   // イベント一覧が更新された時、またはウィンドウのリサイズ時に再計算
@@ -270,15 +261,7 @@ export default function TimelinePage() {
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === '5226') {
-      setIsAuthenticated(true);
-      fetchEvents();
-    } else {
-      setError('暗証番号が正しくありません。');
-    }
-  };
+
 
   // サムネイルとテキストの重ね合わせ表示コンポーネント
   const renderCardInner = (event: TimelineEvent, overlayGrad?: string) => {
@@ -681,41 +664,7 @@ export default function TimelinePage() {
           <div className="absolute inset-2 border border-[#c9a64e]/30 pointer-events-none rounded-lg" />
           <div className="absolute inset-3 border border-[#c9a64e]/15 pointer-events-none rounded-lg" />
 
-          {!isAuthenticated ? (
-            /* ── パスワード認証画面 ── */
-            <div className="w-full max-w-md py-16 px-6 text-center my-auto animate-fadeIn">
-              <div className="mb-6 inline-block">
-                <div className="w-16 h-16 rounded-full border-2 border-[#c9a64e]/40 flex items-center justify-center mx-auto bg-[#0a1224] shadow-[0_0_20px_rgba(201,166,78,0.2)]">
-                  <span className="text-[#c9a64e] text-2xl">🗝️</span>
-                </div>
-              </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#ffe29a] tracking-widest mb-3" style={{ textShadow: '0 0 12px rgba(255,226,154,0.3)' }}>
-                閲覧制限
-              </h2>
-              <p className="text-xs text-[#c9a64e]/80 tracking-wider mb-8 font-sans">
-                かきょ年表を紐解くには暗証番号が必要です
-              </p>
-
-              <form onSubmit={handleLogin} className="space-y-5">
-                <div>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="暗証番号を入力"
-                    className="w-full px-5 py-3.5 rounded-xl bg-[#080d1a] border border-[#c9a64e]/40 text-center text-lg text-white tracking-[0.3em] focus:outline-none focus:border-[#c9a64e] focus:ring-2 focus:ring-[#c9a64e]/30 transition-all placeholder:tracking-normal placeholder:text-gray-600 font-sans shadow-inner"
-                  />
-                </div>
-                {error && <p className="text-rose-400 text-xs font-sans animate-bounce">{error}</p>}
-                <button
-                  type="submit"
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#c9a64e] via-[#e2c575] to-[#a06830] text-[#080d1a] font-black tracking-widest hover:brightness-110 active:scale-[0.99] transition-all shadow-[0_4px_15px_rgba(201,166,78,0.3)] font-sans"
-                >
-                  紐解く
-                </button>
-              </form>
-            </div>
-          ) : loading ? (
+          {loading ? (
             /* ── ローディング表示 ── */
             <div className="py-24 text-center my-auto">
               <div className="w-10 h-10 border-3 border-[#c9a64e]/20 border-t-[#c9a64e] rounded-full animate-spin mx-auto mb-4" />

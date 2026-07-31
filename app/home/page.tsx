@@ -5,21 +5,12 @@ import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const router = useRouter();
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authPassword, setAuthPassword] = useState('');
-  const [authError, setAuthError] = useState('');
   const [showScrollVideo, setShowScrollVideo] = useState(false);
   const [showWhiteout, setShowWhiteout] = useState(false);
 
-  const handleAuthSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (authPassword === '5226') {
-      sessionStorage.setItem('timeline_auth', '5226');
-      setShowAuthModal(false);
-      setShowScrollVideo(true);
-    } else {
-      setAuthError('暗証番号が正しくありません。');
-    }
+  const handleTileClick = () => {
+    sessionStorage.setItem('timeline_auth', '5226');
+    setShowScrollVideo(true);
   };
 
   const handleVideoEnded = () => {
@@ -112,7 +103,7 @@ export default function Home() {
 
           {/* ── かきょ年表（星空・星座あしらい横長タイル） ── */}
           <div
-            onClick={() => setShowAuthModal(true)}
+            onClick={handleTileClick}
             className="group cursor-pointer md:col-span-2 lg:col-span-3"
           >
             <div className="glass-panel p-6 md:p-10 h-full flex flex-col md:flex-row items-center justify-between hover:scale-[1.01] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/60 relative overflow-hidden bg-gradient-to-r from-[#0a1224]/95 via-[#131f38]/90 to-[#0a1224]/95 border border-[#c9a64e]/30 shadow-[0_0_30px_rgba(201,166,78,0.2)] min-h-[220px]">
@@ -336,68 +327,7 @@ export default function Home() {
 
       </div>
 
-      {/* ── パスワード入力モーダル ── */}
-      {showAuthModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-filter backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="relative max-w-md w-full glass-panel p-8 md:p-10 rounded-[2.5rem] border-[#c9a64e]/30 shadow-2xl text-center space-y-6 animate-in zoom-in-95 duration-300">
-            {/* 装飾の角枠 */}
-            <div className="absolute inset-4 border border-[#c9a64e]/20 rounded-[1.8rem] pointer-events-none" />
-            
-            <div className="space-y-2">
-              <div className="text-4xl">📜</div>
-              <h3 className="text-2xl font-serif font-black text-[#ffe29a] tracking-widest text-glow">
-                かきょ年表の紐解き
-              </h3>
-              <p className="text-xs text-[#c9a64e] tracking-wider uppercase font-sans">
-                Scroll Authentication
-              </p>
-            </div>
 
-            <p className="text-[#d4c5b0] text-sm leading-relaxed font-serif">
-              かきょの歴史を刻んだ年表を紐解くには、<br />
-              四桁の暗証番号が必要です。
-            </p>
-
-            <form onSubmit={handleAuthSubmit} className="space-y-4 pt-2">
-              <input
-                autoFocus
-                type="password"
-                value={authPassword}
-                onChange={(e) => {
-                  setAuthPassword(e.target.value);
-                  setAuthError('');
-                }}
-                placeholder="暗証番号を入力"
-                className="w-full px-5 py-3 rounded-xl bg-[#080d1a]/85 border border-[#c9a64e]/40 text-center text-lg text-white tracking-[0.3em] focus:outline-none focus:border-[#c9a64e] focus:ring-2 focus:ring-[#c9a64e]/20 transition-all font-sans shadow-inner placeholder:tracking-normal placeholder:text-gray-600"
-              />
-              {authError && (
-                <p className="text-rose-400 text-xs font-sans animate-bounce">
-                  {authError}
-                </p>
-              )}
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowAuthModal(false);
-                    setAuthPassword('');
-                    setAuthError('');
-                  }}
-                  className="flex-1 py-3 rounded-xl border border-white/10 text-white/70 hover:bg-white/5 active:scale-[0.98] transition-all tracking-wider text-sm font-bold font-sans"
-                >
-                  閉じる
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#c9a64e] via-[#e2c575] to-[#a06830] text-[#080d1a] font-black tracking-widest hover:brightness-110 active:scale-[0.98] transition-all shadow-[0_4px_15px_rgba(201,166,78,0.3)] text-sm font-sans"
-                >
-                  紐解く
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* ── 巻物オープニング動画オーバーレイ（宇宙背景＋枠＋透過動画） ── */}
       {showScrollVideo && (
