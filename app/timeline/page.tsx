@@ -489,12 +489,10 @@ export default function TimelinePage() {
               draggable={false}
             />
 
-            {/* 吹き出し（ドット絵テイスト：キャラクターの顔の左側） */}
+            {/* 吹き出し（ドット絵テイスト：キャラクターの顔の左上スペースに配置） */}
             <div
+              className="absolute top-[22%] left-[4%] sm:top-[26%] sm:left-[10%] md:top-[28%] md:left-[16%]"
               style={{
-                position: 'absolute',
-                top: '32%',
-                left: '30%',
                 zIndex: 15,
                 background: '#fff',
                 border: '3px solid #111',
@@ -510,11 +508,11 @@ export default function TimelinePage() {
               <p style={{ fontFamily:"'Courier New',Courier,monospace", fontSize:'13px', fontWeight:'bold', color:'#111', lineHeight:1.5, margin:0, whiteSpace:'nowrap' }}>
                 何探してるの？
               </p>
-              {/* キャラクターの顔（右側）に向けて伸びる三角しっぽ */}
+              {/* キャラクターの顔（右下）に向けて伸びる三角しっぽ */}
               <span style={{
                 position: 'absolute',
                 right: '-11px',
-                top: '60%',
+                top: '70%',
                 transform: 'translateY(-50%)',
                 display: 'block',
                 width: 0,
@@ -526,7 +524,7 @@ export default function TimelinePage() {
               <span style={{
                 position: 'absolute',
                 right: '-8px',
-                top: '60%',
+                top: '70%',
                 transform: 'translateY(-50%)',
                 display: 'block',
                 width: 0,
