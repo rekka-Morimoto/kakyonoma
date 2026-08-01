@@ -8,7 +8,16 @@ interface TimelineEvent {
   title: string;
   linkUrl?: string | null;
   thumbnailUrl?: string | null;
+  isSecret?: boolean;
 }
+
+const SECRET_EVENT: TimelineEvent = {
+  importance: 4,
+  date: '????.??.??',
+  title: '?????',
+  thumbnailUrl: '/kakyoknighf.png',
+  isSecret: true,
+};
 
 
 const getTitleFontSize = (title: string, imp: number) => {
@@ -182,11 +191,16 @@ export default function TimelinePage() {
 
   // 検索フィルタリング済みイベント
   const filteredEvents = React.useMemo(() => {
-    if (!searchQuery.trim()) return [];
-    const q = searchQuery.toLowerCase();
-    return events.filter(
+    const rawQ = searchQuery.trim();
+    if (!rawQ) return [];
+    const q = rawQ.toLowerCase();
+    const matched = events.filter(
       (ev) => ev.title.toLowerCase().includes(q) || ev.date.includes(q)
     );
+    if (rawQ === '消すよ' || q === '消すよ') {
+      return [SECRET_EVENT, ...matched];
+    }
+    return matched;
   }, [events, searchQuery]);
 
   const [spans, setSpans] = useState<{ [key: string]: number }>({});
@@ -588,8 +602,8 @@ export default function TimelinePage() {
                           key={i}
                           onClick={() => { setSelectedEvent(ev); setShowCharSearch(false); setSearchQuery(''); }}
                           style={{
-                            background: 'rgba(201,166,78,0.1)',
-                            border: '1px solid rgba(201,166,78,0.4)',
+                            background: ev.isSecret ? 'rgba(147,51,234,0.25)' : 'rgba(201,166,78,0.1)',
+                            border: ev.isSecret ? '1px solid rgba(192,132,252,0.8)' : '1px solid rgba(201,166,78,0.4)',
                             borderRadius: '3px',
                             padding: '6px 9px',
                             textAlign: 'left',
@@ -597,11 +611,11 @@ export default function TimelinePage() {
                             transition: 'background 0.15s',
                             width: '100%',
                           }}
-                          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(201,166,78,0.25)')}
-                          onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(201,166,78,0.1)')}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = ev.isSecret ? 'rgba(147,51,234,0.45)' : 'rgba(201,166,78,0.25)')}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = ev.isSecret ? 'rgba(147,51,234,0.25)' : 'rgba(201,166,78,0.1)')}
                         >
-                          <div style={{ fontFamily:"'Courier New',monospace", fontSize:'9px', color:'#c9a64e', marginBottom:'2px' }}>{ev.date}</div>
-                          <div style={{ fontFamily:'sans-serif', fontSize:'11px', color:'#f1f5f9', lineHeight:1.4 }}>{ev.title}</div>
+                          <div style={{ fontFamily:"'Courier New',monospace", fontSize:'9px', color: ev.isSecret ? '#e9d5ff' : '#c9a64e', marginBottom:'2px' }}>{ev.date} {ev.isSecret ? '✦ SECRET' : ''}</div>
+                          <div style={{ fontFamily:'sans-serif', fontSize:'11px', color: ev.isSecret ? '#f3e8ff' : '#f1f5f9', fontWeight: ev.isSecret ? 'bold' : 'normal', lineHeight:1.4 }}>{ev.title}</div>
                         </button>
                       ))}
                     </div>
@@ -1049,25 +1063,25 @@ export default function TimelinePage() {
           onClick={() => setSelectedEvent(null)}
         >
           <div
-            className="bg-[#0c1326] border-2 border-[#c9a64e]/70 rounded-3xl p-6 md:p-8 max-w-lg w-full relative shadow-[0_0_50px_rgba(201,166,78,0.3)] overflow-hidden"
+            className={`bg-[#0c1326] border-2 border-[#c9a64e]/70 rounded-3xl p-6 md:p-8 ${selectedEvent.isSecret ? 'max-w-2xl' : 'max-w-lg'} w-full relative shadow-[0_0_50px_rgba(201,166,78,0.3)] overflow-hidden`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* 金の箔押し風ライン & 装飾 */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#c9a64e] to-transparent" />
             <button
               onClick={() => setSelectedEvent(null)}
-              className="absolute top-4 right-4 text-[#c9a64e]/70 hover:text-white text-xl font-bold w-8 h-8 rounded-full bg-white/5 flex items-center justify-center transition-colors font-sans"
+              className="absolute top-4 right-4 text-[#c9a64e]/70 hover:text-white text-xl font-bold w-8 h-8 rounded-full bg-white/5 flex items-center justify-center transition-colors font-sans z-20"
             >
               ✕
             </button>
 
             {/* サムネイル（高画質/拡大表示） */}
             {selectedEvent.thumbnailUrl && (
-              <div className="w-full h-48 md:h-64 rounded-2xl overflow-hidden mb-6 border border-white/10 shadow-inner relative">
+              <div className={`w-full ${selectedEvent.isSecret ? 'max-h-[65vh] h-auto' : 'h-48 md:h-64'} rounded-2xl overflow-hidden mb-6 border border-white/10 shadow-inner relative flex items-center justify-center bg-black/40`}>
                 <img
                   src={selectedEvent.thumbnailUrl}
-                  alt="Event Thumbnail"
-                  className="w-full h-full object-cover"
+                  alt={selectedEvent.title}
+                  className={`w-full ${selectedEvent.isSecret ? 'h-auto max-h-[65vh] object-contain' : 'h-full object-cover'}`}
                 />
               </div>
             )}
