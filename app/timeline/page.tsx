@@ -1090,9 +1090,14 @@ export default function TimelinePage() {
             <div className="text-xs md:text-sm font-black text-[#ffc56c] tracking-widest mb-2 font-sans">
               {selectedEvent.date}
             </div>
-            <h2 className="text-xl md:text-2xl font-black text-white leading-relaxed tracking-wider break-keep mb-6">
+            <h2 className="text-xl md:text-2xl font-black text-white leading-relaxed tracking-wider break-keep mb-2">
               {selectedEvent.title}
             </h2>
+            {selectedEvent.isSecret && (
+              <p className="text-base md:text-lg font-bold text-red-400 tracking-wider mb-6 animate-pulse font-sans">
+                そろそろ消すよ～🔪
+              </p>
+            )}
 
             {/* ボタン群 */}
             <div className="flex flex-col sm:flex-row gap-3 mt-4">
