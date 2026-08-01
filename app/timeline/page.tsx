@@ -197,7 +197,7 @@ export default function TimelinePage() {
     const matched = events.filter(
       (ev) => ev.title.toLowerCase().includes(q) || ev.date.includes(q)
     );
-    if (rawQ === '消すよ' || q === '消すよ') {
+    if (rawQ.includes('消すよ') || q.includes('消すよ')) {
       return [SECRET_EVENT, ...matched];
     }
     return matched;
