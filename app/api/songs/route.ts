@@ -16,11 +16,14 @@ export async function GET(request: Request) {
 
             for (let line of lines) {
                 line = line.trim();
-                if (line.startsWith('- URL:')) {
-                    const url = line.replace(/^- URL:\s*/, '').trim();
+                const urlMatch = line.match(/^-\s*URL\s*:\s*(.*)$/i);
+                const streamLinkMatch = line.match(/^-\s*配信リンク\s*:\s*(.*)$/);
+
+                if (urlMatch) {
+                    const url = urlMatch[1].trim();
                     if (url) links.push(url);
-                } else if (line.startsWith('- 配信リンク:')) {
-                    const url = line.replace(/^- 配信リンク:\s*/, '').trim();
+                } else if (streamLinkMatch) {
+                    const url = streamLinkMatch[1].trim();
                     if (url) links.push(url);
                 }
             }

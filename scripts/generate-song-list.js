@@ -22,21 +22,25 @@ function generateHtml() {
             line = line.trim();
             if (!line) continue;
 
-            if (line.startsWith('■')) {
+            const sectionMatch = line.match(/^■\s*(.*)$/);
+            const streamLinkMatch = line.match(/^-\s*配信リンク\s*:\s*(.*)$/);
+            const urlMatch = line.match(/^-\s*URL\s*:\s*(.*)$/i);
+
+            if (sectionMatch) {
                 // 新しいセクション（配信）の開始
-                const title = line.replace(/^■\s*/, '');
+                const title = sectionMatch[1].trim();
                 currentSection = { title, songs: [], link: null };
                 sections.push(currentSection);
                 currentSong = null;
-            } else if (line.startsWith('- 配信リンク:')) {
+            } else if (streamLinkMatch) {
                 // セクション全体の配信アーカイブリンク
                 if (currentSection) {
-                    currentSection.link = line.replace(/^- 配信リンク:\s*/, '');
+                    currentSection.link = streamLinkMatch[1].trim();
                 }
-            } else if (line.startsWith('- URL:')) {
+            } else if (urlMatch) {
                 // 直前の曲に対する個別リンク
                 if (currentSong) {
-                    currentSong.url = line.replace(/^- URL:\s*/, '');
+                    currentSong.url = urlMatch[1].trim();
                 }
             } else {
                 // 曲名
