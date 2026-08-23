@@ -13,8 +13,9 @@ interface VoiceSection {
   items: VoiceItem[];
 }
 
-export default function KakyoVoicePage() {
+export default function KakyoArchivePage() {
   const [sections, setSections] = useState<VoiceSection[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedVoice, setSelectedVoice] = useState<VoiceItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,11 +28,14 @@ export default function KakyoVoicePage() {
           throw new Error('データの取得に失敗しました');
         }
         const data = await res.json();
-        setSections(data.sections || []);
-        if (data.sections && data.sections.length > 0) {
-          const firstSection = data.sections.find((s: VoiceSection) => s.items.length > 0);
-          if (firstSection) {
-            setSelectedVoice(firstSection.items[0]);
+        const fetchedSections: VoiceSection[] = data.sections || [];
+        setSections(fetchedSections);
+
+        if (fetchedSections.length > 0) {
+          const initialCat = fetchedSections[0].category;
+          setSelectedCategory(initialCat);
+          if (fetchedSections[0].items.length > 0) {
+            setSelectedVoice(fetchedSections[0].items[0]);
           }
         }
       } catch (err: any) {
@@ -44,113 +48,155 @@ export default function KakyoVoicePage() {
     fetchVoices();
   }, []);
 
+  const handleCategorySelect = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    const targetSection = sections.find(s => s.category === categoryName);
+    if (targetSection && targetSection.items.length > 0) {
+      setSelectedVoice(targetSection.items[0]);
+    } else {
+      setSelectedVoice(null);
+    }
+  };
 
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'まいにちかきょボイス':
+        return '🎙️';
+      case 'おやすみかきょボイス':
+        return '🌙';
+      case '#きょーのお話':
+        return '📖';
+      case 'かきょみこ、ふたりのーと。':
+        return '📓';
+      default:
+        return '📝';
+    }
+  };
+
+  const activeSection = sections.find(s => s.category === selectedCategory);
 
   return (
-    <main className="min-h-screen bg-transparent p-4 md:p-20 relative overflow-hidden flex flex-col items-center">
+    <main className="min-h-screen bg-transparent p-4 md:p-12 relative overflow-hidden flex flex-col items-center">
       <div className="max-w-6xl w-full space-y-8 relative z-10">
-        <Link href="/home" className="inline-flex items-center text-[#c9a64e] hover:text-white transition-colors mb-4 group font-bold tracking-widest text-lg">
+        <Link href="/home" className="inline-flex items-center text-[#c9a64e] hover:text-white transition-colors mb-2 group font-bold tracking-widest text-lg">
           <span className="mr-3 transform group-hover:-translate-x-2 transition-transform text-2xl">←</span>
           BACK TO HOME
         </Link>
 
-        <div className="glass-panel p-6 md:p-12 rounded-[2.5rem] border-white/10 shadow-2xl space-y-8">
+        <div className="glass-panel p-6 md:p-10 rounded-[2.5rem] border-white/10 shadow-2xl space-y-8">
           <header className="border-b border-white/10 pb-6 text-center">
-            <h1 className="text-4xl md:text-6xl font-serif font-black text-white mb-3 text-outline">まいにちかきょボイス</h1>
-            <p className="text-[#c9a64e] tracking-[0.4em] font-sans font-black uppercase text-xs drop-shadow-md">Daily Kakyo Voice Log</p>
+            <h1 className="text-4xl md:text-6xl font-serif font-black text-white mb-3 text-outline">かきょあーかいぶ</h1>
+            <p className="text-[#c9a64e] tracking-[0.4em] font-sans font-black uppercase text-xs drop-shadow-md">Kakyo Voice & Story Archive</p>
           </header>
 
           {loading ? (
             <div className="flex justify-center py-20 text-[#d4c5b0] text-xl font-serif">
-              ボイス一覧を読み込み中...
+              アーカイブを読み込み中...
             </div>
           ) : error ? (
             <div className="text-center py-20 text-[#a84032] text-xl font-serif">
               {error}
             </div>
           ) : (
-            <div className="flex flex-col lg:flex-row gap-8">
-              {/* Left Column: Voice List */}
-              <div className="w-full lg:w-5/12 flex flex-col space-y-6">
-                {sections.map((section, sIndex) => (
-                  <div key={sIndex} className="flex flex-col">
-                    <h3 className="text-lg font-serif font-bold text-[#c9a64e] mb-4 border-b border-[#c9a64e]/20 pb-2 flex items-center gap-2">
-                      {section.category === 'かきょみこ、ふたりのーと。' 
-                        ? '📓' 
-                        : section.category === 'おやすみかきょボイス' 
-                          ? '🌙' 
-                          : '📝'} {section.category}
-                    </h3>
-                    <div 
-                      className="voice-scrollbar overflow-y-auto space-y-3 pr-2"
-                      style={{ 
-                        maxHeight: 
-                          section.category === 'かきょみこ、ふたりのーと。' || section.category === 'おやすみかきょボイス' 
-                            ? '250px' 
-                            : '350px' 
-                      }}
+            <div className="space-y-8">
+              {/* Category Tiles Section */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {sections.map((section) => {
+                  const isSelected = selectedCategory === section.category;
+                  const icon = getCategoryIcon(section.category);
+                  return (
+                    <button
+                      key={section.category}
+                      onClick={() => handleCategorySelect(section.category)}
+                      className={`p-5 rounded-2xl transition-all duration-300 border flex flex-col items-center justify-center text-center cursor-pointer relative overflow-hidden group ${
+                        isSelected
+                          ? 'bg-gradient-to-b from-[#c9a64e]/30 to-[#1a140d]/90 border-[#c9a64e] shadow-[0_0_20px_rgba(201,166,78,0.3)] scale-[1.02]'
+                          : 'bg-white/5 border-white/10 text-[#d4c5b0] hover:bg-white/10 hover:border-white/20 hover:text-white'
+                      }`}
                     >
-                      {section.items.map((voice, index) => {
-                        const isSelected = selectedVoice?.url === voice.url;
+                      <div className="text-3xl md:text-4xl mb-2 group-hover:scale-110 transition-transform">
+                        {icon}
+                      </div>
+                      <div className={`font-serif font-bold text-sm md:text-base leading-snug break-keep ${isSelected ? 'text-white' : ''}`}>
+                        {section.category}
+                      </div>
+                      <div className="text-[11px] text-[#c9a64e]/80 font-sans mt-1">
+                        {section.items.length} 件の記録
+                      </div>
+
+                      {isSelected && (
+                        <div className="absolute bottom-0 inset-x-0 h-1 bg-[#c9a64e]" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Main Content Area: Left Item List + Right Embedded View */}
+              <div className="flex flex-col lg:flex-row gap-8 pt-4">
+                {/* Left Column: Voice / Story List */}
+                <div className="w-full lg:w-5/12 flex flex-col space-y-4">
+                  <h3 className="text-lg font-serif font-bold text-[#c9a64e] border-b border-[#c9a64e]/20 pb-2 flex items-center justify-between">
+                    <span>{getCategoryIcon(selectedCategory)} {selectedCategory} 一覧</span>
+                    <span className="text-xs text-[#d4c5b0] font-sans font-normal opacity-80">日付順</span>
+                  </h3>
+                  
+                  <div className="voice-scrollbar overflow-y-auto space-y-3 pr-2 max-h-[500px]">
+                    {activeSection && activeSection.items.length > 0 ? (
+                      activeSection.items.map((item, index) => {
+                        const isSelected = selectedVoice?.url === item.url && selectedVoice?.title === item.title;
                         return (
                           <button
                             key={index}
-                            onClick={() => setSelectedVoice(voice)}
+                            onClick={() => setSelectedVoice(item)}
                             className={`w-full text-left p-4 rounded-xl transition-all duration-300 border font-serif cursor-pointer ${
                               isSelected
-                                ? 'bg-white/10 border-[#c9a64e] text-white shadow-[0_0_15px_rgba(201,166,78,0.2)]'
-                                : 'bg-white/5 border-transparent text-[#d4c5b0] hover:bg-white/8 hover:text-white'
+                                ? 'bg-white/15 border-[#c9a64e] text-white shadow-[0_0_15px_rgba(201,166,78,0.25)] translate-x-1'
+                                : 'bg-white/5 border-transparent text-[#d4c5b0] hover:bg-white/10 hover:text-white'
                             }`}
                           >
-                            <div className="font-bold text-sm md:text-base leading-relaxed break-keep">
-                              {voice.title}
+                            <div className="font-bold text-sm md:text-base leading-relaxed break-words">
+                              {item.title}
                             </div>
                           </button>
                         );
-                      })}
-                    </div>
+                      })
+                    ) : (
+                      <div className="text-center py-10 text-[#d4c5b0]/60 font-serif">
+                        項目がありません。
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
+                </div>
 
-              {/* Right Column: Embedded Post */}
-              <div className="w-full lg:w-7/12 flex flex-col">
-                <h3 className="text-lg font-serif font-bold text-[#c9a64e] mb-4 border-b border-[#c9a64e]/20 pb-2">
-                  📻 ポスト表示
-                </h3>
-                <div className="glass-panel rounded-2xl p-6 border-white/5 flex-1 flex flex-col items-center justify-center min-h-[450px]">
-                  {selectedVoice ? (
-                    <div className="w-full space-y-4 flex flex-col items-center">
-                      <div className="text-center mb-2">
-                        <div className="text-xs text-[#c9a64e] tracking-widest font-sans font-bold uppercase mb-1">
-                          Now Playing
+                {/* Right Column: Embedded Content View */}
+                <div className="w-full lg:w-7/12 flex flex-col">
+                  <h3 className="text-lg font-serif font-bold text-[#c9a64e] mb-4 border-b border-[#c9a64e]/20 pb-2">
+                    📻 コンテンツ表示
+                  </h3>
+                  <div className="glass-panel rounded-2xl p-6 border-white/5 flex-1 flex flex-col items-center justify-center min-h-[480px]">
+                    {selectedVoice ? (
+                      <div className="w-full space-y-4 flex flex-col items-center">
+                        <div className="text-center mb-2">
+                          <div className="text-xs text-[#c9a64e] tracking-widest font-sans font-bold uppercase mb-1">
+                            Viewing Item
+                          </div>
+                          <h4 className="text-white font-serif font-bold text-lg md:text-xl max-w-md mx-auto break-words leading-relaxed">
+                            {selectedVoice.title}
+                          </h4>
                         </div>
-                        <h4 className="text-white font-serif font-bold text-lg max-w-md mx-auto break-keep">
-                          {selectedVoice.title}
-                        </h4>
-                      </div>
 
-                      {/* X Post Embedded Container */}
-                      <div className="w-full max-w-[500px] flex justify-center py-2 bg-[#1a140d]/40 rounded-xl p-2 border border-white/5 shadow-inner">
-                        <TweetEmbed url={selectedVoice.url} />
+                        {/* Embedded Container for X or YouTube */}
+                        <div className="w-full max-w-[500px] flex justify-center py-2 bg-[#1a140d]/40 rounded-xl p-3 border border-white/5 shadow-inner">
+                          <MediaEmbed url={selectedVoice.url} title={selectedVoice.title} />
+                        </div>
                       </div>
-
-                      {/* Fallback button to open directly */}
-                      <a
-                        href={selectedVoice.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-4 px-6 py-3 rounded-full bg-[#1da1f2]/20 hover:bg-[#1da1f2]/30 border border-[#1da1f2]/50 text-white font-bold text-sm tracking-wider transition-colors inline-flex items-center gap-2"
-                      >
-                        <span>🐦</span>
-                        <span>Xで直接ポストを開く</span>
-                      </a>
-                    </div>
-                  ) : (
-                    <div className="text-[#d4c5b0] font-serif text-center">
-                      表示するボイスを選択してください。
-                    </div>
-                  )}
+                    ) : (
+                      <div className="text-[#d4c5b0] font-serif text-center">
+                        表示する項目を選択してください。
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -158,12 +204,82 @@ export default function KakyoVoicePage() {
 
           <footer className="pt-8 border-t border-white/10 opacity-40 text-center">
             <p className="text-white text-xs md:text-sm font-serif italic">
-              きょーちゃんの毎日の声を聞いて、今日も素敵な一日に。
+              きょーちゃんの思い出や声を聞いて、今日も素敵な一日に。
             </p>
           </footer>
         </div>
       </div>
     </main>
+  );
+}
+
+function MediaEmbed({ url, title }: { url: string; title: string }) {
+  const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
+  
+  if (isYouTube) {
+    return <YouTubeEmbed url={url} title={title} />;
+  }
+
+  return <TweetEmbed url={url} />;
+}
+
+function YouTubeEmbed({ url, title }: { url: string; title: string }) {
+  // 動画ID抽出 (YouTube Watch URLの場合)
+  let videoId = '';
+  const watchMatch = url.match(/(?:v=|\/embed\/|\/watch\?v=|\/v\/|https?:\/\/youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (watchMatch && watchMatch[1]) {
+    videoId = watchMatch[1];
+  }
+
+  if (videoId) {
+    return (
+      <div className="w-full space-y-4 flex flex-col items-center">
+        <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg border border-white/10">
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}`}
+            title={title}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 px-6 py-3 rounded-full bg-[#ff0000]/20 hover:bg-[#ff0000]/30 border border-[#ff0000]/50 text-white font-bold text-sm tracking-wider transition-colors inline-flex items-center gap-2"
+        >
+          <span>▶</span>
+          <span>YouTubeで見る</span>
+        </a>
+      </div>
+    );
+  }
+
+  // YouTubeコミュニティポストなどの場合
+  return (
+    <div className="w-full space-y-5 flex flex-col items-center py-6 px-4 text-center">
+      <div className="w-16 h-16 rounded-full bg-[#ff0000]/20 border border-[#ff0000]/40 flex items-center justify-center text-3xl shadow-inner">
+        🔴
+      </div>
+      <div className="space-y-2 max-w-sm">
+        <div className="text-white font-serif font-bold text-base leading-relaxed">
+          YouTube ポスト
+        </div>
+        <p className="text-xs text-[#d4c5b0] leading-relaxed">
+          YouTube コミュニティ投稿・お知らせポストです。下のボタンからYouTube上でご覧いただけます。
+        </p>
+      </div>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-2 px-6 py-3 rounded-full bg-[#ff0000]/20 hover:bg-[#ff0000]/30 border border-[#ff0000]/50 text-white font-bold text-sm tracking-wider transition-colors inline-flex items-center gap-2"
+      >
+        <span>▶</span>
+        <span>YouTubeで開く</span>
+      </a>
+    </div>
   );
 }
 
@@ -243,6 +359,15 @@ function TweetEmbed({ url }: { url: string }) {
         </div>
       )}
       <div ref={containerRef} className="w-full max-w-[500px] flex justify-center" />
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-4 px-6 py-2.5 rounded-full bg-[#1da1f2]/20 hover:bg-[#1da1f2]/30 border border-[#1da1f2]/50 text-white font-bold text-xs tracking-wider transition-colors inline-flex items-center gap-2"
+      >
+        <span>🐦</span>
+        <span>Xで直接ポストを開く</span>
+      </a>
     </div>
   );
 }
