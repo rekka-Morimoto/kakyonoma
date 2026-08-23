@@ -4,6 +4,8 @@ import path from 'path';
 
 interface VoiceItem {
     title: string;
+    date?: string;
+    subtitle?: string;
     url: string;
 }
 
@@ -15,6 +17,24 @@ interface VoiceSection {
 export async function GET() {
     const kakyovoicePath = path.join(process.cwd(), 'data', 'kakyovoice.txt');
     const kyoStoryPath = path.join(process.cwd(), 'data', '#きょーのお話.txt');
+
+    const parseItemTitle = (rawTitle: string): { title: string; date?: string; subtitle?: string } => {
+        const bracketMatch = rawTitle.match(/(【[^】]+】)/);
+        if (bracketMatch) {
+            const subtitle = bracketMatch[1];
+            const datePart = rawTitle.replace(subtitle, '').trim().replace(/^☆\s*/, '');
+            return {
+                title: rawTitle,
+                date: datePart || rawTitle,
+                subtitle: subtitle
+            };
+        }
+        return { 
+            title: rawTitle, 
+            date: rawTitle.replace(/^☆\s*/, ''), 
+            subtitle: rawTitle 
+        };
+    };
 
     try {
         const sections: VoiceSection[] = [];
@@ -50,14 +70,20 @@ export async function GET() {
                     const urlMatch = line.match(/(https?:\/\/\S+)/);
                     if (urlMatch) {
                         const url = urlMatch[0];
-                        const title = line.replace(url, '').trim();
+                        const rawTitle = line.replace(url, '').trim();
+                        const parsed = parseItemTitle(rawTitle || "無題");
                         currentItems.push({
-                            title: title || "無題",
+                            title: parsed.title,
+                            date: parsed.date,
+                            subtitle: parsed.subtitle,
                             url: url
                         });
                     } else if (!isUrlOnly(line) && lines[i + 1] && isUrlOnly(lines[i + 1])) {
+                        const parsed = parseItemTitle(line);
                         currentItems.push({
-                            title: line,
+                            title: parsed.title,
+                            date: parsed.date,
+                            subtitle: parsed.subtitle,
                             url: lines[i + 1]
                         });
                         i++;
@@ -85,9 +111,12 @@ export async function GET() {
                 const urlMatch = line.match(/(https?:\/\/\S+)/);
                 if (urlMatch) {
                     const url = urlMatch[0];
-                    const title = line.replace(url, '').trim();
+                    const rawTitle = line.replace(url, '').trim();
+                    const parsed = parseItemTitle(rawTitle || "#きょーのお話");
                     storyItems.push({
-                        title: title || "#きょーのお話",
+                        title: parsed.title,
+                        date: parsed.date,
+                        subtitle: parsed.subtitle,
                         url: url
                     });
                 }
@@ -132,5 +161,3 @@ export async function GET() {
         return NextResponse.json({ error: 'Failed to read archive list.' }, { status: 500 });
     }
 }
-
-

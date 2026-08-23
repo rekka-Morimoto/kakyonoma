@@ -5,6 +5,8 @@ import Link from 'next/link';
 
 interface VoiceItem {
   title: string;
+  date?: string;
+  subtitle?: string;
   url: string;
 }
 
@@ -138,13 +140,15 @@ export default function KakyoArchivePage() {
                 <div className="w-full lg:w-5/12 flex flex-col space-y-4">
                   <h3 className="text-lg font-serif font-bold text-[#c9a64e] border-b border-[#c9a64e]/20 pb-2 flex items-center justify-between">
                     <span>{getCategoryIcon(selectedCategory)} {selectedCategory} 一覧</span>
-                    <span className="text-xs text-[#d4c5b0] font-sans font-normal opacity-80">日付順</span>
+                    <span className="text-xs text-[#d4c5b0] font-sans font-normal opacity-80">日付 / 回数</span>
                   </h3>
                   
                   <div className="voice-scrollbar overflow-y-auto space-y-3 pr-2 max-h-[500px]">
                     {activeSection && activeSection.items.length > 0 ? (
                       activeSection.items.map((item, index) => {
                         const isSelected = selectedVoice?.url === item.url && selectedVoice?.title === item.title;
+                        const displayTabLabel = item.date || item.title;
+
                         return (
                           <button
                             key={index}
@@ -156,7 +160,7 @@ export default function KakyoArchivePage() {
                             }`}
                           >
                             <div className="font-bold text-sm md:text-base leading-relaxed break-words">
-                              {item.title}
+                              {displayTabLabel}
                             </div>
                           </button>
                         );
@@ -172,31 +176,56 @@ export default function KakyoArchivePage() {
                 {/* Right Column: Embedded Content View */}
                 <div className="w-full lg:w-7/12 flex flex-col">
                   <h3 className="text-lg font-serif font-bold text-[#c9a64e] mb-4 border-b border-[#c9a64e]/20 pb-2">
-                    📻 コンテンツ表示
+                    📻 プレビュー画面 (クリックで投稿を開く)
                   </h3>
-                  <div className="glass-panel rounded-2xl p-6 border-white/5 flex-1 flex flex-col items-center justify-center min-h-[480px]">
-                    {selectedVoice ? (
-                      <div className="w-full space-y-4 flex flex-col items-center">
+                  
+                  {selectedVoice ? (
+                    <a
+                      href={selectedVoice.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="glass-panel rounded-2xl p-6 border-white/5 hover:border-[#c9a64e]/60 transition-all duration-300 group flex-1 flex flex-col items-center justify-center min-h-[480px] cursor-pointer relative overflow-hidden shadow-2xl"
+                    >
+                      {/* Hover Effect Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-b from-[#c9a64e]/5 via-transparent to-[#c9a64e]/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+                      <div className="w-full space-y-4 flex flex-col items-center relative z-10">
+                        {/* Header Title inside Preview */}
                         <div className="text-center mb-2">
-                          <div className="text-xs text-[#c9a64e] tracking-widest font-sans font-bold uppercase mb-1">
-                            Viewing Item
+                          <div className="text-xs text-[#c9a64e] tracking-widest font-sans font-bold uppercase mb-1 flex items-center justify-center gap-1.5">
+                            <span>Viewing Preview</span>
+                            <span className="group-hover:translate-x-1 transition-transform">↗</span>
                           </div>
-                          <h4 className="text-white font-serif font-bold text-lg md:text-xl max-w-md mx-auto break-words leading-relaxed">
-                            {selectedVoice.title}
+
+                          {/* Display Subtitle in Brackets 【表題】 */}
+                          <h4 className="text-white font-serif font-bold text-xl md:text-2xl max-w-md mx-auto break-words leading-relaxed group-hover:text-[#ffe29a] transition-colors">
+                            {selectedVoice.subtitle || selectedVoice.title}
                           </h4>
+                          {selectedVoice.date && (
+                            <div className="text-xs text-[#d4c5b0]/80 font-sans mt-1">
+                              {selectedVoice.date}
+                            </div>
+                          )}
                         </div>
 
                         {/* Embedded Container for X or YouTube */}
-                        <div className="w-full max-w-[500px] flex justify-center py-2 bg-[#1a140d]/40 rounded-xl p-3 border border-white/5 shadow-inner">
+                        <div className="w-full max-w-[500px] flex justify-center py-2 bg-[#1a140d]/40 rounded-xl p-3 border border-white/5 shadow-inner pointer-events-auto">
                           <MediaEmbed url={selectedVoice.url} title={selectedVoice.title} />
                         </div>
+
+                        <div className="text-xs text-[#c9a64e] font-serif font-bold tracking-wider pt-2 group-hover:underline flex items-center gap-1">
+                          <span>クリックしてリンク先の投稿ページを開く</span>
+                          <span>↗</span>
+                        </div>
                       </div>
-                    ) : (
+                    </a>
+                  ) : (
+                    <div className="glass-panel rounded-2xl p-6 border-white/5 flex-1 flex flex-col items-center justify-center min-h-[480px]">
                       <div className="text-[#d4c5b0] font-serif text-center">
                         表示する項目を選択してください。
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -224,7 +253,6 @@ function MediaEmbed({ url, title }: { url: string; title: string }) {
 }
 
 function YouTubeEmbed({ url, title }: { url: string; title: string }) {
-  // 動画ID抽出 (YouTube Watch URLの場合)
   let videoId = '';
   const watchMatch = url.match(/(?:v=|\/embed\/|\/watch\?v=|\/v\/|https?:\/\/youtu\.be\/)([a-zA-Z0-9_-]{11})/);
   if (watchMatch && watchMatch[1]) {
@@ -243,42 +271,24 @@ function YouTubeEmbed({ url, title }: { url: string; title: string }) {
             allowFullScreen
           />
         </div>
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-2 px-6 py-3 rounded-full bg-[#ff0000]/20 hover:bg-[#ff0000]/30 border border-[#ff0000]/50 text-white font-bold text-sm tracking-wider transition-colors inline-flex items-center gap-2"
-        >
-          <span>▶</span>
-          <span>YouTubeで見る</span>
-        </a>
       </div>
     );
   }
 
   // YouTubeコミュニティポストなどの場合
   return (
-    <div className="w-full space-y-5 flex flex-col items-center py-6 px-4 text-center">
-      <div className="w-16 h-16 rounded-full bg-[#ff0000]/20 border border-[#ff0000]/40 flex items-center justify-center text-3xl shadow-inner">
+    <div className="w-full space-y-4 flex flex-col items-center py-6 px-4 text-center">
+      <div className="w-16 h-16 rounded-full bg-[#ff0000]/20 border border-[#ff0000]/40 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
         🔴
       </div>
-      <div className="space-y-2 max-w-sm">
-        <div className="text-white font-serif font-bold text-base leading-relaxed">
-          YouTube ポスト
+      <div className="space-y-1.5 max-w-sm">
+        <div className="text-white font-serif font-bold text-base leading-relaxed group-hover:text-[#ffe29a] transition-colors">
+          YouTube コミュニティポスト
         </div>
         <p className="text-xs text-[#d4c5b0] leading-relaxed">
-          YouTube コミュニティ投稿・お知らせポストです。下のボタンからYouTube上でご覧いただけます。
+          YouTubeのコミュニティ投稿です。このカードをクリックするとYouTubeで直接ご覧いただけます。
         </p>
       </div>
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-2 px-6 py-3 rounded-full bg-[#ff0000]/20 hover:bg-[#ff0000]/30 border border-[#ff0000]/50 text-white font-bold text-sm tracking-wider transition-colors inline-flex items-center gap-2"
-      >
-        <span>▶</span>
-        <span>YouTubeで開く</span>
-      </a>
     </div>
   );
 }
@@ -359,15 +369,6 @@ function TweetEmbed({ url }: { url: string }) {
         </div>
       )}
       <div ref={containerRef} className="w-full max-w-[500px] flex justify-center" />
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-4 px-6 py-2.5 rounded-full bg-[#1da1f2]/20 hover:bg-[#1da1f2]/30 border border-[#1da1f2]/50 text-white font-bold text-xs tracking-wider transition-colors inline-flex items-center gap-2"
-      >
-        <span>🐦</span>
-        <span>Xで直接ポストを開く</span>
-      </a>
     </div>
   );
 }
