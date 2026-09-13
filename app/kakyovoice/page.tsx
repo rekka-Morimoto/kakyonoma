@@ -13,6 +13,7 @@ interface VoiceItem {
   date?: string;
   subtitle?: string;
   url: string;
+  thumbnailUrl?: string;
   songs?: SongSubItem[];
   category?: string; // 検索結果でカテゴリを識別用
 }
@@ -63,7 +64,6 @@ export default function KakyoArchivePage() {
 
   const handleCategorySelect = (categoryName: string) => {
     setSelectedCategory(categoryName);
-    // カテゴリ切替時に検索範囲を該当カテゴリに合わせ、検索をクリアしたい場合は以下
     const targetSection = sections.find(s => s.category === categoryName);
     if (targetSection && targetSection.items.length > 0) {
       setSelectedVoice(targetSection.items[0]);
@@ -80,6 +80,10 @@ export default function KakyoArchivePage() {
         return '🌙';
       case '#きょーのお話':
         return '📖';
+      case 'オリジナル曲':
+        return '🎵';
+      case 'カバー曲':
+        return '🎧';
       case '歌枠セトリ':
         return '🎤';
       case 'かきょみこ、ふたりのーと。':
@@ -135,7 +139,7 @@ export default function KakyoArchivePage() {
         <div className="glass-panel p-6 md:p-10 rounded-[2.5rem] border-white/10 shadow-2xl space-y-8">
           <header className="border-b border-white/10 pb-6 text-center">
             <h1 className="text-4xl md:text-6xl font-serif font-black text-white mb-3 text-outline">かきょあーかいぶ</h1>
-            <p className="text-[#c9a64e] tracking-[0.4em] font-sans font-black uppercase text-xs drop-shadow-md">Kakyo Voice, Story & Setlist Archive</p>
+            <p className="text-[#c9a64e] tracking-[0.4em] font-sans font-black uppercase text-xs drop-shadow-md">Kakyo Voice, Story, Song & Setlist Archive</p>
           </header>
 
           {loading ? (
@@ -148,8 +152,8 @@ export default function KakyoArchivePage() {
             </div>
           ) : (
             <div className="space-y-8">
-              {/* Category Tiles Section (5 Categories Grid) */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5">
+              {/* Category Tiles Section (7 Categories Responsive Grid) */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
                 {sections.map((section) => {
                   const isSelected = !isSearching && selectedCategory === section.category;
                   const icon = getCategoryIcon(section.category);
@@ -158,21 +162,20 @@ export default function KakyoArchivePage() {
                       key={section.category}
                       onClick={() => {
                         handleCategorySelect(section.category);
-                        // もし検索中なら範囲もそれに合わせる選択肢をユーザーに提供
                       }}
-                      className={`p-4 rounded-2xl transition-all duration-300 border flex flex-col items-center justify-center text-center cursor-pointer relative overflow-hidden group ${
+                      className={`p-3 md:p-3.5 rounded-2xl transition-all duration-300 border flex flex-col items-center justify-center text-center cursor-pointer relative overflow-hidden group ${
                         isSelected
                           ? 'bg-gradient-to-b from-[#c9a64e]/30 to-[#1a140d]/90 border-[#c9a64e] shadow-[0_0_20px_rgba(201,166,78,0.3)] scale-[1.02]'
                           : 'bg-white/5 border-white/10 text-[#d4c5b0] hover:bg-white/10 hover:border-white/20 hover:text-white'
                       }`}
                     >
-                      <div className="text-3xl mb-1.5 group-hover:scale-110 transition-transform">
+                      <div className="text-2xl md:text-3xl mb-1 group-hover:scale-110 transition-transform">
                         {icon}
                       </div>
-                      <div className={`font-serif font-bold text-xs md:text-sm leading-snug break-keep ${isSelected ? 'text-white' : ''}`}>
+                      <div className={`font-serif font-bold text-xs md:text-xs leading-snug break-keep ${isSelected ? 'text-white' : ''}`}>
                         {section.category}
                       </div>
-                      <div className="text-[10px] text-[#c9a64e]/80 font-sans mt-1">
+                      <div className="text-[10px] text-[#c9a64e]/80 font-sans mt-0.5">
                         {section.items.length} 件
                       </div>
 
@@ -209,7 +212,7 @@ export default function KakyoArchivePage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="ボイスタイトル・表題・歌枠の曲名で検索..."
+                    placeholder="ボイス・お話・楽曲名・アーティスト名で検索..."
                     className="w-full bg-white/10 text-white font-serif placeholder-[#d4c5b0]/50 border border-white/15 rounded-xl pl-10 pr-10 py-2 text-sm focus:outline-none focus:border-[#c9a64e] focus:bg-black/40 transition-all shadow-inner"
                   />
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base opacity-60">
@@ -245,7 +248,7 @@ export default function KakyoArchivePage() {
                     </span>
                   </h3>
                   
-                  <div className="voice-scrollbar overflow-y-auto space-y-3 pr-2 max-h-[520px]">
+                  <div className="voice-scrollbar overflow-y-auto space-y-3 pr-2 max-h-[540px]">
                     {isSearching ? (
                       filteredItems.length > 0 ? (
                         filteredItems.map((item, index) => {
@@ -258,20 +261,29 @@ export default function KakyoArchivePage() {
                             <button
                               key={index}
                               onClick={() => setSelectedVoice(item)}
-                              className={`w-full text-left p-4 rounded-xl transition-all duration-300 border font-serif cursor-pointer ${
+                              className={`w-full text-left p-3.5 rounded-xl transition-all duration-300 border font-serif cursor-pointer flex items-center gap-3 ${
                                 isSelected
                                   ? 'bg-white/15 border-[#c9a64e] text-white shadow-[0_0_15px_rgba(201,166,78,0.25)] translate-x-1'
                                   : 'bg-white/5 border-transparent text-[#d4c5b0] hover:bg-white/10 hover:text-white'
                               }`}
                             >
-                              {item.category && (
-                                <div className="text-[11px] text-[#c9a64e] font-sans font-bold mb-1 flex items-center gap-1">
-                                  <span>{getCategoryIcon(item.category)}</span>
-                                  <span>{item.category}</span>
-                                </div>
+                              {item.thumbnailUrl && (
+                                <img
+                                  src={item.thumbnailUrl}
+                                  alt={item.title}
+                                  className="w-14 h-10 object-cover rounded-lg flex-shrink-0 border border-white/10 shadow"
+                                />
                               )}
-                              <div className="font-bold text-sm md:text-base leading-relaxed break-words">
-                                {displayTabLabel}
+                              <div className="flex-1 overflow-hidden">
+                                {item.category && (
+                                  <div className="text-[11px] text-[#c9a64e] font-sans font-bold mb-0.5 flex items-center gap-1">
+                                    <span>{getCategoryIcon(item.category)}</span>
+                                    <span>{item.category}</span>
+                                  </div>
+                                )}
+                                <div className="font-bold text-sm leading-relaxed break-words line-clamp-2">
+                                  {displayTabLabel}
+                                </div>
                               </div>
                             </button>
                           );
@@ -292,14 +304,23 @@ export default function KakyoArchivePage() {
                           <button
                             key={index}
                             onClick={() => setSelectedVoice({ ...item, category: selectedCategory })}
-                            className={`w-full text-left p-4 rounded-xl transition-all duration-300 border font-serif cursor-pointer ${
+                            className={`w-full text-left p-3.5 rounded-xl transition-all duration-300 border font-serif cursor-pointer flex items-center gap-3 ${
                               isSelected
                                 ? 'bg-white/15 border-[#c9a64e] text-white shadow-[0_0_15px_rgba(201,166,78,0.25)] translate-x-1'
                                 : 'bg-white/5 border-transparent text-[#d4c5b0] hover:bg-white/10 hover:text-white'
                             }`}
                           >
-                            <div className="font-bold text-sm md:text-base leading-relaxed break-words">
-                              {displayTabLabel}
+                            {item.thumbnailUrl && (
+                              <img
+                                src={item.thumbnailUrl}
+                                alt={item.title}
+                                className="w-14 h-10 object-cover rounded-lg flex-shrink-0 border border-white/10 shadow"
+                              />
+                            )}
+                            <div className="flex-1 overflow-hidden">
+                              <div className="font-bold text-sm leading-relaxed break-words line-clamp-2">
+                                {displayTabLabel}
+                              </div>
                             </div>
                           </button>
                         );
@@ -315,7 +336,7 @@ export default function KakyoArchivePage() {
                 {/* Right Column: Embedded Content or Setlist View */}
                 <div className="w-full lg:w-7/12 flex flex-col">
                   <h3 className="text-lg font-serif font-bold text-[#c9a64e] mb-4 border-b border-[#c9a64e]/20 pb-2">
-                    📻 {(selectedVoice?.category || selectedCategory) === '歌枠セトリ' ? '歌枠セトリ＆配信アーカイブ' : 'プレビュー画面 (クリックで投稿を開く)'}
+                    📻 {(selectedVoice?.category || selectedCategory) === '歌枠セトリ' ? '歌枠セトリ＆配信アーカイブ' : 'プレビュー画面 (クリックで投稿・楽曲を開く)'}
                   </h3>
                   
                   {selectedVoice ? (
@@ -387,10 +408,12 @@ export default function KakyoArchivePage() {
                       </div>
                     ) : (
                       <a
-                        href={selectedVoice.url}
+                        href={selectedVoice.url || '#'}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="glass-panel rounded-2xl p-6 border-white/5 hover:border-[#c9a64e]/60 transition-all duration-300 group flex-1 flex flex-col items-center justify-center min-h-[480px] cursor-pointer relative overflow-hidden shadow-2xl"
+                        className={`glass-panel rounded-2xl p-6 border-white/5 hover:border-[#c9a64e]/60 transition-all duration-300 group flex-1 flex flex-col items-center justify-center min-h-[480px] relative overflow-hidden shadow-2xl ${
+                          selectedVoice.url ? 'cursor-pointer' : 'cursor-default pointer-events-none'
+                        }`}
                       >
                         {/* Hover Effect Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-b from-[#c9a64e]/5 via-transparent to-[#c9a64e]/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
@@ -399,11 +422,12 @@ export default function KakyoArchivePage() {
                           {/* Header Title inside Preview */}
                           <div className="text-center mb-2">
                             <div className="text-xs text-[#c9a64e] tracking-widest font-sans font-bold uppercase mb-1 flex items-center justify-center gap-1.5">
-                              <span>Viewing Preview</span>
-                              <span className="group-hover:translate-x-1 transition-transform">↗</span>
+                              <span>Viewing {(selectedVoice.category || selectedCategory)}</span>
+                              {selectedVoice.url && (
+                                <span className="group-hover:translate-x-1 transition-transform">↗</span>
+                              )}
                             </div>
 
-                            {/* Display Subtitle in Brackets 【表題】 */}
                             <h4 className="text-white font-serif font-bold text-xl md:text-2xl max-w-md mx-auto break-words leading-relaxed group-hover:text-[#ffe29a] transition-colors">
                               {selectedVoice.subtitle || selectedVoice.title}
                             </h4>
@@ -414,15 +438,38 @@ export default function KakyoArchivePage() {
                             )}
                           </div>
 
-                          {/* Embedded Container for X or YouTube */}
-                          <div className="w-full max-w-[500px] flex justify-center py-2 bg-[#1a140d]/40 rounded-xl p-3 border border-white/5 shadow-inner pointer-events-auto">
-                            <MediaEmbed url={selectedVoice.url} title={selectedVoice.title} />
+                          {/* Thumbnail / Embedded Container */}
+                          <div className="w-full max-w-[500px] flex justify-center py-2">
+                            {selectedVoice.thumbnailUrl ? (
+                              <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 group-hover:border-[#c9a64e]/50 transition-all">
+                                <img
+                                  src={selectedVoice.thumbnailUrl}
+                                  alt={selectedVoice.title}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                />
+                                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                                  <div className="w-16 h-16 rounded-full bg-[#c9a64e]/90 text-black flex items-center justify-center pl-1 text-2xl shadow-2xl group-hover:scale-110 transition-transform">
+                                    ▶
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="w-full bg-[#1a140d]/40 rounded-xl p-3 border border-white/5 shadow-inner pointer-events-auto">
+                                <MediaEmbed url={selectedVoice.url} title={selectedVoice.title} />
+                              </div>
+                            )}
                           </div>
 
-                          <div className="text-xs text-[#c9a64e] font-serif font-bold tracking-wider pt-2 group-hover:underline flex items-center gap-1">
-                            <span>クリックしてリンク先の投稿ページを開く</span>
-                            <span>↗</span>
-                          </div>
+                          {selectedVoice.url ? (
+                            <div className="text-xs text-[#c9a64e] font-serif font-bold tracking-wider pt-2 group-hover:underline flex items-center gap-1">
+                              <span>クリックしてYouTube/動画リンク先を開く</span>
+                              <span>↗</span>
+                            </div>
+                          ) : (
+                            <div className="text-xs text-[#d4c5b0]/60 font-serif pt-2">
+                              ※リンク情報は用意されていません
+                            </div>
+                          )}
                         </div>
                       </a>
                     )
@@ -440,7 +487,7 @@ export default function KakyoArchivePage() {
 
           <footer className="pt-8 border-t border-white/10 opacity-40 text-center">
             <p className="text-white text-xs md:text-sm font-serif italic">
-              きょーちゃんの思い出や声、歌枠の記録を振り返って、今日も素敵な一日に。
+              きょーちゃんの思い出や声、歌枠や楽曲の記録を振り返って、今日も素敵な一日に。
             </p>
           </footer>
         </div>
@@ -450,6 +497,7 @@ export default function KakyoArchivePage() {
 }
 
 function MediaEmbed({ url, title }: { url: string; title: string }) {
+  if (!url) return null;
   const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
   
   if (isYouTube) {

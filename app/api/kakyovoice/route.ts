@@ -12,6 +12,7 @@ export interface VoiceItem {
     date?: string;
     subtitle?: string;
     url: string;
+    thumbnailUrl?: string;
     songs?: SongSubItem[];
 }
 
@@ -24,6 +25,8 @@ export async function GET() {
     const kakyovoicePath = path.join(process.cwd(), 'data', 'kakyovoice.txt');
     const kyoStoryPath = path.join(process.cwd(), 'data', '#きょーのお話.txt');
     const songListPath = path.join(process.cwd(), 'data', 'song_list.txt');
+    const originalSongPath = path.join(process.cwd(), 'data', 'songs_original.txt');
+    const coverSongPath = path.join(process.cwd(), 'data', 'songs_cover.txt');
 
     const parseItemTitle = (rawTitle: string): { title: string; date?: string; subtitle?: string } => {
         const bracketMatch = rawTitle.match(/(【[^】]+】)/);
@@ -41,6 +44,49 @@ export async function GET() {
             date: rawTitle.replace(/^☆\s*/, ''), 
             subtitle: rawTitle 
         };
+    };
+
+    const getYouTubeThumbnail = (url: string): string | undefined => {
+        const match = url.match(/(?:v=|\/embed\/|\/watch\?v=|\/v\/|https?:\/\/youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        if (match && match[1]) {
+            return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+        }
+        return undefined;
+    };
+
+    const parseSongFile = async (filePath: string): Promise<VoiceItem[]> => {
+        try {
+            const content = await fs.readFile(filePath, 'utf-8');
+            const lines = content.split('\n').map(l => l.trim());
+            const items: VoiceItem[] = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                if (!line) continue;
+
+                // 曲名行 (例: "1.夢の揺籠/Lyrics...")
+                const isTitleLine = /^\d+\./.test(line) || (!line.startsWith('http://') && !line.startsWith('https://'));
+                if (isTitleLine) {
+                    const title = line.replace(/^\d+\.\s*/, '');
+                    let url = '';
+                    if (lines[i + 1] && (lines[i + 1].startsWith('http://') || lines[i + 1].startsWith('https://'))) {
+                        url = lines[i + 1];
+                        i++;
+                    }
+
+                    const thumbnailUrl = url ? getYouTubeThumbnail(url) : undefined;
+                    items.push({
+                        title: title,
+                        url: url,
+                        thumbnailUrl: thumbnailUrl
+                    });
+                }
+            }
+            return items;
+        } catch (e) {
+            console.error(`Error reading ${filePath}:`, e);
+            return [];
+        }
     };
 
     try {
@@ -83,15 +129,18 @@ export async function GET() {
                             title: parsed.title,
                             date: parsed.date,
                             subtitle: parsed.subtitle,
-                            url: url
+                            url: url,
+                            thumbnailUrl: getYouTubeThumbnail(url)
                         });
                     } else if (!isUrlOnly(line) && lines[i + 1] && isUrlOnly(lines[i + 1])) {
                         const parsed = parseItemTitle(line);
+                        const url = lines[i + 1];
                         currentItems.push({
                             title: parsed.title,
                             date: parsed.date,
                             subtitle: parsed.subtitle,
-                            url: lines[i + 1]
+                            url: url,
+                            thumbnailUrl: getYouTubeThumbnail(url)
                         });
                         i++;
                     }
@@ -124,7 +173,8 @@ export async function GET() {
                         title: parsed.title,
                         date: parsed.date,
                         subtitle: parsed.subtitle,
-                        url: url
+                        url: url,
+                        thumbnailUrl: getYouTubeThumbnail(url)
                     });
                 }
             }
@@ -139,7 +189,24 @@ export async function GET() {
             console.error('Error reading #きょーのお話.txt:', e);
         }
 
-        // 3. song_list.txt の読み込み（歌枠セトリ）
+        // 3. オリジナル曲 & カバー曲の読み込み
+        const originalItems = await parseSongFile(originalSongPath);
+        if (originalItems.length > 0) {
+            sections.push({
+                category: "オリジナル曲",
+                items: originalItems
+            });
+        }
+
+        const coverItems = await parseSongFile(coverSongPath);
+        if (coverItems.length > 0) {
+            sections.push({
+                category: "カバー曲",
+                items: coverItems
+            });
+        }
+
+        // 4. song_list.txt の読み込み（歌枠セトリ）
         try {
             const songContent = await fs.readFile(songListPath, 'utf-8');
             const songLines = songContent.split('\n');
@@ -158,11 +225,13 @@ export async function GET() {
 
                 if (sectionMatch) {
                     if (currentStream) {
+                        const mainUrl = currentStream.url || (currentStream.songs.find(s => !!s.url)?.url || '');
                         setlistItems.push({
                             title: currentStream.title,
                             date: parseItemTitle(currentStream.title).date,
                             subtitle: parseItemTitle(currentStream.title).subtitle || currentStream.title,
-                            url: currentStream.url || (currentStream.songs.find(s => !!s.url)?.url || ''),
+                            url: mainUrl,
+                            thumbnailUrl: mainUrl ? getYouTubeThumbnail(mainUrl) : undefined,
                             songs: currentStream.songs
                         });
                     }
@@ -190,11 +259,13 @@ export async function GET() {
             }
 
             if (currentStream) {
+                const mainUrl = currentStream.url || (currentStream.songs.find(s => !!s.url)?.url || '');
                 setlistItems.push({
                     title: currentStream.title,
                     date: parseItemTitle(currentStream.title).date,
                     subtitle: parseItemTitle(currentStream.title).subtitle || currentStream.title,
-                    url: currentStream.url || (currentStream.songs.find(s => !!s.url)?.url || ''),
+                    url: mainUrl,
+                    thumbnailUrl: mainUrl ? getYouTubeThumbnail(mainUrl) : undefined,
                     songs: currentStream.songs
                 });
             }
@@ -209,11 +280,13 @@ export async function GET() {
             console.error('Error reading song_list.txt:', e);
         }
 
-        // 4. カテゴリ順の並べ替え・整理
+        // 5. カテゴリ順の並べ替え・整理
         const desiredOrder = [
             "まいにちかきょボイス",
             "おやすみかきょボイス",
             "#きょーのお話",
+            "オリジナル曲",
+            "カバー曲",
             "歌枠セトリ",
             "かきょみこ、ふたりのーと。"
         ];
