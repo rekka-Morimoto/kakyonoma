@@ -95,6 +95,22 @@ export default function KakyoArchivePage() {
 
   const activeSection = sections.find(s => s.category === selectedCategory);
 
+  // 分割：1段目（3つ）と2段目（4つ）
+  const row1Categories = ["カバー曲", "オリジナル曲", "歌枠セトリ"];
+  const row2Categories = ["おやすみかきょボイス", "かきょみこ、ふたりのーと。", "#きょーのお話", "まいにちかきょボイス"];
+
+  const row1Sections = useMemo(() => {
+    return row1Categories
+      .map(cat => sections.find(s => s.category === cat))
+      .filter((s): s is VoiceSection => s !== undefined);
+  }, [sections]);
+
+  const row2Sections = useMemo(() => {
+    return row2Categories
+      .map(cat => sections.find(s => s.category === cat))
+      .filter((s): s is VoiceSection => s !== undefined);
+  }, [sections]);
+
   // Filtered items based on search query and search category scope
   const filteredItems = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -128,6 +144,36 @@ export default function KakyoArchivePage() {
 
   const isSearching = searchQuery.trim().length > 0;
 
+  const renderTileButton = (section: VoiceSection) => {
+    const isSelected = !isSearching && selectedCategory === section.category;
+    const icon = getCategoryIcon(section.category);
+    return (
+      <button
+        key={section.category}
+        onClick={() => handleCategorySelect(section.category)}
+        className={`p-3.5 md:p-4 rounded-2xl transition-all duration-300 border flex flex-col items-center justify-center text-center cursor-pointer relative overflow-hidden group ${
+          isSelected
+            ? 'bg-gradient-to-b from-[#c9a64e]/30 to-[#1a140d]/90 border-[#c9a64e] shadow-[0_0_20px_rgba(201,166,78,0.3)] scale-[1.02]'
+            : 'bg-white/5 border-white/10 text-[#d4c5b0] hover:bg-white/10 hover:border-white/20 hover:text-white'
+        }`}
+      >
+        <div className="text-2xl md:text-3xl mb-1 group-hover:scale-110 transition-transform">
+          {icon}
+        </div>
+        <div className={`font-serif font-bold text-xs md:text-sm leading-snug break-keep ${isSelected ? 'text-white' : ''}`}>
+          {section.category}
+        </div>
+        <div className="text-[10px] text-[#c9a64e]/80 font-sans mt-0.5">
+          {section.items.length} 件
+        </div>
+
+        {isSelected && (
+          <div className="absolute bottom-0 inset-x-0 h-1 bg-[#c9a64e]" />
+        )}
+      </button>
+    );
+  };
+
   return (
     <main className="min-h-screen bg-transparent p-4 md:p-12 relative overflow-hidden flex flex-col items-center">
       <div className="max-w-6xl w-full space-y-8 relative z-10">
@@ -152,39 +198,17 @@ export default function KakyoArchivePage() {
             </div>
           ) : (
             <div className="space-y-8">
-              {/* Category Tiles Section (7 Categories Responsive Grid) */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
-                {sections.map((section) => {
-                  const isSelected = !isSearching && selectedCategory === section.category;
-                  const icon = getCategoryIcon(section.category);
-                  return (
-                    <button
-                      key={section.category}
-                      onClick={() => {
-                        handleCategorySelect(section.category);
-                      }}
-                      className={`p-3 md:p-3.5 rounded-2xl transition-all duration-300 border flex flex-col items-center justify-center text-center cursor-pointer relative overflow-hidden group ${
-                        isSelected
-                          ? 'bg-gradient-to-b from-[#c9a64e]/30 to-[#1a140d]/90 border-[#c9a64e] shadow-[0_0_20px_rgba(201,166,78,0.3)] scale-[1.02]'
-                          : 'bg-white/5 border-white/10 text-[#d4c5b0] hover:bg-white/10 hover:border-white/20 hover:text-white'
-                      }`}
-                    >
-                      <div className="text-2xl md:text-3xl mb-1 group-hover:scale-110 transition-transform">
-                        {icon}
-                      </div>
-                      <div className={`font-serif font-bold text-xs md:text-xs leading-snug break-keep ${isSelected ? 'text-white' : ''}`}>
-                        {section.category}
-                      </div>
-                      <div className="text-[10px] text-[#c9a64e]/80 font-sans mt-0.5">
-                        {section.items.length} 件
-                      </div>
+              {/* Category Tiles Section (Two-Row Layout) */}
+              <div className="space-y-3">
+                {/* 1段目 (3項目: カバー曲 -> オリジナル曲 -> 歌枠セトリ) */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {row1Sections.map(renderTileButton)}
+                </div>
 
-                      {isSelected && (
-                        <div className="absolute bottom-0 inset-x-0 h-1 bg-[#c9a64e]" />
-                      )}
-                    </button>
-                  );
-                })}
+                {/* 2段目 (4項目: おやすみかきょボイス -> かきょみこ、ふたりのーと。 -> #きょーのお話 -> まいにちかきょボイス) */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {row2Sections.map(renderTileButton)}
+                </div>
               </div>
 
               {/* Search Bar Container */}

@@ -64,7 +64,6 @@ export async function GET() {
                 const line = lines[i];
                 if (!line) continue;
 
-                // 曲名行 (例: "1.夢の揺籠/Lyrics...")
                 const isTitleLine = /^\d+\./.test(line) || (!line.startsWith('http://') && !line.startsWith('https://'));
                 if (isTitleLine) {
                     const title = line.replace(/^\d+\.\s*/, '');
@@ -106,7 +105,6 @@ export async function GET() {
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
 
-                // セクションヘッダー判定
                 const isHeader = line.startsWith('#') || 
                     (!hasUrl(line) && lines[i + 1] && !hasUrl(lines[i + 1]));
 
@@ -280,15 +278,17 @@ export async function GET() {
             console.error('Error reading song_list.txt:', e);
         }
 
-        // 5. カテゴリ順の並べ替え・整理
+        // 5. 新しい要求順序の指定
+        // 1段目: カバー曲 -> オリジナル曲 -> 歌枠セトリ
+        // 2段目: おやすみかきょボイス -> かきょみこ、ふたりのーと。 -> #きょーのお話 -> まいにちかきょボイス
         const desiredOrder = [
-            "まいにちかきょボイス",
-            "おやすみかきょボイス",
-            "#きょーのお話",
-            "オリジナル曲",
             "カバー曲",
+            "オリジナル曲",
             "歌枠セトリ",
-            "かきょみこ、ふたりのーと。"
+            "おやすみかきょボイス",
+            "かきょみこ、ふたりのーと。",
+            "#きょーのお話",
+            "まいにちかきょボイス"
         ];
 
         const sortedSections: VoiceSection[] = [];
@@ -299,7 +299,6 @@ export async function GET() {
             }
         }
 
-        // 定義されていないカテゴリがあれば末尾に追加
         for (const s of sections) {
             if (!desiredOrder.includes(s.category) && s.items.length > 0) {
                 sortedSections.push(s);
