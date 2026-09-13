@@ -27,6 +27,7 @@ export async function GET() {
     const songListPath = path.join(process.cwd(), 'data', 'song_list.txt');
     const originalSongPath = path.join(process.cwd(), 'data', 'songs_original.txt');
     const coverSongPath = path.join(process.cwd(), 'data', 'songs_cover.txt');
+    const vlogPath = path.join(process.cwd(), 'data', 'vlog.txt');
 
     const parseItemTitle = (rawTitle: string): { title: string; date?: string; subtitle?: string } => {
         const bracketMatch = rawTitle.match(/(【[^】]+】)/);
@@ -74,8 +75,11 @@ export async function GET() {
                     }
 
                     const thumbnailUrl = url ? getYouTubeThumbnail(url) : undefined;
+                    const parsed = parseItemTitle(title);
                     items.push({
                         title: title,
+                        date: parsed.date,
+                        subtitle: parsed.subtitle,
                         url: url,
                         thumbnailUrl: thumbnailUrl
                     });
@@ -187,7 +191,7 @@ export async function GET() {
             console.error('Error reading #きょーのお話.txt:', e);
         }
 
-        // 3. オリジナル曲 & カバー曲の読み込み
+        // 3. オリジナル曲 & カバー曲 の読み込み
         const originalItems = await parseSongFile(originalSongPath);
         if (originalItems.length > 0) {
             sections.push({
@@ -204,7 +208,16 @@ export async function GET() {
             });
         }
 
-        // 4. song_list.txt の読み込み（歌枠セトリ）
+        // 4. Vlog の読み込み
+        const vlogItems = await parseSongFile(vlogPath);
+        if (vlogItems.length > 0) {
+            sections.push({
+                category: "Vlog",
+                items: vlogItems
+            });
+        }
+
+        // 5. song_list.txt の読み込み（歌枠セトリ）
         try {
             const songContent = await fs.readFile(songListPath, 'utf-8');
             const songLines = songContent.split('\n');
@@ -278,13 +291,14 @@ export async function GET() {
             console.error('Error reading song_list.txt:', e);
         }
 
-        // 5. 新しい要求順序の指定
-        // 1段目: カバー曲 -> オリジナル曲 -> 歌枠セトリ
+        // 6. 要求順序の指定
+        // 1段目: カバー曲 -> オリジナル曲 -> 歌枠セトリ -> Vlog
         // 2段目: おやすみかきょボイス -> かきょみこ、ふたりのーと。 -> #きょーのお話 -> まいにちかきょボイス
         const desiredOrder = [
             "カバー曲",
             "オリジナル曲",
             "歌枠セトリ",
+            "Vlog",
             "おやすみかきょボイス",
             "かきょみこ、ふたりのーと。",
             "#きょーのお話",

@@ -86,6 +86,8 @@ export default function KakyoArchivePage() {
         return '🎧';
       case '歌枠セトリ':
         return '🎤';
+      case 'Vlog':
+        return '📹';
       case 'かきょみこ、ふたりのーと。':
         return '📓';
       default:
@@ -95,8 +97,8 @@ export default function KakyoArchivePage() {
 
   const activeSection = sections.find(s => s.category === selectedCategory);
 
-  // 分割：1段目（3つ）と2段目（4つ）
-  const row1Categories = ["カバー曲", "オリジナル曲", "歌枠セトリ"];
+  // 分割：1段目（4つ）と2段目（4つ）
+  const row1Categories = ["カバー曲", "オリジナル曲", "歌枠セトリ", "Vlog"];
   const row2Categories = ["おやすみかきょボイス", "かきょみこ、ふたりのーと。", "#きょーのお話", "まいにちかきょボイス"];
 
   const row1Sections = useMemo(() => {
@@ -185,7 +187,7 @@ export default function KakyoArchivePage() {
         <div className="glass-panel p-6 md:p-10 rounded-[2.5rem] border-white/10 shadow-2xl space-y-8">
           <header className="border-b border-white/10 pb-6 text-center">
             <h1 className="text-4xl md:text-6xl font-serif font-black text-white mb-3 text-outline">かきょあーかいぶ</h1>
-            <p className="text-[#c9a64e] tracking-[0.4em] font-sans font-black uppercase text-xs drop-shadow-md">Kakyo Voice, Story, Song & Setlist Archive</p>
+            <p className="text-[#c9a64e] tracking-[0.4em] font-sans font-black uppercase text-xs drop-shadow-md">Kakyo Voice, Story, Song, Vlog & Setlist Archive</p>
           </header>
 
           {loading ? (
@@ -198,10 +200,10 @@ export default function KakyoArchivePage() {
             </div>
           ) : (
             <div className="space-y-8">
-              {/* Category Tiles Section (Two-Row Layout) */}
+              {/* Category Tiles Section (Two-Row Layout: 4 Columns each) */}
               <div className="space-y-3">
-                {/* 1段目 (3項目: カバー曲 -> オリジナル曲 -> 歌枠セトリ) */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* 1段目 (4項目: カバー曲 -> オリジナル曲 -> 歌枠セトリ -> Vlog) */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {row1Sections.map(renderTileButton)}
                 </div>
 
@@ -236,7 +238,7 @@ export default function KakyoArchivePage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="ボイス・お話・楽曲名・アーティスト名で検索..."
+                    placeholder="ボイス・お話・楽曲・Vlogタイトルで検索..."
                     className="w-full bg-white/10 text-white font-serif placeholder-[#d4c5b0]/50 border border-white/15 rounded-xl pl-10 pr-10 py-2 text-sm focus:outline-none focus:border-[#c9a64e] focus:bg-black/40 transition-all shadow-inner"
                   />
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base opacity-60">
@@ -360,7 +362,7 @@ export default function KakyoArchivePage() {
                 {/* Right Column: Embedded Content or Setlist View */}
                 <div className="w-full lg:w-7/12 flex flex-col">
                   <h3 className="text-lg font-serif font-bold text-[#c9a64e] mb-4 border-b border-[#c9a64e]/20 pb-2">
-                    📻 {(selectedVoice?.category || selectedCategory) === '歌枠セトリ' ? '歌枠セトリ＆配信アーカイブ' : 'プレビュー画面 (クリックで投稿・楽曲を開く)'}
+                    📻 {(selectedVoice?.category || selectedCategory) === '歌枠セトリ' ? '歌枠セトリ＆配信アーカイブ' : 'プレビュー画面 (クリックで動画・投稿を開く)'}
                   </h3>
                   
                   {selectedVoice ? (
@@ -486,7 +488,7 @@ export default function KakyoArchivePage() {
 
                           {selectedVoice.url ? (
                             <div className="text-xs text-[#c9a64e] font-serif font-bold tracking-wider pt-2 group-hover:underline flex items-center gap-1">
-                              <span>クリックしてYouTube/動画リンク先を開く</span>
+                              <span>クリックしてYouTube/動画を開く</span>
                               <span>↗</span>
                             </div>
                           ) : (
@@ -511,7 +513,7 @@ export default function KakyoArchivePage() {
 
           <footer className="pt-8 border-t border-white/10 opacity-40 text-center">
             <p className="text-white text-xs md:text-sm font-serif italic">
-              きょーちゃんの思い出や声、歌枠や楽曲の記録を振り返って、今日も素敵な一日に。
+              きょーちゃんの思い出や声、歌枠や楽曲、Vlogの記録を振り返って、今日も素敵な一日に。
             </p>
           </footer>
         </div>
