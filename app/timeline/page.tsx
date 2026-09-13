@@ -264,8 +264,8 @@ export default function TimelinePage() {
       if (res.ok) {
         const data = await res.json();
         const evList: TimelineEvent[] = data.events || [];
-        // 日付順（昇順）にソートを徹底保証
-        evList.sort((a, b) => a.date.localeCompare(b.date));
+        // 日付順（降順）にソート：最新の日付が上（直近）に来るように保証
+        evList.sort((a, b) => b.date.localeCompare(a.date));
         setEvents(evList);
       }
     } catch (err) {
