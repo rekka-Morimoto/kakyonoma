@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 
 interface SongSubItem {
@@ -14,6 +14,7 @@ interface VoiceItem {
   subtitle?: string;
   url: string;
   songs?: SongSubItem[];
+  category?: string; // 検索結果でカテゴリを識別用
 }
 
 interface VoiceSection {
@@ -27,6 +28,10 @@ export default function KakyoArchivePage() {
   const [selectedVoice, setSelectedVoice] = useState<VoiceItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Search States
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchCategory, setSearchCategory] = useState<string>('all');
 
   useEffect(() => {
     async function fetchVoices() {
@@ -58,6 +63,7 @@ export default function KakyoArchivePage() {
 
   const handleCategorySelect = (categoryName: string) => {
     setSelectedCategory(categoryName);
+    // カテゴリ切替時に検索範囲を該当カテゴリに合わせ、検索をクリアしたい場合は以下
     const targetSection = sections.find(s => s.category === categoryName);
     if (targetSection && targetSection.items.length > 0) {
       setSelectedVoice(targetSection.items[0]);
@@ -66,7 +72,7 @@ export default function KakyoArchivePage() {
     }
   };
 
-  const getCategoryIcon = (category: string) => {
+  const getCategoryIcon = (category?: string) => {
     switch (category) {
       case 'まいにちかきょボイス':
         return '🎙️';
@@ -84,6 +90,39 @@ export default function KakyoArchivePage() {
   };
 
   const activeSection = sections.find(s => s.category === selectedCategory);
+
+  // Filtered items based on search query and search category scope
+  const filteredItems = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+
+    let targetSections = sections;
+    if (searchCategory !== 'all') {
+      targetSections = sections.filter(s => s.category === searchCategory);
+    }
+
+    const results: VoiceItem[] = [];
+    for (const sec of targetSections) {
+      for (const item of sec.items) {
+        const titleMatch = item.title.toLowerCase().includes(q);
+        const dateMatch = item.date ? item.date.toLowerCase().includes(q) : false;
+        const subtitleMatch = item.subtitle ? item.subtitle.toLowerCase().includes(q) : false;
+        const songMatch = item.songs
+          ? item.songs.some(s => s.title.toLowerCase().includes(q))
+          : false;
+
+        if (titleMatch || dateMatch || subtitleMatch || songMatch) {
+          results.push({
+            ...item,
+            category: sec.category
+          });
+        }
+      }
+    }
+    return results;
+  }, [searchQuery, searchCategory, sections]);
+
+  const isSearching = searchQuery.trim().length > 0;
 
   return (
     <main className="min-h-screen bg-transparent p-4 md:p-12 relative overflow-hidden flex flex-col items-center">
@@ -112,12 +151,15 @@ export default function KakyoArchivePage() {
               {/* Category Tiles Section (5 Categories Grid) */}
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5">
                 {sections.map((section) => {
-                  const isSelected = selectedCategory === section.category;
+                  const isSelected = !isSearching && selectedCategory === section.category;
                   const icon = getCategoryIcon(section.category);
                   return (
                     <button
                       key={section.category}
-                      onClick={() => handleCategorySelect(section.category)}
+                      onClick={() => {
+                        handleCategorySelect(section.category);
+                        // もし検索中なら範囲もそれに合わせる選択肢をユーザーに提供
+                      }}
                       className={`p-4 rounded-2xl transition-all duration-300 border flex flex-col items-center justify-center text-center cursor-pointer relative overflow-hidden group ${
                         isSelected
                           ? 'bg-gradient-to-b from-[#c9a64e]/30 to-[#1a140d]/90 border-[#c9a64e] shadow-[0_0_20px_rgba(201,166,78,0.3)] scale-[1.02]'
@@ -142,17 +184,104 @@ export default function KakyoArchivePage() {
                 })}
               </div>
 
+              {/* Search Bar Container */}
+              <div className="glass-panel p-4 rounded-2xl border-white/10 flex flex-col md:flex-row gap-3 items-center justify-between shadow-inner bg-black/20">
+                <div className="flex items-center gap-2 w-full md:w-auto">
+                  <span className="text-[#c9a64e] text-sm font-serif font-bold whitespace-nowrap hidden sm:inline">
+                    検索範囲:
+                  </span>
+                  <select
+                    value={searchCategory}
+                    onChange={(e) => setSearchCategory(e.target.value)}
+                    className="w-full md:w-auto bg-[#1a140d]/90 text-white font-serif border border-[#c9a64e]/40 rounded-xl px-3 py-2 text-xs md:text-sm focus:outline-none focus:border-[#c9a64e] cursor-pointer shadow-md"
+                  >
+                    <option value="all">🔍 すべてのアーカイブ (全体検索)</option>
+                    {sections.map((s) => (
+                      <option key={s.category} value={s.category}>
+                        {getCategoryIcon(s.category)} {s.category}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="relative w-full md:w-7/12">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="ボイスタイトル・表題・歌枠の曲名で検索..."
+                    className="w-full bg-white/10 text-white font-serif placeholder-[#d4c5b0]/50 border border-white/15 rounded-xl pl-10 pr-10 py-2 text-sm focus:outline-none focus:border-[#c9a64e] focus:bg-black/40 transition-all shadow-inner"
+                  />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base opacity-60">
+                    🔍
+                  </span>
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white text-xs bg-white/10 hover:bg-white/20 w-5 h-5 rounded-full flex items-center justify-center transition-colors"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              </div>
+
               {/* Main Content Area: Left Item List + Right Embedded View */}
-              <div className="flex flex-col lg:flex-row gap-8 pt-4">
+              <div className="flex flex-col lg:flex-row gap-8 pt-2">
                 {/* Left Column: List */}
                 <div className="w-full lg:w-5/12 flex flex-col space-y-4">
                   <h3 className="text-lg font-serif font-bold text-[#c9a64e] border-b border-[#c9a64e]/20 pb-2 flex items-center justify-between">
-                    <span>{getCategoryIcon(selectedCategory)} {selectedCategory} 一覧</span>
-                    <span className="text-xs text-[#d4c5b0] font-sans font-normal opacity-80">全 {activeSection?.items.length || 0} 件</span>
+                    <span>
+                      {isSearching ? (
+                        <>🔍 検索結果: 『{searchQuery}』</>
+                      ) : (
+                        <>{getCategoryIcon(selectedCategory)} {selectedCategory} 一覧</>
+                      )}
+                    </span>
+                    <span className="text-xs text-[#d4c5b0] font-sans font-normal opacity-80">
+                      {isSearching
+                        ? `${filteredItems.length} 件一致`
+                        : `全 ${activeSection?.items.length || 0} 件`}
+                    </span>
                   </h3>
                   
                   <div className="voice-scrollbar overflow-y-auto space-y-3 pr-2 max-h-[520px]">
-                    {activeSection && activeSection.items.length > 0 ? (
+                    {isSearching ? (
+                      filteredItems.length > 0 ? (
+                        filteredItems.map((item, index) => {
+                          const isSelected = selectedVoice?.url === item.url && selectedVoice?.title === item.title;
+                          const displayTabLabel = item.category === '#きょーのお話' 
+                            ? (item.date || item.title)
+                            : item.title;
+
+                          return (
+                            <button
+                              key={index}
+                              onClick={() => setSelectedVoice(item)}
+                              className={`w-full text-left p-4 rounded-xl transition-all duration-300 border font-serif cursor-pointer ${
+                                isSelected
+                                  ? 'bg-white/15 border-[#c9a64e] text-white shadow-[0_0_15px_rgba(201,166,78,0.25)] translate-x-1'
+                                  : 'bg-white/5 border-transparent text-[#d4c5b0] hover:bg-white/10 hover:text-white'
+                              }`}
+                            >
+                              {item.category && (
+                                <div className="text-[11px] text-[#c9a64e] font-sans font-bold mb-1 flex items-center gap-1">
+                                  <span>{getCategoryIcon(item.category)}</span>
+                                  <span>{item.category}</span>
+                                </div>
+                              )}
+                              <div className="font-bold text-sm md:text-base leading-relaxed break-words">
+                                {displayTabLabel}
+                              </div>
+                            </button>
+                          );
+                        })
+                      ) : (
+                        <div className="text-center py-10 text-[#d4c5b0]/60 font-serif">
+                          該当するアイテムが見つかりませんでした。
+                        </div>
+                      )
+                    ) : activeSection && activeSection.items.length > 0 ? (
                       activeSection.items.map((item, index) => {
                         const isSelected = selectedVoice?.url === item.url && selectedVoice?.title === item.title;
                         const displayTabLabel = selectedCategory === '#きょーのお話' 
@@ -162,7 +291,7 @@ export default function KakyoArchivePage() {
                         return (
                           <button
                             key={index}
-                            onClick={() => setSelectedVoice(item)}
+                            onClick={() => setSelectedVoice({ ...item, category: selectedCategory })}
                             className={`w-full text-left p-4 rounded-xl transition-all duration-300 border font-serif cursor-pointer ${
                               isSelected
                                 ? 'bg-white/15 border-[#c9a64e] text-white shadow-[0_0_15px_rgba(201,166,78,0.25)] translate-x-1'
@@ -186,11 +315,11 @@ export default function KakyoArchivePage() {
                 {/* Right Column: Embedded Content or Setlist View */}
                 <div className="w-full lg:w-7/12 flex flex-col">
                   <h3 className="text-lg font-serif font-bold text-[#c9a64e] mb-4 border-b border-[#c9a64e]/20 pb-2">
-                    📻 {selectedCategory === '歌枠セトリ' ? '歌枠セトリ＆配信アーカイブ' : 'プレビュー画面 (クリックで投稿を開く)'}
+                    📻 {(selectedVoice?.category || selectedCategory) === '歌枠セトリ' ? '歌枠セトリ＆配信アーカイブ' : 'プレビュー画面 (クリックで投稿を開く)'}
                   </h3>
                   
                   {selectedVoice ? (
-                    selectedCategory === '歌枠セトリ' ? (
+                    (selectedVoice.category || selectedCategory) === '歌枠セトリ' ? (
                       <div className="glass-panel rounded-2xl p-6 border-white/5 flex-1 flex flex-col justify-between min-h-[480px] shadow-2xl">
                         <div className="space-y-6">
                           <div className="text-center border-b border-white/10 pb-4">
@@ -205,27 +334,34 @@ export default function KakyoArchivePage() {
                           {/* Setlist Song List */}
                           {selectedVoice.songs && selectedVoice.songs.length > 0 ? (
                             <div className="space-y-2 max-h-[340px] overflow-y-auto pr-2 voice-scrollbar">
-                              {selectedVoice.songs.map((song, sIdx) => (
-                                <div
-                                  key={sIdx}
-                                  className="p-3 rounded-lg bg-white/5 border border-white/5 flex items-center justify-between gap-3 text-sm font-serif hover:bg-white/10 transition-colors"
-                                >
-                                  <span className="text-white/90 break-words flex-1">
-                                    {song.title}
-                                  </span>
-                                  {song.url && (
-                                    <a
-                                      href={song.url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="px-3 py-1 rounded-full bg-[#c9a64e]/20 hover:bg-[#c9a64e]/40 border border-[#c9a64e]/40 text-[#ffe29a] text-xs font-sans font-bold transition-colors whitespace-nowrap flex items-center gap-1"
-                                    >
-                                      <span>再生</span>
-                                      <span>↗</span>
-                                    </a>
-                                  )}
-                                </div>
-                              ))}
+                              {selectedVoice.songs.map((song, sIdx) => {
+                                const isSongMatched = isSearching && song.title.toLowerCase().includes(searchQuery.trim().toLowerCase());
+                                return (
+                                  <div
+                                    key={sIdx}
+                                    className={`p-3 rounded-lg border flex items-center justify-between gap-3 text-sm font-serif transition-colors ${
+                                      isSongMatched
+                                        ? 'bg-[#c9a64e]/20 border-[#c9a64e]/60 text-white font-bold'
+                                        : 'bg-white/5 border-white/5 text-white/90 hover:bg-white/10'
+                                    }`}
+                                  >
+                                    <span className="break-words flex-1">
+                                      {song.title}
+                                    </span>
+                                    {song.url && (
+                                      <a
+                                        href={song.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="px-3 py-1 rounded-full bg-[#c9a64e]/20 hover:bg-[#c9a64e]/40 border border-[#c9a64e]/40 text-[#ffe29a] text-xs font-sans font-bold transition-colors whitespace-nowrap flex items-center gap-1"
+                                      >
+                                        <span>再生</span>
+                                        <span>↗</span>
+                                      </a>
+                                    )}
+                                  </div>
+                                );
+                              })}
                             </div>
                           ) : (
                             <div className="text-center py-8 text-[#d4c5b0]/60 font-serif">
