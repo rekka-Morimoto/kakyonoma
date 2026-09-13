@@ -2,14 +2,20 @@ import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 
-interface VoiceItem {
+export interface SongSubItem {
+    title: string;
+    url?: string;
+}
+
+export interface VoiceItem {
     title: string;
     date?: string;
     subtitle?: string;
     url: string;
+    songs?: SongSubItem[];
 }
 
-interface VoiceSection {
+export interface VoiceSection {
     category: string;
     items: VoiceItem[];
 }
@@ -17,6 +23,7 @@ interface VoiceSection {
 export async function GET() {
     const kakyovoicePath = path.join(process.cwd(), 'data', 'kakyovoice.txt');
     const kyoStoryPath = path.join(process.cwd(), 'data', '#きょーのお話.txt');
+    const songListPath = path.join(process.cwd(), 'data', 'song_list.txt');
 
     const parseItemTitle = (rawTitle: string): { title: string; date?: string; subtitle?: string } => {
         const bracketMatch = rawTitle.match(/(【[^】]+】)/);
@@ -132,11 +139,82 @@ export async function GET() {
             console.error('Error reading #きょーのお話.txt:', e);
         }
 
-        // 3. カテゴリ順の並べ替え・整理
+        // 3. song_list.txt の読み込み（歌枠セトリ）
+        try {
+            const songContent = await fs.readFile(songListPath, 'utf-8');
+            const songLines = songContent.split('\n');
+
+            const setlistItems: VoiceItem[] = [];
+            let currentStream: { title: string; url: string; songs: SongSubItem[] } | null = null;
+            let currentSong: SongSubItem | null = null;
+
+            for (let rawLine of songLines) {
+                const line = rawLine.trim();
+                if (!line) continue;
+
+                const sectionMatch = line.match(/^■\s*(.*)$/);
+                const streamLinkMatch = line.match(/^-\s*配信リンク\s*:\s*(.*)$/);
+                const urlMatch = line.match(/^-\s*(?:URL|-URL)\s*:\s*(.*)$/i);
+
+                if (sectionMatch) {
+                    if (currentStream) {
+                        setlistItems.push({
+                            title: currentStream.title,
+                            date: parseItemTitle(currentStream.title).date,
+                            subtitle: parseItemTitle(currentStream.title).subtitle || currentStream.title,
+                            url: currentStream.url || (currentStream.songs.find(s => !!s.url)?.url || ''),
+                            songs: currentStream.songs
+                        });
+                    }
+                    const title = sectionMatch[1].trim();
+                    currentStream = { title, url: '', songs: [] };
+                    currentSong = null;
+                } else if (streamLinkMatch) {
+                    if (currentStream) {
+                        currentStream.url = streamLinkMatch[1].trim();
+                    }
+                } else if (urlMatch) {
+                    const songUrl = urlMatch[1].trim();
+                    if (currentSong) {
+                        currentSong.url = songUrl;
+                    }
+                    if (currentStream && !currentStream.url) {
+                        currentStream.url = songUrl;
+                    }
+                } else {
+                    currentSong = { title: line };
+                    if (currentStream) {
+                        currentStream.songs.push(currentSong);
+                    }
+                }
+            }
+
+            if (currentStream) {
+                setlistItems.push({
+                    title: currentStream.title,
+                    date: parseItemTitle(currentStream.title).date,
+                    subtitle: parseItemTitle(currentStream.title).subtitle || currentStream.title,
+                    url: currentStream.url || (currentStream.songs.find(s => !!s.url)?.url || ''),
+                    songs: currentStream.songs
+                });
+            }
+
+            if (setlistItems.length > 0) {
+                sections.push({
+                    category: "歌枠セトリ",
+                    items: setlistItems
+                });
+            }
+        } catch (e) {
+            console.error('Error reading song_list.txt:', e);
+        }
+
+        // 4. カテゴリ順の並べ替え・整理
         const desiredOrder = [
             "まいにちかきょボイス",
             "おやすみかきょボイス",
             "#きょーのお話",
+            "歌枠セトリ",
             "かきょみこ、ふたりのーと。"
         ];
 
