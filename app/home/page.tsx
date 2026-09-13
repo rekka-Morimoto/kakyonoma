@@ -101,7 +101,7 @@ export default function Home() {
         {/* Navigation Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
 
-          {/* ── かきょ年表（星空・星座あしらい横長タイル） ── */}
+          {/* ── 1. かきょ年表（星空・星座あしらい横長大タイル） ── */}
           <div
             onClick={handleTileClick}
             className="group cursor-pointer md:col-span-2 lg:col-span-3"
@@ -145,7 +145,7 @@ export default function Home() {
               <div className="absolute top-4 right-12 text-[#c9a64e]/30 text-xl animate-pulse select-none pointer-events-none">✦</div>
               <div className="absolute bottom-6 left-1/4 text-[#c9a64e]/20 text-2xl animate-bounce select-none pointer-events-none" style={{ animationDuration: '5s' }}>✦</div>
               
-              {/* 左側：巻物画像（大きく表示） */}
+              {/* 左側：巻物画像 */}
               <div className="flex-shrink-0 relative w-full md:w-1/3 h-44 md:h-full flex items-center justify-center mb-6 md:mb-0 z-10">
                 <div className="absolute w-36 h-36 bg-[#c9a64e]/10 rounded-full blur-2xl group-hover:bg-[#c9a64e]/20 transition-all duration-700 z-0" />
                 
@@ -183,6 +183,54 @@ export default function Home() {
             </div>
           </div>
 
+          {/* ── 2. かきょあーかいぶ（かきょ年表のすぐ下・横長大タイル） ── */}
+          <Link href="/kakyovoice" className="group md:col-span-2 lg:col-span-3">
+            <div className="glass-panel p-6 md:p-10 h-full flex flex-col md:flex-row items-center justify-between hover:scale-[1.01] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/60 relative overflow-hidden bg-gradient-to-r from-[#1c160e]/95 via-[#2d2214]/90 to-[#1c160e]/95 border border-[#c9a64e]/30 shadow-[0_0_30px_rgba(201,166,78,0.15)] min-h-[220px]">
+              
+              {/* 背景アクセント */}
+              <div className="absolute top-0 right-0 w-96 h-96 bg-[#c9a64e]/10 rounded-full blur-3xl pointer-events-none group-hover:bg-[#c9a64e]/20 transition-all duration-700" />
+              <div className="absolute top-4 left-10 text-[#c9a64e]/20 text-xl animate-pulse select-none pointer-events-none">🎙️</div>
+              <div className="absolute bottom-4 right-1/4 text-[#c9a64e]/20 text-xl animate-bounce select-none pointer-events-none" style={{ animationDuration: '4s' }}>🎵</div>
+
+              {/* 左側：画像アイコン */}
+              <div className="flex-shrink-0 relative w-full md:w-1/3 h-44 md:h-full flex items-center justify-center mb-6 md:mb-0 z-10">
+                <div className="absolute w-36 h-36 bg-[#c9a64e]/15 rounded-full blur-2xl group-hover:bg-[#c9a64e]/25 transition-all duration-700 z-0" />
+                
+                <div className="relative z-10 group-hover:scale-105 group-hover:-rotate-3 transition-transform duration-500 w-44 h-44 flex items-center justify-center">
+                  <img
+                    src="/kakyovoice.png"
+                    alt="かきょあーかいぶ"
+                    className="w-full h-full object-contain drop-shadow-[0_10px_25px_rgba(201,166,78,0.35)]"
+                  />
+                </div>
+              </div>
+
+              {/* 右側：テキストコンテンツ */}
+              <div className="flex-1 md:pl-10 text-center md:text-left relative z-10 flex flex-col justify-center h-full">
+                <div className="flex items-center justify-center md:justify-start gap-3 mb-2 flex-wrap">
+                  <span className="bg-[#c9a64e]/20 text-[#ffe29a] text-[10px] md:text-xs tracking-wider px-3 py-1 rounded-full border border-[#c9a64e]/40 font-serif">
+                    Maison de Kyo Archive
+                  </span>
+                </div>
+                
+                <h3 className="text-3xl md:text-4xl font-black text-white font-serif mb-4 text-outline tracking-wider" style={{ textShadow: '0 0 15px rgba(255,226,154,0.15)' }}>
+                  かきょあーかいぶ
+                </h3>
+                
+                <p className="text-[#d4c5b0] text-sm md:text-base leading-relaxed mb-6 max-w-xl font-serif">
+                  ボイス、お話、歌枠セトリ、ふたりのーと。などの記録を振り返る。
+                </p>
+                
+                <div className="text-[#c9a64e] font-bold text-lg border-b border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest inline-flex items-center gap-2 self-center md:self-start">
+                  <span>アーカイブを開く (Explore)</span>
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+              </div>
+
+            </div>
+          </Link>
+
+          {/* ── 3. 入居届 ── */}
           <Link href="/register" className="group">
             <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
               <div className="mb-0 group-hover:rotate-6 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
@@ -201,6 +249,7 @@ export default function Home() {
             </div>
           </Link>
 
+          {/* ── 4. 住人名簿 ── */}
           <Link href="/registry" className="group">
             <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-white/30 relative overflow-hidden">
               <div className="mb-0 group-hover:-rotate-6 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
@@ -219,6 +268,7 @@ export default function Home() {
             </div>
           </Link>
 
+          {/* ── 5. かきょの間 ── */}
           <Link href="/kakyonoma" className="group">
             <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
               <div className="mb-0 group-hover:scale-110 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
@@ -237,6 +287,7 @@ export default function Home() {
             </div>
           </Link>
 
+          {/* ── 6. きょーの一曲 ── */}
           <Link href="/songs" className="group">
             <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
               <div className="mb-0 group-hover:rotate-6 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
@@ -255,6 +306,7 @@ export default function Home() {
             </div>
           </Link>
 
+          {/* ── 7. 推しスタイル診断 ── */}
           <Link href="/diagnosis" className="group">
             <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-white/30 relative overflow-hidden">
               <div className="mb-0 group-hover:scale-110 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
@@ -273,24 +325,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/kakyovoice" className="group">
-            <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
-              <div className="mb-0 group-hover:scale-110 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
-                <img src="/kakyovoice.png" alt="かきょあーかいぶ" className="w-full h-full object-contain drop-shadow-2xl" />
-              </div>
-              <div className="relative z-10 mt-28 md:mt-44 flex flex-col items-center">
-                <h3 className="text-3xl md:text-4xl font-black text-white font-serif mb-4 text-outline whitespace-nowrap">かきょあーかいぶ</h3>
-                <p className="text-[#d4c5b0] text-base md:text-lg leading-relaxed mb-10 flex-1 drop-shadow-md">
-                  日々の声やお話をここに集めて。<br className="hidden md:block" />
-                  これまでの記録を振り返ります。
-                </p>
-                <div className="text-[#c9a64e] font-bold text-xl border-b-2 border-transparent group-hover:border-[#c9a64e] transition-all pb-1 uppercase tracking-widest">
-                  Explore →
-                </div>
-              </div>
-            </div>
-          </Link>
-
+          {/* ── 8. 管理人から ── */}
           <Link href="/greeting" className="group">
             <div className="glass-panel p-6 md:p-10 h-full flex flex-col items-center hover:scale-[1.02] transition-all duration-500 rounded-[2.5rem] group-hover:border-[#c9a64e]/40 relative overflow-hidden">
               <div className="mb-0 group-hover:translate-x-2 transition-transform h-32 md:h-48 w-32 md:w-48 flex items-center justify-center absolute top-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 duration-500">
@@ -327,9 +362,7 @@ export default function Home() {
 
       </div>
 
-
-
-      {/* ── 巻物オープニング動画オーバーレイ（宇宙背景＋枠＋透過動画） ── */}
+      {/* ── 巻物オープニング動画オーバーレイ ── */}
       {showScrollVideo && (
         <div
           className="fixed inset-0"
