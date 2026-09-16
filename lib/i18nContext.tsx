@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { translations, Locale, replaceNameForZh } from './translations';
+import { translations, Locale, replaceNameForZh, replaceNameForEn } from './translations';
 
 interface LanguageContextType {
   locale: Locale;
@@ -22,7 +22,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     const saved = localStorage.getItem('kakyonoma_lang') as Locale;
-    if (saved && (saved === 'ja' || saved === 'zh')) {
+    if (saved && (saved === 'ja' || saved === 'zh' || saved === 'en')) {
       setLocaleState(saved);
     }
   }, []);
@@ -58,6 +58,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     if (!text) return text;
     if (locale === 'zh') {
       return replaceNameForZh(text);
+    }
+    if (locale === 'en') {
+      return replaceNameForEn(text);
     }
     return text;
   };

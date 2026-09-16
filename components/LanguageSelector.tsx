@@ -28,6 +28,16 @@ export default function LanguageSelector() {
       >
         简体中文
       </button>
+      <button
+        onClick={() => setLocale('en')}
+        className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+          locale === 'en'
+            ? 'bg-[#c9a64e] text-black shadow-md'
+            : 'text-white/70 hover:text-white hover:bg-white/10'
+        }`}
+      >
+        English
+      </button>
     </div>
   );
 }

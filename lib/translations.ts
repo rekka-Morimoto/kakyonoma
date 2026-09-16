@@ -1,4 +1,4 @@
-export type Locale = 'ja' | 'zh';
+export type Locale = 'ja' | 'zh' | 'en';
 
 // 人名置換ルール:
 // 簡体字モードでは「かきょ」と「きょー」を「院院」に置換・翻訳する
@@ -25,6 +25,27 @@ export function replaceNameForZh(text: string): string {
   return result;
 }
 
+export function replaceNameForEn(text: string): string {
+  if (!text) return text;
+
+  let result = text
+    .replace(/佳鏡院/g, 'Kakyo')
+    .replace(/メゾン・ド・きょー/g, 'Maison de Kyo')
+    .replace(/かきょの間/g, 'Kakyo-no-ma')
+    .replace(/かきょ年表/g, 'Kakyo Timeline')
+    .replace(/かきょあーかいぶ/g, 'Kakyo Archive')
+    .replace(/まいにちかきょボイス/g, 'Daily Kakyo Voice')
+    .replace(/おやすみかきょボイス/g, 'Goodnight Kakyo Voice')
+    .replace(/かきょみこ/g, 'Kakyo & Miko')
+    .replace(/きょーのお話/g, 'Kyo Talk')
+    .replace(/きょーの一曲/g, 'Song of Kyo')
+    .replace(/きょーめいと/g, 'Kyomate');
+
+  result = result.replace(/かきょ/g, 'Kakyo').replace(/きょー/g, 'Kyo');
+
+  return result;
+}
+
 export const translations = {
   ja: {
     common: {
@@ -39,6 +60,7 @@ export const translations = {
       message: 'メッセージ',
       langJa: '日本語',
       langZh: '简体中文',
+      langEn: 'English',
       estYear: 'EST. 2026 • KAKYO-NO-MA',
     },
     nav: {
@@ -138,7 +160,7 @@ export const translations = {
       subtitle: 'Tatami Room',
       zoomIn: '拡大',
       zoomOut: '縮小',
-      reset: 'リreset',
+      reset: 'リセット',
       dragHint: 'DRAG OR SWIPE TO PAN • WHEEL TO ZOOM',
       totalMats: '現在の畳数: ',
     },
@@ -182,6 +204,7 @@ export const translations = {
       message: '留言',
       langJa: '日本語',
       langZh: '简体中文',
+      langEn: 'English',
       estYear: 'EST. 2026 • KAKYO-NO-MA',
     },
     nav: {
@@ -310,6 +333,150 @@ export const translations = {
       scrollInstruction: '滚动画卷追溯足迹',
       orderAsc: '按时间顺序',
       orderDesc: '按倒序',
+    },
+  },
+  en: {
+    common: {
+      siteTitle: 'Maison de Kyo',
+      back: 'Back',
+      open: 'Open',
+      explore: 'Explore',
+      listen: 'Listen',
+      start: 'Start',
+      checkIn: 'Check-in',
+      registry: 'Registry',
+      message: 'Message',
+      langJa: '日本語',
+      langZh: '简体中文',
+      langEn: 'English',
+      estYear: 'EST. 2026 • KAKYO-NO-MA',
+    },
+    nav: {
+      timeline: 'Kakyo Timeline',
+      archive: 'Kakyo Archive',
+      register: 'Registration',
+      registry: 'Resident Registry',
+      kakyonoma: 'Kakyo-no-ma',
+      songs: 'Song of Kyo',
+      diagnosis: 'Oshi Style Diagnosis',
+      greeting: 'From Manager',
+      terms: 'Guidelines',
+    },
+    home: {
+      welcome: 'Welcome to this classic residence.',
+      subtext: 'Record your space and enjoy time with fellow friends.',
+      timelineDesc: 'Look back at historical milestones on the timeline.',
+      timelineOpen: 'Unroll Scroll (Open)',
+      archiveDesc: 'Browse records of voices, talks, setlists, and notes.',
+      archiveOpen: 'Open Archive (Explore)',
+      registerDesc: 'Create your profile and register as a resident here.',
+      registryDesc: 'Records of residents living here. Accessible anytime.',
+      kakyonomaDesc: 'A traditional room where everyone\'s presence expands the tatami space.',
+      songsDesc: 'Find the perfect song for your mood among originals and covers.',
+      diagnosisDesc: 'Answer questions to discover your Oshi interaction style.',
+      greetingDesc: 'The message and story from the manager behind this site.',
+      announcements: 'Announcements',
+      officeTitle: 'Manager\'s Office',
+      updated: 'Updated 2026.04',
+      skipHint: 'Click to skip',
+    },
+    terms: {
+      title: 'Terms & Guidelines',
+      subtitle: 'Terms & Guidelines',
+      error: '## Error\nFailed to load terms and guidelines.',
+      agreeCheck: 'I understand and agree to the terms',
+      agreeButton: 'Agree and Proceed',
+    },
+    greeting: {
+      title: 'Greeting',
+      subtitle: 'A Message from the Manager',
+      authorName: 'Rekka Morimoto',
+      authorEn: 'Rekka Morimoto',
+      managerRole: 'Maison de Kyo Manager',
+      error: 'Failed to load greeting content.',
+    },
+    kakyovoice: {
+      title: 'Kakyo Archive',
+      subtitle: 'Archive & Voice Collection',
+      playRandom: 'Random Play',
+      filterAll: 'All Categories',
+      catDailyVoice: 'Daily Kakyo Voice',
+      catGoodNightVoice: 'Goodnight Kakyo Voice',
+      catFutariNote: 'Kakyo & Miko Notes',
+      catKyoStory: '#Kyo Talk',
+      catOriginalSong: 'Original Songs',
+      catCoverSong: 'Cover Songs',
+      catVlog: 'Vlog',
+      catSetlist: 'Karaoke Setlists',
+      noItems: 'No items found matching your criteria.',
+      viewPost: 'View Post',
+      streamLink: 'Watch Stream',
+    },
+    register: {
+      title: 'Resident Registration',
+      subtitle: 'Resident Registration',
+      pageTitle: 'Registration Procedure',
+      instructionsTitle: '[Registration Guidelines]',
+      instructionsText: 'Welcome to Maison de Kyo! Please fill out the form below to register your room number and name.\nRegistered information will be reflected in the Kakyo-no-ma tatami room and resident list.',
+      nameLabel: 'Name / Nickname',
+      namePlaceholder: 'e.g. Kyomate Taro',
+      buildingLabel: 'Building (Optional)',
+      buildingSelect: 'Default',
+      roomLabel: 'Room No. (1~999)',
+      roomPlaceholder: 'e.g. 101',
+      iconLabel: 'Icon Image (Twitter, etc.)',
+      iconHint: 'Square images look best',
+      commentLabel: 'Short Message',
+      commentPlaceholder: 'e.g. Nice to meet you all!',
+      submitButton: 'Submit Registration',
+      submitting: 'Submitting...',
+      successTitle: 'Registration Received!',
+      successText: 'Your registration is complete. Check out Kakyo-no-ma or the Resident Registry.',
+      previewTitle: 'Registration Preview',
+    },
+    registry: {
+      title: 'Resident Registry',
+      subtitle: 'Resident Registry',
+      searchPlaceholder: 'Search by name or room number...',
+      buildingFilterAll: 'All Buildings',
+      totalCount: 'Total Residents: ',
+      noResidents: 'No residents found matching your search.',
+      roomSuffix: ' Room',
+    },
+    kakyonoma: {
+      title: 'Kakyo-no-ma',
+      subtitle: 'Tatami Room',
+      zoomIn: 'Zoom In',
+      zoomOut: 'Zoom Out',
+      reset: 'Reset',
+      dragHint: 'DRAG OR SWIPE TO PAN • WHEEL TO ZOOM',
+      totalMats: 'Total Tatami Mats: ',
+    },
+    songs: {
+      title: 'Song of Kyo',
+      subtitle: 'Today\'s Recommended Song',
+      pickupSong: 'Today\'s Picked Song',
+      drawAgain: 'Pick Again 🎲',
+      watchOnYoutube: 'Listen on YouTube 🎵',
+      allSongs: 'All Songs List',
+      original: 'Original Songs',
+      cover: 'Cover Songs',
+      singingStream: 'Karaoke Stream',
+    },
+    diagnosis: {
+      title: 'Oshi Style Diagnosis',
+      subtitle: 'Oshi Style Diagnosis',
+      startBtn: 'Start Diagnosis',
+      restartBtn: 'Diagnose Again',
+      resultTitle: 'Your Oshi Style is...',
+      shareBtn: 'Share on X (Twitter)',
+    },
+    timeline: {
+      title: 'Kakyo Timeline',
+      subtitle: 'Kakyo Timeline',
+      scrollInstruction: 'Scroll the scroll to trace the journey',
+      orderAsc: 'Oldest First',
+      orderDesc: 'Newest First',
     },
   },
 };

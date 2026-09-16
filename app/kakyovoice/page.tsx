@@ -25,7 +25,7 @@ interface VoiceSection {
 }
 
 export default function KakyoArchivePage() {
-  const { t, translateDynamicText } = useLanguage();
+  const { t, locale, translateDynamicText } = useLanguage();
   const [sections, setSections] = useState<VoiceSection[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedVoice, setSelectedVoice] = useState<VoiceItem | null>(null);
@@ -231,7 +231,7 @@ export default function KakyoArchivePage() {
               <div className="glass-panel p-4 rounded-2xl border-white/10 flex flex-col md:flex-row gap-3 items-center justify-between shadow-inner bg-black/20">
                 <div className="flex items-center gap-2 w-full md:w-auto">
                   <span className="text-[#c9a64e] text-sm font-serif font-bold whitespace-nowrap hidden sm:inline">
-                    検索範囲:
+                    {locale === 'zh' ? '搜索范围:' : '検索範囲:'}
                   </span>
                   <select
                     value={searchCategory}
@@ -252,7 +252,7 @@ export default function KakyoArchivePage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="検索..."
+                    placeholder={locale === 'zh' ? '搜索...' : '検索...'}
                     className="w-full bg-white/10 text-white font-serif placeholder-[#d4c5b0]/50 border border-white/15 rounded-xl pl-10 pr-10 py-2 text-sm focus:outline-none focus:border-[#c9a64e] focus:bg-black/40 transition-all shadow-inner"
                   />
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base opacity-60">
@@ -276,15 +276,15 @@ export default function KakyoArchivePage() {
                   <h3 className="text-lg font-serif font-bold text-[#c9a64e] border-b border-[#c9a64e]/20 pb-2 flex items-center justify-between">
                     <span>
                       {isSearching ? (
-                        <>🔍 検索結果: 『{searchQuery}』</>
+                        <>{locale === 'zh' ? `🔍 搜索结果: 『${searchQuery}』` : `🔍 検索結果: 『${searchQuery}』`}</>
                       ) : (
                         <>{getCategoryIcon(selectedCategory)} {getCategoryDisplayName(selectedCategory)}</>
                       )}
                     </span>
                     <span className="text-xs text-[#d4c5b0] font-sans font-normal opacity-80">
                       {isSearching
-                        ? `${filteredItems.length} 件一致`
-                        : `全 ${activeSection?.items.length || 0} 件`}
+                        ? (locale === 'zh' ? `匹配 ${filteredItems.length} 项` : `${filteredItems.length} 件一致`)
+                        : (locale === 'zh' ? `共 ${activeSection?.items.length || 0} 项` : `全 ${activeSection?.items.length || 0} 件`)}
                     </span>
                   </h3>
                   
