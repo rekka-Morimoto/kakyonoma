@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import DiagnosisFlow, { QUESTIONS } from '../components/DiagnosisFlow';
+import { useLanguage } from '../../lib/i18nContext';
 
 interface DailyStats {
     [questionId: string]: {
@@ -15,11 +16,11 @@ interface StatsData {
 }
 
 export default function DiagnosisPage() {
+    const { t, locale, translateDynamicText } = useLanguage();
     const [stats, setStats] = useState<DailyStats | null>(null);
     const [loadingStats, setLoadingStats] = useState(true);
     const [isAdminOpen, setIsAdminOpen] = useState(false);
 
-    // Admin State
     const [adminPassword, setAdminPassword] = useState('');
     const [targetDate, setTargetDate] = useState(() => new Date().toISOString().split('T')[0]);
     const [adminMsg, setAdminMsg] = useState('');
@@ -33,7 +34,6 @@ export default function DiagnosisPage() {
             const res = await fetch('/api/stats');
             const data: StatsData = await res.json();
 
-            // Aggregate all dates
             const aggregated: DailyStats = {};
             Object.values(data).forEach(daily => {
                 Object.entries(daily).forEach(([qId, counts]) => {
@@ -51,7 +51,7 @@ export default function DiagnosisPage() {
     };
 
     const handleClearStats = async () => {
-        if (!confirm(`${targetDate} の統計データを削除しますか？`)) return;
+        if (!confirm(`${targetDate} ${locale === 'zh' ? '的统计数据要删除吗？' : 'の統計データを削除しますか？'}`)) return;
 
         try {
             const res = await fetch('/api/stats', {
@@ -62,7 +62,7 @@ export default function DiagnosisPage() {
             const data = await res.json();
             if (res.ok) {
                 setAdminMsg(data.message);
-                fetchStats(); // Refresh
+                fetchStats();
             } else {
                 setAdminMsg(`Error: ${data.error}`);
             }
@@ -72,8 +72,7 @@ export default function DiagnosisPage() {
     };
 
     const handleClearAllStats = async () => {
-        if (!confirm(`【警告】すべての統計データを削除しますか？\nこの操作は取り消せません。`)) return;
-        if (!confirm(`本当によろしいですか？ すべての集計がリセットされます。`)) return;
+        if (!confirm(locale === 'zh' ? '【警告】确定要删除所有统计数据吗？\n此操作无法撤销。' : '【警告】すべての統計データを削除しますか？\nこの操作は取り消せません。')) return;
 
         try {
             const res = await fetch('/api/stats', {
@@ -84,7 +83,7 @@ export default function DiagnosisPage() {
             const data = await res.json();
             if (res.ok) {
                 setAdminMsg(data.message);
-                fetchStats(); // Refresh
+                fetchStats();
             } else {
                 setAdminMsg(`Error: ${data.error}`);
             }
@@ -95,7 +94,6 @@ export default function DiagnosisPage() {
 
     return (
         <div className="min-h-screen bg-[#faf9f6] text-stone-900 font-serif flex flex-col">
-            {/* Header */}
             <header className="p-6">
                 <Link href="/" className="text-stone-400 font-bold tracking-widest hover:text-stone-600 transition-colors">
                     ← KAKYO-NO-MA
@@ -105,11 +103,12 @@ export default function DiagnosisPage() {
             <main className="flex-1 flex flex-col items-center p-6 w-full space-y-20 pb-40">
                 <DiagnosisFlow />
 
-                {/* Statistics Section */}
                 <section className="w-full max-w-4xl border-t border-dashed border-stone-300 pt-20">
                     <div className="text-center mb-12">
                         <h2 className="text-2xl font-black text-stone-800 tracking-wider uppercase mb-2">Diagnosis Statistics</h2>
-                        <p className="text-stone-500 font-sans">入居者の回答傾向</p>
+                        <p className="text-stone-500 font-sans">
+                            {locale === 'zh' ? '住户回答倾向' : '入居者の回答傾向'}
+                        </p>
                     </div>
 
                     {loadingStats ? (
@@ -128,7 +127,7 @@ export default function DiagnosisPage() {
                                             <span className="text-xs font-bold text-stone-400 tracking-widest">Q{q.id}</span>
                                             <span className="text-xs font-bold text-stone-400">{total} Answers</span>
                                         </div>
-                                        <h3 className="text-lg font-bold text-stone-800 mb-6">{q.text}</h3>
+                                        <h3 className="text-lg font-bold text-stone-800 mb-6">{translateDynamicText(q.text)}</h3>
 
                                         <div className="space-y-4">
                                             <div className="relative h-12 bg-stone-100 rounded-full overflow-hidden flex text-xs font-bold text-white">
@@ -149,10 +148,10 @@ export default function DiagnosisPage() {
                                             <div className="flex justify-between text-sm text-stone-600 px-2 gap-4">
                                                 <div className="flex-1">
                                                     <span className="font-bold mr-2 text-stone-800">A</span>
-                                                    {q.optionA}
+                                                    {translateDynamicText(q.optionA)}
                                                 </div>
                                                 <div className="flex-1 text-right">
-                                                    {q.optionB}
+                                                    {translateDynamicText(q.optionB)}
                                                     <span className="font-bold ml-2 text-stone-400">B</span>
                                                 </div>
                                             </div>
@@ -164,7 +163,6 @@ export default function DiagnosisPage() {
                     )}
                 </section>
 
-                {/* Admin Section */}
                 <section className="w-full max-w-lg pt-12">
                     <button
                         onClick={() => setIsAdminOpen(!isAdminOpen)}

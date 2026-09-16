@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
+import { useLanguage } from '../../lib/i18nContext';
 
 interface SongSubItem {
   title: string;
@@ -15,7 +16,7 @@ interface VoiceItem {
   url: string;
   thumbnailUrl?: string;
   songs?: SongSubItem[];
-  category?: string; // 検索結果でカテゴリを識別用
+  category?: string;
 }
 
 interface VoiceSection {
@@ -24,13 +25,13 @@ interface VoiceSection {
 }
 
 export default function KakyoArchivePage() {
+  const { t, translateDynamicText } = useLanguage();
   const [sections, setSections] = useState<VoiceSection[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedVoice, setSelectedVoice] = useState<VoiceItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Search States
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchCategory, setSearchCategory] = useState<string>('all');
 
@@ -72,6 +73,20 @@ export default function KakyoArchivePage() {
     }
   };
 
+  const getCategoryDisplayName = (catName: string) => {
+    switch (catName) {
+      case 'まいにちかきょボイス': return t('kakyovoice.catDailyVoice');
+      case 'おやすみかきょボイス': return t('kakyovoice.catGoodNightVoice');
+      case '#きょーのお話': return t('kakyovoice.catKyoStory');
+      case 'かきょみこ、ふたりのーと。': return t('kakyovoice.catFutariNote');
+      case 'オリジナル曲': return t('kakyovoice.catOriginalSong');
+      case 'カバー曲': return t('kakyovoice.catCoverSong');
+      case '歌枠セトリ': return t('kakyovoice.catSetlist');
+      case 'Vlog': return t('kakyovoice.catVlog');
+      default: return translateDynamicText(catName);
+    }
+  };
+
   const getCategoryIcon = (category?: string) => {
     switch (category) {
       case 'まいにちかきょボイス':
@@ -97,7 +112,6 @@ export default function KakyoArchivePage() {
 
   const activeSection = sections.find(s => s.category === selectedCategory);
 
-  // 分割：1段目（4つ）と2段目（4つ）
   const row1Categories = ["カバー曲", "オリジナル曲", "歌枠セトリ", "Vlog"];
   const row2Categories = ["おやすみかきょボイス", "かきょみこ、ふたりのーと。", "#きょーのお話", "まいにちかきょボイス"];
 
@@ -113,7 +127,6 @@ export default function KakyoArchivePage() {
       .filter((s): s is VoiceSection => s !== undefined);
   }, [sections]);
 
-  // Filtered items based on search query and search category scope
   const filteredItems = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return [];
@@ -163,7 +176,7 @@ export default function KakyoArchivePage() {
           {icon}
         </div>
         <div className={`font-serif font-bold text-xs md:text-sm leading-snug break-keep ${isSelected ? 'text-white' : ''}`}>
-          {section.category}
+          {getCategoryDisplayName(section.category)}
         </div>
         <div className="text-[10px] text-[#c9a64e]/80 font-sans mt-0.5">
           {section.items.length} 件
@@ -181,18 +194,22 @@ export default function KakyoArchivePage() {
       <div className="max-w-6xl w-full space-y-8 relative z-10">
         <Link href="/home" className="inline-flex items-center text-[#c9a64e] hover:text-white transition-colors mb-2 group font-bold tracking-widest text-lg">
           <span className="mr-3 transform group-hover:-translate-x-2 transition-transform text-2xl">←</span>
-          BACK TO HOME
+          {t('common.back')}
         </Link>
 
         <div className="glass-panel p-6 md:p-10 rounded-[2.5rem] border-white/10 shadow-2xl space-y-8">
           <header className="border-b border-white/10 pb-6 text-center">
-            <h1 className="text-4xl md:text-6xl font-serif font-black text-white mb-3 text-outline">かきょあーかいぶ</h1>
-            <p className="text-[#c9a64e] tracking-[0.4em] font-sans font-black uppercase text-xs drop-shadow-md">Kakyo Voice, Story, Song, Vlog & Setlist Archive</p>
+            <h1 className="text-4xl md:text-6xl font-serif font-black text-white mb-3 text-outline">
+              {t('kakyovoice.title')}
+            </h1>
+            <p className="text-[#c9a64e] tracking-[0.4em] font-sans font-black uppercase text-xs drop-shadow-md">
+              {t('kakyovoice.subtitle')}
+            </p>
           </header>
 
           {loading ? (
             <div className="flex justify-center py-20 text-[#d4c5b0] text-xl font-serif">
-              アーカイブを読み込み中...
+              読み込み中...
             </div>
           ) : error ? (
             <div className="text-center py-20 text-[#a84032] text-xl font-serif">
@@ -200,14 +217,11 @@ export default function KakyoArchivePage() {
             </div>
           ) : (
             <div className="space-y-8">
-              {/* Category Tiles Section (Two-Row Layout: 4 Columns each) */}
+              {/* Category Tiles Section */}
               <div className="space-y-3">
-                {/* 1段目 (4項目: カバー曲 -> オリジナル曲 -> 歌枠セトリ -> Vlog) */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {row1Sections.map(renderTileButton)}
                 </div>
-
-                {/* 2段目 (4項目: おやすみかきょボイス -> かきょみこ、ふたりのーと。 -> #きょーのお話 -> まいにちかきょボイス) */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {row2Sections.map(renderTileButton)}
                 </div>
@@ -224,10 +238,10 @@ export default function KakyoArchivePage() {
                     onChange={(e) => setSearchCategory(e.target.value)}
                     className="w-full md:w-auto bg-[#1a140d]/90 text-white font-serif border border-[#c9a64e]/40 rounded-xl px-3 py-2 text-xs md:text-sm focus:outline-none focus:border-[#c9a64e] cursor-pointer shadow-md"
                   >
-                    <option value="all">🔍 すべてのアーカイブ (全体検索)</option>
+                    <option value="all">🔍 {t('kakyovoice.filterAll')}</option>
                     {sections.map((s) => (
                       <option key={s.category} value={s.category}>
-                        {getCategoryIcon(s.category)} {s.category}
+                        {getCategoryIcon(s.category)} {getCategoryDisplayName(s.category)}
                       </option>
                     ))}
                   </select>
@@ -238,7 +252,7 @@ export default function KakyoArchivePage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="ボイス・お話・楽曲・Vlogタイトルで検索..."
+                    placeholder="検索..."
                     className="w-full bg-white/10 text-white font-serif placeholder-[#d4c5b0]/50 border border-white/15 rounded-xl pl-10 pr-10 py-2 text-sm focus:outline-none focus:border-[#c9a64e] focus:bg-black/40 transition-all shadow-inner"
                   />
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base opacity-60">
@@ -255,7 +269,7 @@ export default function KakyoArchivePage() {
                 </div>
               </div>
 
-              {/* Main Content Area: Left Item List + Right Embedded View */}
+              {/* Main Content Area */}
               <div className="flex flex-col lg:flex-row gap-8 pt-2">
                 {/* Left Column: List */}
                 <div className="w-full lg:w-5/12 flex flex-col space-y-4">
@@ -264,7 +278,7 @@ export default function KakyoArchivePage() {
                       {isSearching ? (
                         <>🔍 検索結果: 『{searchQuery}』</>
                       ) : (
-                        <>{getCategoryIcon(selectedCategory)} {selectedCategory} 一覧</>
+                        <>{getCategoryIcon(selectedCategory)} {getCategoryDisplayName(selectedCategory)}</>
                       )}
                     </span>
                     <span className="text-xs text-[#d4c5b0] font-sans font-normal opacity-80">
@@ -304,11 +318,11 @@ export default function KakyoArchivePage() {
                                 {item.category && (
                                   <div className="text-[11px] text-[#c9a64e] font-sans font-bold mb-0.5 flex items-center gap-1">
                                     <span>{getCategoryIcon(item.category)}</span>
-                                    <span>{item.category}</span>
+                                    <span>{getCategoryDisplayName(item.category)}</span>
                                   </div>
                                 )}
                                 <div className="font-bold text-sm leading-relaxed break-words line-clamp-2">
-                                  {displayTabLabel}
+                                  {translateDynamicText(displayTabLabel)}
                                 </div>
                               </div>
                             </button>
@@ -316,7 +330,7 @@ export default function KakyoArchivePage() {
                         })
                       ) : (
                         <div className="text-center py-10 text-[#d4c5b0]/60 font-serif">
-                          該当するアイテムが見つかりませんでした。
+                          {t('kakyovoice.noItems')}
                         </div>
                       )
                     ) : activeSection && activeSection.items.length > 0 ? (
@@ -345,7 +359,7 @@ export default function KakyoArchivePage() {
                             )}
                             <div className="flex-1 overflow-hidden">
                               <div className="font-bold text-sm leading-relaxed break-words line-clamp-2">
-                                {displayTabLabel}
+                                {translateDynamicText(displayTabLabel)}
                               </div>
                             </div>
                           </button>
@@ -353,16 +367,16 @@ export default function KakyoArchivePage() {
                       })
                     ) : (
                       <div className="text-center py-10 text-[#d4c5b0]/60 font-serif">
-                        項目がありません。
+                        {t('kakyovoice.noItems')}
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* Right Column: Embedded Content or Setlist View */}
+                {/* Right Column: Embedded Content */}
                 <div className="w-full lg:w-7/12 flex flex-col">
                   <h3 className="text-lg font-serif font-bold text-[#c9a64e] mb-4 border-b border-[#c9a64e]/20 pb-2">
-                    📻 {(selectedVoice?.category || selectedCategory) === '歌枠セトリ' ? '歌枠セトリ＆配信アーカイブ' : 'プレビュー画面 (クリックで動画・投稿を開く)'}
+                    📻 {(selectedVoice?.category || selectedCategory) === '歌枠セトリ' ? getCategoryDisplayName('歌枠セトリ') : 'プレビュー'}
                   </h3>
                   
                   {selectedVoice ? (
@@ -374,11 +388,10 @@ export default function KakyoArchivePage() {
                               Setlist Overview
                             </div>
                             <h4 className="text-white font-serif font-bold text-xl md:text-2xl leading-relaxed">
-                              {selectedVoice.title}
+                              {translateDynamicText(selectedVoice.title)}
                             </h4>
                           </div>
 
-                          {/* Setlist Song List */}
                           {selectedVoice.songs && selectedVoice.songs.length > 0 ? (
                             <div className="space-y-2 max-h-[340px] overflow-y-auto pr-2 voice-scrollbar">
                               {selectedVoice.songs.map((song, sIdx) => {
@@ -393,7 +406,7 @@ export default function KakyoArchivePage() {
                                     }`}
                                   >
                                     <span className="break-words flex-1">
-                                      {song.title}
+                                      {translateDynamicText(song.title)}
                                     </span>
                                     {song.url && (
                                       <a
@@ -412,12 +425,11 @@ export default function KakyoArchivePage() {
                             </div>
                           ) : (
                             <div className="text-center py-8 text-[#d4c5b0]/60 font-serif">
-                              曲目リスト情報がありません。
+                              {t('kakyovoice.noItems')}
                             </div>
                           )}
                         </div>
 
-                        {/* Full Stream Archive Link Button */}
                         {selectedVoice.url && (
                           <div className="pt-6 border-t border-white/10 text-center">
                             <a
@@ -426,7 +438,7 @@ export default function KakyoArchivePage() {
                               rel="noopener noreferrer"
                               className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#c9a64e]/30 via-[#c9a64e]/20 to-[#c9a64e]/30 hover:from-[#c9a64e]/40 hover:to-[#c9a64e]/40 border border-[#c9a64e]/60 text-white font-serif font-bold text-sm tracking-wider transition-all shadow-lg inline-flex items-center justify-center gap-2 group"
                             >
-                              <span>📺 配信アーカイブ全体を開く</span>
+                              <span>📺 {t('kakyovoice.streamLink')}</span>
                               <span className="group-hover:translate-x-1 transition-transform">↗</span>
                             </a>
                           </div>
@@ -441,21 +453,19 @@ export default function KakyoArchivePage() {
                           selectedVoice.url ? 'cursor-pointer' : 'cursor-default pointer-events-none'
                         }`}
                       >
-                        {/* Hover Effect Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-b from-[#c9a64e]/5 via-transparent to-[#c9a64e]/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
                         <div className="w-full space-y-4 flex flex-col items-center relative z-10">
-                          {/* Header Title inside Preview */}
                           <div className="text-center mb-2">
                             <div className="text-xs text-[#c9a64e] tracking-widest font-sans font-bold uppercase mb-1 flex items-center justify-center gap-1.5">
-                              <span>Viewing {(selectedVoice.category || selectedCategory)}</span>
+                              <span>Viewing {getCategoryDisplayName(selectedVoice.category || selectedCategory)}</span>
                               {selectedVoice.url && (
                                 <span className="group-hover:translate-x-1 transition-transform">↗</span>
                               )}
                             </div>
 
                             <h4 className="text-white font-serif font-bold text-xl md:text-2xl max-w-md mx-auto break-words leading-relaxed group-hover:text-[#ffe29a] transition-colors">
-                              {selectedVoice.subtitle || selectedVoice.title}
+                              {translateDynamicText(selectedVoice.subtitle || selectedVoice.title)}
                             </h4>
                             {selectedVoice.date && (
                               <div className="text-xs text-[#d4c5b0]/80 font-sans mt-1">
@@ -464,7 +474,6 @@ export default function KakyoArchivePage() {
                             )}
                           </div>
 
-                          {/* Thumbnail / Embedded Container */}
                           <div className="w-full max-w-[500px] flex justify-center py-2">
                             {selectedVoice.thumbnailUrl ? (
                               <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 group-hover:border-[#c9a64e]/50 transition-all">
@@ -486,14 +495,10 @@ export default function KakyoArchivePage() {
                             )}
                           </div>
 
-                          {selectedVoice.url ? (
+                          {selectedVoice.url && (
                             <div className="text-xs text-[#c9a64e] font-serif font-bold tracking-wider pt-2 group-hover:underline flex items-center gap-1">
-                              <span>クリックしてYouTube/動画を開く</span>
+                              <span>{t('kakyovoice.viewPost')}</span>
                               <span>↗</span>
-                            </div>
-                          ) : (
-                            <div className="text-xs text-[#d4c5b0]/60 font-serif pt-2">
-                              ※リンク情報は用意されていません
                             </div>
                           )}
                         </div>
@@ -502,7 +507,7 @@ export default function KakyoArchivePage() {
                   ) : (
                     <div className="glass-panel rounded-2xl p-6 border-white/5 flex-1 flex flex-col items-center justify-center min-h-[480px]">
                       <div className="text-[#d4c5b0] font-serif text-center">
-                        表示する項目を選択してください。
+                        {t('kakyovoice.noItems')}
                       </div>
                     </div>
                   )}
@@ -510,12 +515,6 @@ export default function KakyoArchivePage() {
               </div>
             </div>
           )}
-
-          <footer className="pt-8 border-t border-white/10 opacity-40 text-center">
-            <p className="text-white text-xs md:text-sm font-serif italic">
-              きょーちゃんの思い出や声、歌枠や楽曲、Vlogの記録を振り返って、今日も素敵な一日に。
-            </p>
-          </footer>
         </div>
       </div>
     </main>
@@ -563,11 +562,8 @@ function YouTubeEmbed({ url, title }: { url: string; title: string }) {
       </div>
       <div className="space-y-1.5 max-w-sm">
         <div className="text-white font-serif font-bold text-base leading-relaxed group-hover:text-[#ffe29a] transition-colors">
-          YouTube コミュニティポスト
+          YouTube
         </div>
-        <p className="text-xs text-[#d4c5b0] leading-relaxed">
-          YouTubeのコミュニティ投稿です。このカードをクリックするとYouTubeで直接ご覧いただけます。
-        </p>
       </div>
     </div>
   );
@@ -605,9 +601,6 @@ function TweetEmbed({ url }: { url: string }) {
         ).then((el: any) => {
           if (isMounted) {
             setLoading(false);
-            if (!el && containerRef.current) {
-              containerRef.current.innerHTML = `<p class="text-[#a84032] text-sm text-center font-sans py-4">ツイートの読み込みに失敗しました。<br/>削除されたか、非公開アカウントの可能性があります。</p>`;
-            }
           }
         });
       } else {

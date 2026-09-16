@@ -1,6 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useLanguage } from '../../lib/i18nContext';
+
 
 interface TimelineEvent {
   importance: number;
@@ -144,7 +146,9 @@ const getEventStyles = (imp: number, title: string = '') => {
 };
 
 export default function TimelinePage() {
+  const { t, locale, translateDynamicText } = useLanguage();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [showCharSearch, setShowCharSearch] = useState(false);
@@ -307,12 +311,12 @@ export default function TimelinePage() {
           <div className="relative z-10 flex items-center w-full text-left gap-2 pl-0.5 overflow-hidden">
             <span className={`${dateClass} shrink-0 mb-0 leading-none text-[10px] md:text-[11px]`}>{event.date}</span>
             <span className="text-[#ffe29a]/40 text-[9px] select-none leading-none">|</span>
-            <h3 className={`${titleClass} truncate flex-1 leading-none`}>{event.title}</h3>
+            <h3 className={`${titleClass} truncate flex-1 leading-none`}>{translateDynamicText(event.title)}</h3>
           </div>
         ) : (
           <div className="relative z-10 flex flex-col justify-center w-full pr-4">
             <div className={dateClass}>{event.date}</div>
-            <h3 className={titleClass}>{event.title}</h3>
+            <h3 className={titleClass}>{translateDynamicText(event.title)}</h3>
           </div>
         )}
       </>
@@ -506,7 +510,7 @@ export default function TimelinePage() {
               <span style={{ position:'absolute', bottom:'-3px', left:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
               <span style={{ position:'absolute', bottom:'-3px', right:'-3px', width:'6px', height:'6px', background:'#111', display:'block' }} />
               <p style={{ fontFamily:"'Courier New',Courier,monospace", fontSize:'13px', fontWeight:'bold', color:'#111', lineHeight:1.5, margin:0, whiteSpace:'nowrap' }}>
-                何探してるの？
+                {locale === 'zh' ? '你在找什么？' : '何探してるの？'}
               </p>
               {/* キャラクターの顔（右側）に向けて伸びる三角しっぽ */}
               <span style={{
@@ -571,7 +575,7 @@ export default function TimelinePage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="キーワードを入力..."
+                  placeholder={locale === 'zh' ? '输入关键词...' : 'キーワードを入力...'}
                   style={{
                     width: '100%',
                     background: 'rgba(10,18,36,0.8)',
@@ -590,9 +594,13 @@ export default function TimelinePage() {
                 {/* 検索結果 */}
                 <div style={{ marginTop:'8px', maxHeight:'180px', overflowY:'auto' }}>
                   {searchQuery.trim() === '' ? (
-                    <p style={{ fontFamily:"'Courier New',monospace", fontSize:'10px', color:'#4a5568', textAlign:'center', padding:'10px 0' }}>▶ キーワードを入れてね</p>
+                    <p style={{ fontFamily:"'Courier New',monospace", fontSize:'10px', color:'#4a5568', textAlign:'center', padding:'10px 0' }}>
+                      {locale === 'zh' ? '▶ 请输入关键词' : '▶ キーワードを入れてね'}
+                    </p>
                   ) : filteredEvents.length === 0 ? (
-                    <p style={{ fontFamily:"'Courier New',monospace", fontSize:'10px', color:'#e53e3e', textAlign:'center', padding:'10px 0' }}>× みつからなかった...</p>
+                    <p style={{ fontFamily:"'Courier New',monospace", fontSize:'10px', color:'#e53e3e', textAlign:'center', padding:'10px 0' }}>
+                      {locale === 'zh' ? '× 未找到...' : '× みつからなかった...'}
+                    </p>
                   ) : (
                     <div style={{ display:'flex', flexDirection:'column', gap:'5px' }}>
                       {filteredEvents.map((ev, i) => (
@@ -613,7 +621,7 @@ export default function TimelinePage() {
                           onMouseLeave={(e) => (e.currentTarget.style.background = ev.isSecret ? 'rgba(147,51,234,0.25)' : 'rgba(201,166,78,0.1)')}
                         >
                           <div style={{ fontFamily:"'Courier New',monospace", fontSize:'9px', color: ev.isSecret ? '#e9d5ff' : '#c9a64e', marginBottom:'2px' }}>{ev.date} {ev.isSecret ? '✦ SECRET' : ''}</div>
-                          <div style={{ fontFamily:'sans-serif', fontSize:'11px', color: ev.isSecret ? '#f3e8ff' : '#f1f5f9', fontWeight: ev.isSecret ? 'bold' : 'normal', lineHeight:1.4 }}>{ev.title}</div>
+                          <div style={{ fontFamily:'sans-serif', fontSize:'11px', color: ev.isSecret ? '#f3e8ff' : '#f1f5f9', fontWeight: ev.isSecret ? 'bold' : 'normal', lineHeight:1.4 }}>{translateDynamicText(ev.title)}</div>
                         </button>
                       ))}
                     </div>
@@ -635,7 +643,7 @@ export default function TimelinePage() {
                     cursor: 'pointer',
                     letterSpacing: '0.05em',
                   }}
-                >[ESC] とじる</button>
+                >[ESC] {t('common.close')}</button>
               </div>
             </div>
           </div>
@@ -657,7 +665,7 @@ export default function TimelinePage() {
             className="flex items-center gap-2 text-[#c9a64e]/90 hover:text-[#ffe29a] transition-all font-serif text-sm border border-[#c9a64e]/40 px-5 py-2 rounded-full bg-[#0c1326]/70 backdrop-blur-md hover:bg-[#0c1326]/90 hover:border-[#ffe29a]/60 shadow-[0_0_15px_rgba(201,166,78,0.15)] group pointer-events-auto"
           >
             <span className="group-hover:-translate-x-1 transition-transform">←</span>
-            <span>トップへ</span>
+            <span>{t('common.top')}</span>
           </Link>
         </div>
 
@@ -680,7 +688,9 @@ export default function TimelinePage() {
             /* ── ローディング表示 ── */
             <div className="py-24 text-center my-auto">
               <div className="w-10 h-10 border-3 border-[#c9a64e]/20 border-t-[#c9a64e] rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-sm text-[#c9a64e]/80 tracking-widest font-sans animate-pulse">絵巻を紐解いています...</p>
+              <p className="text-sm text-[#c9a64e]/80 tracking-widest font-sans animate-pulse">
+                {locale === 'zh' ? '正在展开画卷...' : '絵巻を紐解いています...'}
+              </p>
             </div>
           ) : (
             /* ── 年表コンテンツ ── */
@@ -688,7 +698,9 @@ export default function TimelinePage() {
               {/* ヘッダー */}
               <header className="text-center pb-8 mb-4 border-b-2 border-[#c9a64e]/20 relative">
                 <p className="text-[10px] text-[#c9a64e]/70 tracking-[0.6em] uppercase font-sans mb-2">Maison de Kyo</p>
-                <h1 className="text-4xl md:text-5xl font-black tracking-[0.25em] text-[#ffe29a]" style={{ textShadow: '0 0 15px rgba(255,226,154,0.15)' }}>かきょ年表</h1>
+                <h1 className="text-4xl md:text-5xl font-black tracking-[0.25em] text-[#ffe29a]" style={{ textShadow: '0 0 15px rgba(255,226,154,0.15)' }}>
+                  {translateDynamicText('かきょ年表')}
+                </h1>
                 <p className="text-[10px] text-[#c9a64e]/70 tracking-[0.4em] uppercase font-sans mt-3">Chronicle of Kakyo</p>
                 <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-[#0c1326] border border-[#c9a64e]/40 rounded-full flex items-center justify-center text-[#c9a64e] text-xs shadow-[0_0_8px_rgba(201,166,78,0.3)]">✦</div>
               </header>
@@ -1089,11 +1101,11 @@ export default function TimelinePage() {
               {selectedEvent.date}
             </div>
             <h2 className="text-xl md:text-2xl font-black text-white leading-relaxed tracking-wider break-keep mb-2">
-              {selectedEvent.title}
+              {translateDynamicText(selectedEvent.title)}
             </h2>
             {selectedEvent.isSecret && (
               <p className="text-base md:text-lg font-bold text-red-400 tracking-wider mb-6 animate-pulse font-sans">
-                そろそろ消すよ～🔪
+                {locale === 'zh' ? '差不多要删掉了哦～🔪' : 'そろそろ消すよ～🔪'}
               </p>
             )}
 
@@ -1106,14 +1118,14 @@ export default function TimelinePage() {
                   rel="noopener noreferrer"
                   className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-[#c9a64e] via-[#e2c575] to-[#a06830] text-[#080d1a] font-black text-center shadow-lg hover:brightness-110 transition-all flex items-center justify-center gap-2 font-sans"
                 >
-                  🔗 リンク先を開く ({selectedEvent.linkUrl.includes('youtube') || selectedEvent.linkUrl.includes('youtu.be') ? 'YouTube' : selectedEvent.linkUrl.includes('twitter.com') || selectedEvent.linkUrl.includes('x.com') ? 'X' : 'Web'})
+                  🔗 {locale === 'zh' ? '打开链接' : 'リンク先を開く'} ({selectedEvent.linkUrl.includes('youtube') || selectedEvent.linkUrl.includes('youtu.be') ? 'YouTube' : selectedEvent.linkUrl.includes('twitter.com') || selectedEvent.linkUrl.includes('x.com') ? 'X' : 'Web'})
                 </a>
               ) : null}
               <button
                 onClick={() => setSelectedEvent(null)}
                 className="py-3 px-6 rounded-xl bg-white/10 text-white font-semibold hover:bg-white/20 transition-colors font-sans"
               >
-                閉じる
+                {t('common.close')}
               </button>
             </div>
           </div>

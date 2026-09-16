@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '../../lib/i18nContext';
 
 export default function TermsAgreement() {
     const [agreed, setAgreed] = useState(false);
     const router = useRouter();
+    const { t } = useLanguage();
 
     const handleProceed = () => {
         if (agreed) {
@@ -24,7 +26,7 @@ export default function TermsAgreement() {
                     className="w-8 h-8 accent-[#c9a64e] cursor-pointer"
                 />
                 <span className="text-xl md:text-2xl font-black text-white text-outline tracking-wider">
-                    内容を理解し、同意します
+                    {t('terms.agreeCheck')}
                 </span>
             </label>
 
@@ -36,7 +38,7 @@ export default function TermsAgreement() {
                         : 'bg-white/5 text-white/20 cursor-not-allowed border border-white/5'
                     }`}
             >
-                同意して進む
+                {t('terms.agreeButton')}
             </button>
         </div>
     );

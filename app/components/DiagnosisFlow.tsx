@@ -1,13 +1,13 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useLanguage } from '../../lib/i18nContext';
 
-// --- Types ---
 export type ResultType =
-    | 'あこがれびと' // NL & Worship
-    | 'みまもりびと' // Lang & Worship
-    | 'となりびと'   // NL & Ident
-    | 'あゆみびと';  // Lang & Ident
+    | 'あこがれびと'
+    | 'みまもりびと'
+    | 'となりびと'
+    | 'あゆみびと';
 
 type QuestionType = 'LangNonLang' | 'WorshipIdent';
 
@@ -129,15 +129,15 @@ export const QUESTIONS: Question[] = [
 
 interface DiagnosisFlowProps {
     onComplete?: (result: ResultType, answers: Record<number, 'A' | 'B'>) => void;
-    embedded?: boolean; // If true, hide restart buttons or adjust padding
+    embedded?: boolean;
 }
 
 export default function DiagnosisFlow({ onComplete, embedded = false }: DiagnosisFlowProps) {
+    const { t, locale, translateDynamicText } = useLanguage();
     const [step, setStep] = useState<'start' | 'question' | 'result'>('start');
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState<Record<number, 'A' | 'B'>>({});
 
-    // Scores
     const [scores, setScores] = useState({
         lang: 0,
         nonLang: 0,
@@ -149,14 +149,11 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
 
     const handleAnswer = (choice: 'A' | 'B') => {
         const q = currentQuestion;
-
-        // Record Answer
         const newAnswers = { ...answers, [q.id]: choice };
         setAnswers(newAnswers);
 
         let newScores = { ...scores };
 
-        // Base Logic
         if (q.type === 'LangNonLang') {
             if (choice === 'A') newScores.lang += 1;
             else newScores.nonLang += 1;
@@ -165,7 +162,6 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
             else newScores.ident += 1;
         }
 
-        // Special Rules
         if (q.id === 2) {
             if (choice === 'A') newScores.ident += 0.1;
             else newScores.worship += 0.1;
@@ -178,15 +174,10 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
 
         setScores(newScores);
 
-        // Next Question or Result
         if (currentQuestionIndex < QUESTIONS.length - 1) {
             setCurrentQuestionIndex(prev => prev + 1);
         } else {
             setStep('result');
-            // Determining result here to pass it immediately if needed, 
-            // but usually we wait for render. 
-            // However, since state update is async, we should calculate again for callback if needed immediately.
-            // But let's just wait for step change effectively.
         }
     };
 
@@ -202,12 +193,11 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
 
     const result = step === 'result' ? DIAGNOSIS_RESULTS[getResult()] : null;
 
-    // Effect to trigger onComplete when result is reached
     React.useEffect(() => {
         if (step === 'result' && onComplete) {
             onComplete(getResult(), answers);
         }
-    }, [step, scores, answers, onComplete]); // answers added to dep
+    }, [step, scores, answers, onComplete]);
 
     const resetDiagnosis = () => {
         setScores({ lang: 0, nonLang: 0, worship: 0, ident: 0 });
@@ -223,10 +213,13 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
                 <div className="text-center space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full max-w-2xl px-4 py-10">
                     <div className="space-y-6">
                         <span className="text-[#c9a64e] font-black tracking-[0.4em] uppercase block drop-shadow-lg">Maison Diagnosis</span>
-                        <h1 className="text-5xl md:text-7xl font-black mb-6 text-white text-outline">推しスタイル診断</h1>
+                        <h1 className="text-5xl md:text-7xl font-black mb-6 text-white text-outline">{t('register.diagnosisTitle')}</h1>
                         <p className="text-xl md:text-3xl text-white/90 leading-relaxed font-serif text-outline opacity-90">
-                            あなたの言葉や感覚から、<br />
-                            理想の距離感や関わり方を紐解きます。
+                            {locale === 'zh' ? (
+                                <>从您的言语与直觉中，<br />梳理出最理想的心理距离与相处方式。</>
+                            ) : (
+                                <>あなたの言葉や感覚から、<br />理想の距離感や関わり方を紐解きます。</>
+                            )}
                         </p>
                     </div>
 
@@ -234,7 +227,7 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
                         onClick={() => setStep('question')}
                         className="bg-[#c9a64e] text-white px-16 py-6 rounded-2xl font-black text-2xl hover:brightness-110 transition-all shadow-2xl active:scale-95 text-outline"
                     >
-                        診断を始める
+                        {locale === 'zh' ? '开始诊断' : '診断を始める'}
                     </button>
                 </div>
             )}
@@ -253,7 +246,7 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
                     </div>
 
                     <h2 className="text-3xl md:text-5xl font-black text-center leading-snug min-h-[160px] flex items-center justify-center text-white text-outline">
-                        {currentQuestion.text}
+                        {translateDynamicText(currentQuestion.text)}
                     </h2>
 
                     <div className="grid grid-cols-1 gap-6">
@@ -262,7 +255,7 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
                             className="glass-panel p-10 rounded-3xl border-2 border-white/5 hover:border-[#c9a64e]/40 transition-all duration-500 text-left active:scale-[0.98] group"
                         >
                             <span className="text-white text-xl font-bold leading-relaxed block pl-2 group-hover:text-[#c9a64e] transition-colors">
-                                {currentQuestion.optionA}
+                                {translateDynamicText(currentQuestion.optionA)}
                             </span>
                         </button>
 
@@ -271,7 +264,7 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
                             className="glass-panel p-10 rounded-3xl border-2 border-white/5 hover:border-[#c9a64e]/40 transition-all duration-500 text-left active:scale-[0.98] group"
                         >
                             <span className="text-white text-xl font-bold leading-relaxed block pl-2 group-hover:text-[#c9a64e] transition-colors">
-                                {currentQuestion.optionB}
+                                {translateDynamicText(currentQuestion.optionB)}
                             </span>
                         </button>
                     </div>
@@ -292,13 +285,13 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
                             )}
                         </div>
                         <h2 className="text-5xl md:text-7xl font-black text-white -mt-8 md:-mt-12 relative z-10 text-outline-heavy tracking-wider drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
-                            {result.title}
+                            {translateDynamicText(result.title)}
                         </h2>
                         <div className="glass-panel p-10 rounded-[3rem] border-white/10 shadow-2xl relative">
                             <div className="absolute -top-4 -left-4 text-4xl opacity-40">📜</div>
                             <div className="absolute -bottom-4 -right-4 text-4xl opacity-40 transform rotate-180">📜</div>
                             <p className="text-white text-lg md:text-xl font-serif leading-loose whitespace-pre-wrap text-justify">
-                                {result.description}
+                                {translateDynamicText(result.description)}
                             </p>
                         </div>
                     </div>
@@ -309,7 +302,7 @@ export default function DiagnosisFlow({ onComplete, embedded = false }: Diagnosi
                                 onClick={resetDiagnosis}
                                 className="bg-[#c9a64e] text-white px-12 py-5 rounded-2xl font-black text-xl hover:brightness-110 transition-all shadow-2xl active:scale-95 text-outline"
                             >
-                                もう一度診断する
+                                {t('register.redoDiagnosis')}
                             </button>
                             <Link
                                 href="/"

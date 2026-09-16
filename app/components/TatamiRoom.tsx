@@ -1,6 +1,7 @@
 'use client';
 import React, { useMemo, useState, useRef } from 'react';
 import { getBuildingStyle } from '../utils/buildingConstants';
+import { useLanguage } from '../../lib/i18nContext';
 
 interface Resident {
     id: number;
@@ -21,6 +22,7 @@ interface MatPosition {
 }
 
 export default function TatamiRoom({ residents }: TatamiRoomProps) {
+    const { locale, translateDynamicText } = useLanguage();
     const residentCount = residents.length;
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -30,12 +32,8 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
     const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 });
 
     const getLayout = (count: number): { cols: number; rows: number; mats: MatPosition[] } => {
-        // Dynamic capacity: Start at 100, then expand in steps of 100
         const targetMatCount = Math.max(100, Math.ceil(count / 100) * 100);
         
-        // Calculate grid density: 
-        // We want a roughly rectangular/square layout. 
-        // 100 mats = 200 total cells. A 14x14 grid (196 cells) is close to 100 mats.
         const cols = Math.ceil(Math.sqrt(targetMatCount * 2));
         const finalCols = cols % 2 === 0 ? cols : cols + 1;
         const rows = Math.ceil((targetMatCount * 2) / finalCols);
@@ -69,7 +67,6 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
             const a = parseArea(areaA);
             const b = parseArea(areaB);
 
-            // Overlap check
             const hOverlap = Math.max(a.cs, b.cs) < Math.min(a.ce, b.ce);
             const vOverlap = Math.max(a.rs, b.rs) < Math.min(a.re, b.re);
 
@@ -79,7 +76,6 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
             return (touchesH && hOverlap) || (touchesV && vOverlap);
         };
 
-        // Placement Logic: Greedy + Relaxed Validation
         residents.forEach((resident) => {
             for (let i = 0; i < layout.mats.length; i++) {
                 if (slots[i]) continue;
@@ -88,7 +84,6 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
                 const candidateRoom = Number(resident.roomNumber);
                 const candidateBuilding = resident.building;
 
-                // Get all residents already sharing an edge with THIS mat
                 const currentNeighbors: { idx: number, res: Resident }[] = [];
                 for (let j = 0; j < layout.mats.length; j++) {
                     if (slots[j] && sharesEdge(candidateArea, layout.mats[j].gridArea)) {
@@ -96,17 +91,11 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
                     }
                 }
 
-                // 1. Same-room-and-building adjacency check: 
-                // Candidate can't touch anyone from same room AND same building
-                // But can touch same room from DIFFERENT building
                 if (currentNeighbors.some(n =>
                     Number(n.res.roomNumber) === candidateRoom &&
                     n.res.building === candidateBuilding
                 )) continue;
 
-                // Removed strict clique uniqueness to allow clustering of different buildings with same room #
-
-                // Passed checks
                 slots[i] = resident;
                 break;
             }
@@ -131,7 +120,6 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
 
     const handleMouseUp = () => setIsDragging(false);
 
-    // Touch handlers for mobile support
     const handleTouchStart = (e: React.TouchEvent) => {
         setIsDragging(true);
         const touch = e.touches[0];
@@ -194,9 +182,11 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
                                                 <img src={resident.icon || resident.image} alt="" className="w-full h-full object-cover" />
                                             </div>
                                             <div className="flex flex-col text-left overflow-hidden">
-                                                <div className="text-sm font-bold text-stone-900 leading-none truncate max-w-[100px]">{resident.name}</div>
+                                                <div className="text-sm font-bold text-stone-900 leading-none truncate max-w-[100px]">
+                                                    {translateDynamicText(resident.name)}
+                                                </div>
                                                 <div className={`text-[10px] font-bold uppercase tracking-tighter ${getBuildingStyle(resident.building).text}`}>
-                                                    {resident.roomNumber}号室
+                                                    {locale === 'zh' ? `${resident.roomNumber}号房` : `${resident.roomNumber}号室`}
                                                 </div>
                                             </div>
                                         </div>
@@ -210,11 +200,11 @@ export default function TatamiRoom({ residents }: TatamiRoomProps) {
 
             {/* Controls Overlay */}
             <div className="absolute top-1/2 -translate-y-1/2 right-6 bg-black/30 backdrop-blur-md p-1.5 rounded-2xl border border-white/10 flex flex-col z-[100] shadow-2xl">
-                <button onClick={() => setScale(s => Math.min(s + 0.2, 3))} className="p-3 text-white hover:bg-white/10 rounded-xl transition text-xl font-bold" title="拡大">+</button>
+                <button onClick={() => setScale(s => Math.min(s + 0.2, 3))} className="p-3 text-white hover:bg-white/10 rounded-xl transition text-xl font-bold" title={locale === 'zh' ? '放大' : '拡大'}>+</button>
                 <div className="h-px bg-white/10 mx-2" />
-                <button onClick={() => setScale(s => Math.max(s - 0.2, 0.2))} className="p-3 text-white hover:bg-white/10 rounded-xl transition text-xl font-bold" title="縮小">-</button>
+                <button onClick={() => setScale(s => Math.max(s - 0.2, 0.2))} className="p-3 text-white hover:bg-white/10 rounded-xl transition text-xl font-bold" title={locale === 'zh' ? '缩小' : '縮小'}>-</button>
                 <div className="h-px bg-white/10 mx-2" />
-                <button onClick={() => { setScale(0.8); setOffset({ x: 0, y: 0 }); }} className="p-3 text-white hover:bg-white/10 rounded-xl transition text-xl" title="リセット">⟲</button>
+                <button onClick={() => { setScale(0.8); setOffset({ x: 0, y: 0 }); }} className="p-3 text-white hover:bg-white/10 rounded-xl transition text-xl" title={locale === 'zh' ? '重置' : 'リセット'}>⟲</button>
             </div>
 
             {/* Legend / Info Overlay */}

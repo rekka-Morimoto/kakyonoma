@@ -21,17 +21,36 @@ export async function GET(request: Request) {
 
                 if (urlMatch) {
                     const url = urlMatch[1].trim();
-                    if (url) links.push(url);
+                    if (url && (url.startsWith('http://') || url.startsWith('https://'))) links.push(url);
                 } else if (streamLinkMatch) {
                     const url = streamLinkMatch[1].trim();
-                    if (url) links.push(url);
+                    if (url && (url.startsWith('http://') || url.startsWith('https://'))) links.push(url);
+                }
+            }
+        } else if (type === 'any') {
+            // 'any' の場合は original, cover, any, stream の全リストからURLを収集
+            const files = ['songs_original.txt', 'songs_cover.txt', 'songs_any.txt'];
+            for (const file of files) {
+                try {
+                    const filePath = path.join(process.cwd(), 'data', file);
+                    const content = await fs.readFile(filePath, 'utf-8');
+                    const fileUrls = content
+                        .split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line.startsWith('http://') || line.startsWith('https://'));
+                    links.push(...fileUrls);
+                } catch (e) {
+                    // ファイルが存在しない場合は無視
                 }
             }
         } else {
             const fileName = `songs_${type}.txt`;
             const filePath = path.join(process.cwd(), 'data', fileName);
             const content = await fs.readFile(filePath, 'utf-8');
-            links = content.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+            links = content
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.startsWith('http://') || line.startsWith('https://'));
         }
 
         if (links.length === 0) {

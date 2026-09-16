@@ -2,8 +2,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import TennyuTodoke from '../components/TennyuTodoke';
-// Dynamic import will be handled in handleViewCertificate
 import { BUILDING_STYLES, getBuildingStyle } from '../utils/buildingConstants';
+import { useLanguage } from '../../lib/i18nContext';
 
 interface Resident {
     id: number;
@@ -14,32 +14,28 @@ interface Resident {
     xAccount?: string;
     youtubeAccount?: string;
     baseLocation?: string;
-    image?: string; // This is the old card image
-    icon?: string;  // This is the original avatar
+    image?: string;
+    icon?: string;
     roomNumber: number;
     building?: string;
     freeText?: string;
 }
 
 export default function Registry() {
+    const { t, locale, translateDynamicText } = useLanguage();
     const [residents, setResidents] = useState<Resident[]>([]);
     const [filteredResidents, setFilteredResidents] = useState<Resident[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // View/Generate State
     const [viewingId, setViewingId] = useState<number | null>(null);
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-    const [isGenerating, setIsGenerating] = useState(false);
 
-    // Filter State
     const [selectedBuilding, setSelectedBuilding] = useState<string | null>(null);
 
-    // Admin State
     const [isAdminMode, setIsAdminMode] = useState(false);
     const [adminPassword, setAdminPassword] = useState('');
     const [showAdminInput, setShowAdminInput] = useState(false);
 
-    // Deletion State
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [deletePassword, setDeletePassword] = useState('');
     const [isBulkDeleting, setIsBulkDeleting] = useState(false);
@@ -48,7 +44,6 @@ export default function Registry() {
         fetchResidents();
     }, []);
 
-    // Precision Background Scroll Synchronization (Parallax)
     const backgroundRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         const handleScroll = () => {
@@ -58,18 +53,14 @@ export default function Registry() {
             const windowHeight = window.innerHeight;
             const fullHeight = document.documentElement.scrollHeight;
             
-            // Calculate scroll progress (0 to 1)
             const scrollProgress = scrollY / (fullHeight - windowHeight);
             
-            // Find the background image inside the ref
             const img = backgroundRef.current.querySelector('img');
             if (img) {
                 const imgHeight = img.offsetHeight;
-                // Range the image can move = Image Height - Visible Window Height
                 const travelDistance = imgHeight - windowHeight;
                 
                 if (travelDistance > 0) {
-                    // Move the image upwards based on scroll progress
                     const translateY = -scrollProgress * travelDistance;
                     img.style.transform = `translateY(${translateY}px)`;
                 }
@@ -77,9 +68,8 @@ export default function Registry() {
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
-        window.addEventListener('resize', handleScroll); // Responsive recalculation
+        window.addEventListener('resize', handleScroll);
         
-        // Initial call after a short delay for image/content load
         const timer = setTimeout(handleScroll, 500);
         
         return () => {
@@ -87,7 +77,7 @@ export default function Registry() {
             window.removeEventListener('resize', handleScroll);
             clearTimeout(timer);
         };
-    }, [residents, filteredResidents]); // Re-calculate when data changes height
+    }, [residents, filteredResidents]);
 
     useEffect(() => {
         if (selectedBuilding) {
@@ -115,11 +105,10 @@ export default function Registry() {
             setShowAdminInput(false);
             setDeletePassword('5226ms');
         } else {
-            alert('パスワードが違います');
+            alert(locale === 'zh' ? '密码不正确' : 'パスワードが違います');
         }
     };
 
-    // --- Deletion Handlers ---
     const openDeleteModal = (id: number) => {
         setDeletingId(id);
         setDeletePassword(isAdminMode ? 'admin' : '');
@@ -132,7 +121,8 @@ export default function Registry() {
 
     const executeDelete = async () => {
         if (!deletingId) return;
-        if (!confirm('本当に削除しますか？\n（この操作は取り消せません）')) return;
+        const confirmMsg = locale === 'zh' ? '确定要删除吗？\n（此操作无法撤销）' : '本当に削除しますか？\n（この操作は取り消せません）';
+        if (!confirm(confirmMsg)) return;
 
         try {
             const res = await fetch('/api/residents', {
@@ -143,21 +133,20 @@ export default function Registry() {
 
             if (res.ok) {
                 setResidents(prev => prev.filter(r => r.id !== deletingId));
-                alert('削除しました');
+                alert(locale === 'zh' ? '已删除' : '削除しました');
                 closeDeleteModal();
             } else {
                 const data = await res.json();
-                alert(`削除失敗: ${data.error}`);
+                alert(`${locale === 'zh' ? '删除失败' : '削除失敗'}: ${data.error}`);
             }
         } catch (error) {
             console.error('Delete error', error);
-            alert('通信エラーが発生しました');
+            alert(locale === 'zh' ? '发生通信错误' : '通信エラーが発生しました');
         }
     };
 
     const handleBulkDelete = async () => {
-        if (!confirm('【警告】すべてのデータを削除しますか？')) return;
-        if (!confirm('本当によろしいですか？\nこの操作は絶対に取り消せません！')) return;
+        if (!confirm(locale === 'zh' ? '【警告】确定要删除所有数据吗？' : '【警告】すべてのデータを削除しますか？')) return;
 
         try {
             const res = await fetch('/api/residents', {
@@ -168,22 +157,20 @@ export default function Registry() {
 
             if (res.ok) {
                 setResidents([]);
-                alert('全データを削除しました');
+                alert(locale === 'zh' ? '已删除所有数据' : '全データを削除しました');
                 setIsBulkDeleting(false);
             } else {
                 const data = await res.json();
-                alert(`削除失敗: ${data.error}`);
+                alert(`${locale === 'zh' ? '删除失败' : '削除失敗'}: ${data.error}`);
             }
         } catch (error) {
             console.error('Bulk Delete error', error);
-            alert('通信エラーが発生しました');
+            alert(locale === 'zh' ? '通信错误' : '通信エラーが発生しました');
         }
     };
 
-    // --- View Certificate Handler ---
     const handleViewCertificate = async (resident: Resident) => {
         setViewingId(resident.id);
-        // DBに保存されている完成画像を表示するだけ（再生成しない）
         setGeneratedImage(resident.image || null);
     };
 
@@ -195,7 +182,6 @@ export default function Registry() {
     return (
         <div className="min-h-screen bg-transparent text-stone-100 font-sans relative">
 
-            {/* Precision Synchronized Background for Registry Page */}
             <div ref={backgroundRef} className="fixed inset-0 w-full h-screen z-[-2] overflow-hidden pointer-events-none">
                 <img 
                     src="/maison-bg.png" 
@@ -205,16 +191,17 @@ export default function Registry() {
                 />
             </div>
 
-            {/* Immersive Overlay to dampen background slightly for registry readability */}
             <div className="fixed inset-0 bg-black/40 z-[-1] pointer-events-none" />
 
             {/* Delete Modal */}
             {deletingId && (
                 <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[100] backdrop-blur-md">
                     <div className="glass-panel p-10 rounded-3xl shadow-2xl max-w-sm w-full space-y-8 border-[#a84032]/30">
-                        <h3 className="text-2xl font-bold text-white text-center text-outline">退去手続き</h3>
+                        <h3 className="text-2xl font-bold text-white text-center text-outline">
+                            {locale === 'zh' ? '搬离手续' : '退去手続き'}
+                        </h3>
                         <p className="text-sm text-[#d4c5b0] text-center">
-                            削除するにはパスワードを入力してください。
+                            {locale === 'zh' ? '请输入密码以进行删除。' : '削除するにはパスワードを入力してください。'}
                         </p>
                         <input
                             type="password"
@@ -229,13 +216,13 @@ export default function Registry() {
                                 onClick={closeDeleteModal}
                                 className="flex-1 py-4 bg-white/10 rounded-xl font-bold hover:bg-white/20 transition text-stone-300"
                             >
-                                戻る
+                                {t('common.back')}
                             </button>
                             <button
                                 onClick={executeDelete}
                                 className="flex-1 py-4 bg-[#a84032] text-white rounded-xl font-bold hover:brightness-110 transition shadow-lg"
                             >
-                                削除
+                                {locale === 'zh' ? '删除' : '削除'}
                             </button>
                         </div>
                     </div>
@@ -275,9 +262,11 @@ export default function Registry() {
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12 relative z-10 text-center md:text-left">
                     <div className="space-y-4">
                         <h1 className="text-6xl md:text-8xl font-serif font-black tracking-tight text-white text-outline">
-                            入居者名簿
+                            {t('registry.title')}
                         </h1>
-                        <p className="text-[#c9a64e] font-black tracking-[0.4em] uppercase text-sm md:text-base drop-shadow-lg">Resident Registry — Maison de Kyo</p>
+                        <p className="text-[#c9a64e] font-black tracking-[0.4em] uppercase text-sm md:text-base drop-shadow-lg">
+                            {t('registry.subtitle')}
+                        </p>
                     </div>
 
                     <div className="flex gap-6">
@@ -285,28 +274,27 @@ export default function Registry() {
                             href="/kakyonoma"
                             className="bg-[#c9a64e] text-white px-10 py-5 rounded-2xl font-black hover:brightness-110 transition-all shadow-2xl hover:shadow-[#c9a64e]/20 active:scale-95 text-xl text-outline"
                         >
-                            かきょの間へ
+                            {t('nav.kakyonoma')}
                         </Link>
                         <Link
                             href="/"
                             className="glass-panel text-white px-10 py-5 rounded-2xl font-bold hover:bg-white/10 transition-all text-xl border-white/20 border"
                         >
-                            トップ
+                            {t('common.top')}
                         </Link>
                     </div>
                 </div>
             </header>
 
             <main className="max-w-7xl mx-auto p-8 md:p-12">
-                {/* Admin Toolbar & Filters */}
+                {/* Building Filter */}
                 <div className="mb-20 flex flex-col md:flex-row justify-between items-center gap-10">
-                    {/* Building Filter */}
                     <div className="w-full flex flex-wrap justify-center items-center gap-6 mb-12">
                         <button
                             onClick={() => setSelectedBuilding(null)}
                             className={`group px-10 py-6 rounded-3xl font-serif font-black text-xl transition-all relative overflow-hidden flex items-center justify-center min-w-[140px] shadow-2xl border-2 ${selectedBuilding === null ? 'bg-[#c9a64e] text-white border-amber-200 scale-105 shadow-amber-900/40' : 'bg-black/60 text-stone-400 border-white/10 hover:border-[#c9a64e]/40 hover:text-white'}`}
                         >
-                            <span className="relative z-10">全て</span>
+                            <span className="relative z-10">{t('common.all')}</span>
                             {selectedBuilding === null && <div className="absolute inset-0 bg-gradient-to-tr from-amber-600/20 to-transparent animate-pulse" />}
                         </button>
                         {Object.values(BUILDING_STYLES).map((style) => (
@@ -327,7 +315,7 @@ export default function Registry() {
                                     <div className="flex flex-col items-center">
                                         <span className={`text-[9px] uppercase tracking-[0.3em] mb-0.5 font-sans font-black ${selectedBuilding === style.name ? 'text-white/70' : 'text-[#c9a64e]'}`}>Type</span>
                                         <span className={`text-sm font-serif font-black tracking-widest ${selectedBuilding === style.name ? 'text-white text-glow' : 'text-stone-300'}`}>
-                                            {style.name}
+                                            {translateDynamicText(style.name)}
                                         </span>
                                     </div>
                                 </div>
@@ -338,7 +326,6 @@ export default function Registry() {
                         ))}
                     </div>
 
-                    {/* Building Description Display - Now Below the row */}
                     {selectedBuilding && (
                         <div className="w-full max-w-4xl mx-auto mb-16 animate-in fade-in slide-in-from-top-4 duration-700">
                             <div className="glass-panel p-8 md:p-10 rounded-[3rem] border-white/10 shadow-2xl relative overflow-hidden group">
@@ -346,10 +333,10 @@ export default function Registry() {
                                 <div className="relative z-10 space-y-4">
                                     <div className="flex items-center gap-4">
                                         <span className="px-4 py-1 bg-[#c9a64e] text-white text-[9px] font-black rounded-full tracking-widest uppercase text-outline">Definition</span>
-                                        <h3 className="text-2xl font-serif font-black text-white text-glow">{selectedBuilding}</h3>
+                                        <h3 className="text-2xl font-serif font-black text-white text-glow">{translateDynamicText(selectedBuilding)}</h3>
                                     </div>
                                     <p className="text-lg md:text-xl text-[#d4c5b0] font-serif leading-[2] text-center whitespace-pre-wrap drop-shadow-md px-4">
-                                        {getBuildingStyle(selectedBuilding).description}
+                                        {translateDynamicText(getBuildingStyle(selectedBuilding).description)}
                                     </p>
                                 </div>
                             </div>
@@ -359,9 +346,9 @@ export default function Registry() {
                     {isAdminMode && (
                         <button
                             onClick={handleBulkDelete}
-                            className="bg-[#a84032] text-white px-8 py-3 rounded-2xl font-black shadow-2xl hover:brightness-110 transition-all text-base text-outline"
+                            className="bg-[#a84032] text-[#fff] px-8 py-3 rounded-2xl font-black shadow-2xl hover:brightness-110 transition-all text-base text-outline"
                         >
-                            ⚠️ 全データ一括削除
+                            ⚠️ {locale === 'zh' ? '批量删除全数据' : '全データ一括削除'}
                         </button>
                     )}
                 </div>
@@ -369,13 +356,15 @@ export default function Registry() {
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-56 space-y-10">
                         <div className="w-24 h-24 border-4 border-white/5 border-t-[#c9a64e] animate-spin rounded-full"></div>
-                        <p className="text-[#c9a64e] text-3xl font-serif italic text-outline animate-pulse">読み込み中...</p>
+                        <p className="text-[#c9a64e] text-3xl font-serif italic text-outline animate-pulse">
+                            {locale === 'zh' ? '加载中...' : '読み込み中...'}
+                        </p>
                     </div>
                 ) : filteredResidents.length === 0 ? (
                     <div className="glass-panel rounded-[3rem] p-48 text-center border-white/5">
                         <span className="text-[10rem] mb-12 block drop-shadow-2xl">🏙️</span>
                         <p className="text-[#d4c5b0] text-4xl font-serif italic drop-shadow-md">
-                            まだ誰もいないようです
+                            {t('registry.empty')}
                         </p>
                     </div>
                 ) : (
@@ -388,11 +377,9 @@ export default function Registry() {
                                     key={resident.id}
                                     className={`glass-panel rounded-[3rem] overflow-hidden border-2 hover:border-white/30 transition-all duration-700 group relative flex flex-col hover:-translate-y-3 shadow-2xl ${style.border === 'border-amber-400' ? 'border-[#c9a64e]/30' : 'border-white/10'}`}
                                 >
-                                    {/* Color Indicator Strip */}
                                     <div className={`h-3 bg-gradient-to-r ${style.gradient} opacity-60 group-hover:opacity-100 transition-opacity`} />
 
                                     <div className="p-12 flex flex-col flex-1">
-                                        {/* Profile Area */}
                                         <div className="flex flex-col items-center mb-10">
                                             <div className="relative mb-8">
                                                 <div className={`w-44 h-44 rounded-full overflow-hidden ring-4 ${style.ring === 'ring-amber-400' ? 'ring-[#c9a64e]/40' : 'ring-white/20'} ring-offset-4 ring-offset-[#2d2418] shadow-2xl bg-black/40 group-hover:scale-105 transition-transform duration-700`}>
@@ -407,12 +394,10 @@ export default function Registry() {
                                                     )}
                                                 </div>
 
-                                                {/* ID Tag */}
                                                 <div className="absolute -bottom-3 -right-3 bg-[#c9a64e] text-white px-4 py-1.5 rounded-full text-sm font-black shadow-2xl border border-white/10 text-outline leading-none">
                                                     ID {resident.id}
                                                 </div>
 
-                                                {/* Delete Button */}
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
@@ -425,11 +410,11 @@ export default function Registry() {
                                             </div>
 
                                             <div className={`px-6 py-2 rounded-full text-[10px] font-black mb-6 tracking-[0.2em] shadow-lg text-outline ${style.bg === 'bg-amber-100' ? 'bg-[#c9a64e]' : 'bg-white/10'}`}>
-                                                {style.name || '所属なし'}
+                                                {translateDynamicText(style.name || '所属なし')}
                                             </div>
 
                                             <h2 className="text-4xl font-serif font-black text-white tracking-tight mb-3 text-center leading-snug text-outline">
-                                                {resident.name}
+                                                {translateDynamicText(resident.name)}
                                             </h2>
 
                                             <div className="text-[#c9a64e] text-xs font-black tracking-[0.3em] uppercase opacity-80 drop-shadow-md">
@@ -437,13 +422,12 @@ export default function Registry() {
                                             </div>
                                         </div>
 
-                                        {/* Information List */}
                                         <div className="space-y-8 mb-10 pt-10 border-t border-dashed border-white/10 flex-1">
                                             <div className="flex items-center gap-5 group/item">
                                                 <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl group-hover/item:bg-white/10 transition-colors shadow-inner">🏠</div>
                                                 <div className="flex flex-col">
                                                     <span className="text-[10px] text-stone-500 font-bold uppercase tracking-widest mb-1">Base Location</span>
-                                                    <span className="text-stone-100 font-bold text-lg drop-shadow-md">{resident.baseLocation || '---'}</span>
+                                                    <span className="text-stone-100 font-bold text-lg drop-shadow-md">{translateDynamicText(resident.baseLocation || '---')}</span>
                                                 </div>
                                             </div>
 
@@ -456,14 +440,13 @@ export default function Registry() {
                                             </div>
                                         </div>
 
-                                        {/* Action Footer */}
                                         <div className="pt-8 border-t border-white/5 flex justify-center">
                                             <button
                                                 onClick={() => handleViewCertificate(resident)}
                                                 className={`w-full py-4 rounded-2xl font-black transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-3 hover:brightness-110 text-outline ${style.bg === 'bg-amber-100' ? 'bg-[#c9a64e] text-white' : 'bg-white/10 text-white border border-white/10'}`}
                                             >
                                                 <span>📄</span>
-                                                入居届を確認
+                                                {t('registry.viewForm')}
                                             </button>
                                         </div>
                                     </div>
@@ -479,7 +462,6 @@ export default function Registry() {
                     — Maison de Kyo —
                 </p>
 
-                {/* Admin Toggle */}
                 {!isAdminMode ? (
                     <div className="flex flex-col items-center gap-4">
                         <button

@@ -5,8 +5,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import TennyuTodoke from './TennyuTodoke';
 import { useRouter } from 'next/navigation';
 import DiagnosisFlow, { ResultType, DIAGNOSIS_RESULTS } from './DiagnosisFlow';
+import { useLanguage } from '../../lib/i18nContext';
 
 export default function RegistrationForm() {
+    const { t, locale, translateDynamicText } = useLanguage();
     const [step, setStep] = useState<'form' | 'diagnosis' | 'confirm'>('form');
     const [name, setName] = useState('');
     const [nickname, setNickname] = useState('');
@@ -63,7 +65,7 @@ export default function RegistrationForm() {
 
     const handleFormNext = () => {
         if (!name || !password) {
-            alert('必須項目を入力してください');
+            alert(locale === 'zh' ? '请填写必填项' : '必須項目を入力してください');
             return;
         }
         setStep('diagnosis');
@@ -100,14 +102,17 @@ export default function RegistrationForm() {
 
             if (res.ok) {
                 const data = await res.json();
-                alert(`入居完了！\nあなたは「${diagnosisResult}棟」の ${data.roomNumber}号室 に入居しました。`);
+                const msg = locale === 'zh'
+                    ? `入住成功！\n您已入住“${translateDynamicText(diagnosisResult)}栋”的 ${data.roomNumber}号房。`
+                    : `入居完了！\nあなたは「${diagnosisResult}棟」の ${data.roomNumber}号室 に入居しました。`;
+                alert(msg);
                 router.push('/registry');
             } else {
-                alert('登録に失敗しました');
+                alert(locale === 'zh' ? '注册失败' : '登録に失敗しました');
             }
         } catch (error) {
             console.error(error);
-            alert('エラーが発生しました');
+            alert(locale === 'zh' ? '发生错误' : 'エラーが発生しました');
         } finally {
             setLoading(false);
         }
@@ -118,39 +123,39 @@ export default function RegistrationForm() {
             {/* Main Content Area */}
             <div className="w-full lg:w-[400px] shrink-0 glass-panel p-6 md:p-8 rounded-[2.5rem] transition-all duration-500 border-white/10 shadow-2xl">
                 <div className="mb-6 p-4 bg-amber-900/40 border border-[#c9a64e]/30 rounded-2xl text-xs text-[#fcf9f2] leading-relaxed">
-                    <p className="font-bold text-[#c9a64e] mb-1">【重要】登録に関する注意</p>
-                    <p>※ご本人のアカウントのみ登録をお願いします。</p>
-                    <p>※個人情報に繋がる内容は記入しないでください。</p>
+                    <p className="font-bold text-[#c9a64e] mb-1">{t('register.noteTitle')}</p>
+                    <p>{t('register.noteSelfOnly')}</p>
+                    <p>{t('register.noteNoPersonal')}</p>
                 </div>
-                <h2 className="text-3xl font-black mb-8 text-white text-outline">入居手続き</h2>
+                <h2 className="text-3xl font-black mb-8 text-white text-outline">{t('register.title')}</h2>
 
                 {/* STEP 1: FORM */}
                 {step === 'form' && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-300">
                         <div>
-                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">なまえ (Name)</label>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">{t('register.nameLabel')}</label>
                             <input
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 className="w-full p-3 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
-                                placeholder="例: 佳鏡院"
+                                placeholder={t('register.namePlaceholder')}
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">呼び方 (Nickname)</label>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">{t('register.nicknameLabel')}</label>
                             <input
                                 type="text"
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
                                 className="w-full p-3 bg-black/40 border border-white/10 rounded-xl focus:border-[#c9a64e]/50 outline-none text-white transition-all shadow-inner"
-                                placeholder="例: かっきょん"
+                                placeholder={t('register.nicknamePlaceholder')}
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">X (旧Twitter) ID</label>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">{t('register.xAccountLabel')}</label>
                             <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 font-bold select-none">@</span>
                                 <input
@@ -167,33 +172,33 @@ export default function RegistrationForm() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">本拠地</label>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">{t('register.locationLabel')}</label>
                             <select
                                 value={baseLocation}
                                 onChange={(e) => setBaseLocation(e.target.value)}
                                 className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white focus:border-[#c9a64e]/50 transition outline-none cursor-pointer"
                             >
-                                <option value="" className="bg-stone-900">選択してください</option>
+                                <option value="" className="bg-stone-900">{t('register.selectPlaceholder')}</option>
                                 {locations.map((loc) => (
-                                    <option key={loc} value={loc} className="bg-stone-900">{loc}</option>
+                                    <option key={loc} value={loc} className="bg-stone-900">{translateDynamicText(loc)}</option>
                                 ))}
                             </select>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">YouTube チャンネル名</label>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">{t('register.youtubeLabel')}</label>
                             <input
                                 type="text"
                                 value={youtubeAccount}
                                 onChange={(e) => setYoutubeAccount(e.target.value)}
                                 className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white focus:border-[#c9a64e]/50 transition outline-none"
-                                placeholder="記入自由"
+                                placeholder={t('register.optional')}
                             />
                         </div>
 
                         <div>
                             <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">
-                                削除用パスワード <span className="text-[#a84032]">*</span>
+                                {t('register.passwordLabel')} <span className="text-[#a84032]">*</span>
                             </label>
                             <input
                                 type="password"
@@ -202,24 +207,24 @@ export default function RegistrationForm() {
                                 required
                                 maxLength={8}
                                 className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white focus:border-[#c9a64e]/50 transition outline-none font-mono"
-                                placeholder="数字や英字"
+                                placeholder={t('register.passwordPlaceholder')}
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">自由記載欄</label>
+                            <label className="block text-sm font-bold mb-2 text-[#d4c5b0] uppercase tracking-wider">{t('register.freeTextLabel')}</label>
                             <textarea
                                 value={freeText}
                                 onChange={(e) => setFreeText(e.target.value)}
                                 maxLength={200}
                                 rows={5}
                                 className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white focus:border-[#c9a64e]/50 transition outline-none resize-none"
-                                placeholder="佳鏡院さんへの思いやきょーめいとへのメッセージ等"
+                                placeholder={t('register.freeTextPlaceholder')}
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold mb-4 text-center text-[#d4c5b0] uppercase tracking-widest">アイコンをアップロード</label>
+                            <label className="block text-sm font-bold mb-4 text-center text-[#d4c5b0] uppercase tracking-widest">{t('register.uploadIcon')}</label>
                             <div className="flex flex-col items-center">
                                 <label className="cursor-pointer group">
                                     <div className="w-40 h-40 rounded-full border-2 border-dashed border-white/20 group-hover:border-[#c9a64e]/50 flex flex-col items-center justify-center transition overflow-hidden bg-white/5 shadow-inner">
@@ -242,7 +247,7 @@ export default function RegistrationForm() {
                             disabled={!name || !password}
                             className={`w-full py-4 rounded-2xl font-black text-xl text-white transition-all shadow-2xl text-outline ${!name || !password ? 'bg-white/5 cursor-not-allowed text-white/20' : 'bg-[#c9a64e] hover:brightness-110 active:scale-95'}`}
                         >
-                            次へ（入居審査）
+                            {t('register.nextButton')}
                         </button>
                     </div>
                 )}
@@ -251,10 +256,10 @@ export default function RegistrationForm() {
                 {step === 'diagnosis' && (
                     <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                         <div className="mb-6">
-                            <button onClick={() => setStep('form')} className="text-sm text-[#d4c5b0] hover:text-white transition-colors">← フォームに戻る</button>
+                            <button onClick={() => setStep('form')} className="text-sm text-[#d4c5b0] hover:text-white transition-colors">← {t('register.backToForm')}</button>
                         </div>
-                        <h3 className="text-2xl font-black mb-4 text-white text-outline">推しスタイル診断</h3>
-                        <p className="text-base text-[#d4c5b0] mb-8 leading-relaxed">あなたのタイプに合わせて入居する棟を決定します。</p>
+                        <h3 className="text-2xl font-black mb-4 text-white text-outline">{t('register.diagnosisTitle')}</h3>
+                        <p className="text-base text-[#d4c5b0] mb-8 leading-relaxed">{t('register.diagnosisDesc')}</p>
 
                         <div className="bg-black/20 p-6 rounded-3xl border border-white/5 shadow-inner">
                             <DiagnosisFlow onComplete={handleDiagnosisComplete} embedded={true} />
@@ -266,7 +271,7 @@ export default function RegistrationForm() {
                 {step === 'confirm' && diagnosisResult && (
                     <div className="space-y-10 animate-in zoom-in-95 duration-300 text-center">
                         <div>
-                            <h3 className="text-2xl font-black text-white text-outline">診断結果</h3>
+                            <h3 className="text-2xl font-black text-white text-outline">{t('register.resultTitle')}</h3>
                             <div className={`mt-6 w-48 h-48 mx-auto rounded-full bg-gradient-to-br ${DIAGNOSIS_RESULTS[diagnosisResult].color} flex items-center justify-center p-4 shadow-2xl border-4 border-white/20 overflow-hidden relative`}>
                                 {DIAGNOSIS_RESULTS[diagnosisResult].iconPath ? (
                                     <img 
@@ -278,12 +283,16 @@ export default function RegistrationForm() {
                                     <span className="text-6xl">{DIAGNOSIS_RESULTS[diagnosisResult].emoji}</span>
                                 )}
                             </div>
-                            <h4 className="text-4xl font-black mt-6 text-white text-outline">{diagnosisResult}</h4>
+                            <h4 className="text-4xl font-black mt-6 text-white text-outline">{translateDynamicText(diagnosisResult)}</h4>
                             <p className="text-[#d4c5b0] mt-4 text-base leading-relaxed px-4 whitespace-pre-wrap drop-shadow-md">
-                                {DIAGNOSIS_RESULTS[diagnosisResult].description}
+                                {translateDynamicText(DIAGNOSIS_RESULTS[diagnosisResult].description)}
                             </p>
                             <p className="text-[#c9a64e] text-sm mt-6 font-bold tracking-widest leading-loose">
-                                おめでとうございます。<br />あなたは<span className="text-white text-lg">「{diagnosisResult}棟」</span>に入居します。
+                                {locale === 'zh' ? (
+                                    <>恭喜您！<br />您将入住<span className="text-white text-lg">“{translateDynamicText(diagnosisResult)}栋”</span>。</>
+                                ) : (
+                                    <>おめでとうございます。<br />あなたは<span className="text-white text-lg">「{diagnosisResult}棟」</span>に入居します。</>
+                                )}
                             </p>
                         </div>
 
@@ -293,11 +302,11 @@ export default function RegistrationForm() {
                                 disabled={loading}
                                 className={`w-full py-5 rounded-2xl font-black text-white text-2xl shadow-2xl transition-all text-outline active:scale-95 ${loading ? 'bg-white/5' : 'bg-[#c9a64e] hover:brightness-110'}`}
                             >
-                                {loading ? '準備中...' : '決定して入居する'}
+                                {loading ? (locale === 'zh' ? '准备中...' : '準備中...') : t('register.submitButton')}
                             </button>
 
                             <button onClick={() => setStep('diagnosis')} className="text-sm text-[#d4c5b0] hover:text-white transition-colors underline decoration-[#d4c5b0]">
-                                診断をやり直す
+                                {t('register.redoDiagnosis')}
                             </button>
                         </div>
                     </div>
@@ -313,7 +322,7 @@ export default function RegistrationForm() {
                         xAccount={xAccount}
                         youtubeAccount={youtubeAccount}
                         baseLocation={baseLocation}
-                        roomNumber={previewRoomNumber} // This is likely inaccurate until building is decided, maybe show '?'
+                        roomNumber={previewRoomNumber}
                         image={image || ''}
                         freeText={freeText}
                         residentId={residentCount + 1}
