@@ -3,12 +3,12 @@
 import React from 'react';
 import TermsAgreement from './TermsAgreement';
 import { useLanguage } from '../../lib/i18nContext';
-import { jaTermsText, zhTermsText } from '../../lib/termsData';
+import { jaTermsText, zhTermsText, enTermsText } from '../../lib/termsData';
 
 export default function TermsPage() {
     const { locale, t, translateDynamicText } = useLanguage();
 
-    const contentToDisplay = locale === 'zh' ? zhTermsText : jaTermsText;
+    const contentToDisplay = locale === 'zh' ? zhTermsText : locale === 'en' ? enTermsText : jaTermsText;
 
     const sections = contentToDisplay.split('##').filter(s => s.trim() !== '').map(s => {
         const lines = s.trim().split('\n');

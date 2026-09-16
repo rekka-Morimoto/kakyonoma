@@ -18,7 +18,7 @@ const zhGreetingText = `大家，非常感谢光临本网站。
 
 能否打造一个为大家提供这种“最初契机”的场所呢？带着这样的构想，我发起了这个项目。
 
-在 Maison de 院院，偶然分到同一个房间的朋友、偶然相邻的榻榻米、虽然知道同为 院院めいと 但此前从未有过交集的朋友们，能够相互打一声简单的招呼。
+在 Maison de 院院，偶然分到同一个房间的朋友、偶然相邻的榻榻米、虽然知道同为 院院めいと 但此前从未有过交集的朋友们，能相互打一声简单的招呼。
 
 如果在这样的偶然中，能萌发出微小而美好的缘分，那将是我的荣幸。
 
@@ -27,6 +27,30 @@ const zhGreetingText = `大家，非常感谢光临本网站。
 请在“Maison de 院院”尽情享受属于你的时光。
 
 烈火Morimoto`;
+
+const enGreetingText = `Thank you so much to everyone for visiting this site.
+
+I am Rekka Morimoto, acting manager and site administrator of "Maison de Kyo".
+
+This website is an unofficial fan site created for the purpose of supporting Kakyo-in's activities.
+
+As a fan, I have always been exploring projects and opportunities that could make our entire community warmer and more enjoyable.
+
+Joining a new fan community can often feel daunting, even if you are deeply interested. Taking that very first step is not always easy.
+
+I myself was introduced by a friend to join a fan community, through which I have met so many invaluable friends. Without that space, I believe I would still be watching streams all alone today.
+
+"Could I build a place that provides everyone with that very first spark of connection?" Driven by this idea, I launched this project.
+
+At Maison de Kyo, friends who randomly end up in the same room, Tatami mats that happen to sit side-by-side, or fellow Kyomates who knew each other by name but never had the chance to talk can send a simple, warm greeting to one another.
+
+If small yet wonderful connections blossom from these casual coincidences, it would be my absolute honor.
+
+Lastly, the continuation of this haven relies on the thoughtfulness and consideration of each and every one of you. I express my deepest gratitude for your support.
+
+Please enjoy your time at "Maison de Kyo".
+
+Rekka Morimoto`;
 
 export default function GreetingPage() {
     const [jaContent, setJaContent] = useState('');
@@ -39,7 +63,7 @@ export default function GreetingPage() {
             .catch(() => setJaContent('ご挨拶を読み込めませんでした。'));
     }, []);
 
-    const contentToDisplay = locale === 'zh' ? zhGreetingText : jaContent;
+    const contentToDisplay = locale === 'zh' ? zhGreetingText : locale === 'en' ? enGreetingText : jaContent;
     const paragraphs = contentToDisplay.split('\n\n').filter(p => p.trim() !== '');
 
     return (

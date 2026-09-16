@@ -174,3 +174,85 @@ export const zhTermsText = `本网站为非官方粉丝网站，旨在方便支�
 
 推活方式因人而异。
 仅限能够尊重彼此差异的朋友使用本网站。`;
+
+export const enTermsText = `This is an unofficial fan site created for fans supporting Kakyo-in from Girls' Revolution Project: Shinseiki to connect with each other.
+
+This site is
+completely unaffiliated with Kakyo-in herself, official management, or related parties.
+All planning, operation, and management of this site are conducted independently by individual fans.
+
+This site was created utilizing Antigravity.
+
+
+① Overview of This Site
+
+This site is strictly unofficial.
+
+Kakyo-in, her agency, and related entities have NO involvement in:
+
+- Site operation
+- Site content
+- Published information
+- Any disputes or issues
+
+Please refrain from contacting Kakyo-in herself or official channels regarding this site.
+
+
+② Principles Regarding Fan Interaction
+
+This site serves as a gentle platform providing opportunities for fans to connect casually.
+
+We do NOT:
+
+- Force
+- Recommend
+- Broker
+
+any personal interactions between fans.
+
+Regarding any:
+
+- Direct communications
+- Social media interactions
+- Offline meetups
+- And any disputes arising therefrom
+
+Neither this site nor its manager accepts any responsibility or liability.
+
+
+③ Inputted Data & Personal Information
+
+Information you submit will only be used for display and aggregation within this site.
+
+Please NEVER submit any of the following:
+
+- Real full name
+- Information that identifies your address or place of residence
+- Phone numbers or email addresses
+- School names, workplaces, or any personally identifiable information
+
+Regarding social media handles, please only share what you are comfortable making public.
+
+
+④ Minors & Age Considerations
+
+Minors should exercise extreme caution when handling personal information and interacting with others.
+
+The manager does not perform age verification.
+
+
+⑤ Modifications & Deletions of Content
+
+The manager reserves the right to perform the following actions at discretion:
+
+- Hiding or deleting user submissions
+- Modifying site specifications
+- Suspending or terminating the service
+
+Notice or explanation of specific reasons may not be provided in advance.
+
+
+We hope this space becomes a comfortable "neighboring spot" or a peaceful "distance" for someone.
+
+Everyone supports their Oshi in their own way.
+Please use this site only if you can respect those differences.`;

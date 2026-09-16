@@ -388,14 +388,14 @@ export default function Home() {
 
 function HomeMessage() {
   const [content, setContent] = React.useState('');
-  const { t, translateDynamicText } = useLanguage();
+  const { t, locale, translateDynamicText } = useLanguage();
 
   React.useEffect(() => {
-    fetch('/api/home-message')
+    fetch(`/api/home-message?lang=${locale}`)
       .then(res => res.json())
       .then(data => setContent(data.content))
       .catch(err => console.error(err));
-  }, []);
+  }, [locale]);
 
   if (!content) return null;
 

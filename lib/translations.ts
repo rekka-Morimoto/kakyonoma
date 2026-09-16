@@ -1,11 +1,9 @@
 export type Locale = 'ja' | 'zh' | 'en';
 
-// 人名置換ルール:
-// 簡体字モードでは「かきょ」と「きょー」を「院院」に置換・翻訳する
+// 人名および動的テキスト置換ルール（簡体字）
 export function replaceNameForZh(text: string): string {
   if (!text) return text;
 
-  // 1. 固有名詞や特定のフレーズの置換
   let result = text
     .replace(/佳鏡院/g, '佳镜院')
     .replace(/メゾン・ド・きょー/g, 'Maison de 院院')
@@ -17,14 +15,28 @@ export function replaceNameForZh(text: string): string {
     .replace(/かきょみこ/g, '院院Miko')
     .replace(/きょーのお話/g, '院院的故事')
     .replace(/きょーの一曲/g, '院院的单曲')
-    .replace(/きょーめいと/g, '院院めいと');
+    .replace(/きょーめいと/g, '院院めいと')
+    .replace(/オリジナル曲/g, '原创单曲')
+    .replace(/歌枠セトリ/g, '歌会歌单')
+    .replace(/歌枠/g, '歌会')
+    .replace(/ボイス/g, '语音')
+    .replace(/カバー曲/g, '翻唱歌曲')
+    .replace(/コラボ/g, '合作联动')
+    .replace(/お話/g, '杂谈闲聊')
+    .replace(/ふたりのーと。/g, '两人笔记。')
+    .replace(/初配信/g, '首次直播')
+    .replace(/活動開始/g, '开始活动')
+    .replace(/チャンネル登録者/g, '频道订阅者')
+    .replace(/万人達成/g, '万人达成')
+    .replace(/新衣装披露/g, '新衣装发布')
+    .replace(/3Dお披露目/g, '3D亮相直播');
 
-  // 2. 単体で残っている「かきょ」「きょー」の置換
   result = result.replace(/かきょ/g, '院院').replace(/きょー/g, '院院');
 
   return result;
 }
 
+// 人名および動的テキスト置換ルール（英語）
 export function replaceNameForEn(text: string): string {
   if (!text) return text;
 
@@ -39,7 +51,22 @@ export function replaceNameForEn(text: string): string {
     .replace(/かきょみこ/g, 'Kakyo & Miko')
     .replace(/きょーのお話/g, 'Kyo Talk')
     .replace(/きょーの一曲/g, 'Song of Kyo')
-    .replace(/きょーめいと/g, 'Kyomate');
+    .replace(/きょーめいと/g, 'Kyomate')
+    .replace(/オリジナル曲/g, 'Original Song')
+    .replace(/歌枠セトリ/g, 'Singing Stream Setlist')
+    .replace(/歌枠/g, 'Singing Stream')
+    .replace(/ボイス/g, 'Voice')
+    .replace(/カバー曲/g, 'Cover Song')
+    .replace(/コラボ/g, 'Collaboration')
+    .replace(/お話/g, 'Talk Stream')
+    .replace(/ふたりのーと。/g, 'Futari Note.')
+    .replace(/初配信/g, 'Debut Stream')
+    .replace(/活動開始/g, 'Activity Started')
+    .replace(/チャンネル登録者/g, 'Channel Subscribers')
+    .replace(/万人達成/g, '0K Subscribers Achieved')
+    .replace(/新衣装披露/g, 'New Outfit Stream')
+    .replace(/3Dお披露目/g, '3D Reveal Stream')
+    .replace(/(\d{4})年(\d{1,2})月/g, '$1-$2');
 
   result = result.replace(/かきょ/g, 'Kakyo').replace(/きょー/g, 'Kyo');
 
