@@ -13,14 +13,14 @@ function SetlistViewContent() {
     const [setlist, setSetlist] = useState<SetlistPayload | null>(null);
     const [copied, setCopied] = useState(false);
     const [downloading, setDownloading] = useState(false);
-    const [templateDataUrl, setTemplateDataUrl] = useState<string>('/images/setlist_template.png');
+    const [templateDataUrl, setTemplateDataUrl] = useState<string>('/images/setlist_template.png?v=' + Date.now());
     const cardRef = useRef<HTMLDivElement>(null);
 
     // テンプレート画像をBase64 DataURLとしてプリロード（CORS/Taintエラー完全防止）
     useEffect(() => {
         const loadImg = async () => {
             try {
-                const res = await fetch('/images/setlist_template.png');
+                const res = await fetch('/images/setlist_template.png?t=' + Date.now());
                 if (res.ok) {
                     const blob = await res.blob();
                     const reader = new FileReader();
