@@ -6,6 +6,16 @@ import { useSearchParams } from 'next/navigation';
 import { useLanguage } from '../../../../lib/i18nContext';
 import { SetlistPayload } from '../page';
 
+// 曲名からアーティスト名（/ または ／ 以降）を除去して純粋な曲名のみを取得
+function cleanSongTitle(rawTitle: string): string {
+    if (!rawTitle) return '';
+    const slashIdx = rawTitle.search(/[/／]/);
+    if (slashIdx !== -1) {
+        return rawTitle.substring(0, slashIdx).trim();
+    }
+    return rawTitle.trim();
+}
+
 function SetlistViewContent() {
     const searchParams = useSearchParams();
     const { locale, translateDynamicText } = useLanguage();
@@ -174,8 +184,8 @@ function SetlistViewContent() {
 
     return (
         <div className="max-w-3xl w-full space-y-5 relative z-10 flex flex-col items-center">
-            {/* 上部アクションバー */}
-            <div className="w-full max-w-[720px] flex items-center justify-between gap-3 px-1">
+            {/* 上部ナビゲーションバー（シンプルに戻るリンクのみ） */}
+            <div className="w-full max-w-[720px] flex items-center justify-between px-1">
                 <Link
                     href="/songs/setlist"
                     className="inline-flex items-center text-[#ffe29a] hover:text-white transition-colors group font-bold tracking-wider text-xs sm:text-sm"
@@ -184,34 +194,8 @@ function SetlistViewContent() {
                     {locale === 'zh' ? '重新制作歌单' : '新しくセトリを作る'}
                 </Link>
 
-                <div className="flex items-center gap-2">
-                    {/* クリップボードコピーボタン */}
-                    <button
-                        onClick={handleCopyLink}
-                        className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl text-xs sm:text-sm font-serif font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md ${
-                            copied
-                                ? 'bg-emerald-600 text-white shadow-emerald-900/40'
-                                : 'bg-black/60 border border-[#ffe29a]/40 text-[#ffe29a] hover:bg-[#ffe29a]/20 hover:scale-105'
-                        }`}
-                        title="閲覧リンクをコピー"
-                    >
-                        <span>{copied ? '✓' : '📋'}</span>
-                        <span>
-                            {copied
-                                ? (locale === 'zh' ? '已复制！' : 'コピー完了！')
-                                : (locale === 'zh' ? '复制链接' : 'リンクをコピー')}
-                        </span>
-                    </button>
-
-                    {/* X シェアボタン */}
-                    <button
-                        onClick={handleShareTwitter}
-                        className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-2xl bg-black/80 hover:bg-black border border-white/20 hover:border-sky-400 text-white text-xs sm:text-sm font-serif font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm hover:scale-105"
-                        title="Xでポスト"
-                    >
-                        <span className="text-sky-400 font-sans font-bold">𝕏</span>
-                        <span>{locale === 'zh' ? 'シェア' : 'シェア'}</span>
-                    </button>
+                <div className="text-[11px] font-mono text-[#ffe29a]/60">
+                    12 Tracks
                 </div>
             </div>
 
@@ -277,7 +261,7 @@ function SetlistViewContent() {
                             boxShadow: '0 1px 0 rgba(255, 226, 154, 0.35)'
                         }}
                     >
-                        {/* セトリタイトル（画面幅連動で美しくフィット） */}
+                        {/* セトリタイトル */}
                         <h2
                             style={{
                                 fontSize: 'clamp(0.85rem, 3.4cqi, 1.7rem)',
@@ -320,7 +304,7 @@ function SetlistViewContent() {
                         </div>
                     </div>
 
-                    {/* 12曲のトラックリスト（星空スペースの高さに合わせて等分割され、モバイルでも絶対にはみ出さない） */}
+                    {/* 12曲のトラックリスト */}
                     <div
                         style={{
                             display: 'flex',
@@ -334,6 +318,8 @@ function SetlistViewContent() {
                         {setlist.songs.map((song, idx) => {
                             const trackNum = (idx + 1).toString().padStart(2, '0');
                             const hasUrl = !!song.url;
+                            // / 以降のアーティスト名を除去した純粋な曲名
+                            const displaySongTitle = cleanSongTitle(song.title);
 
                             const content = (
                                 <div
@@ -398,7 +384,7 @@ function SetlistViewContent() {
                                         {song.alias ? song.alias : song.category === 'original' ? 'オリ' : song.category === 'cover' ? 'カバ' : '歌枠'}
                                     </span>
 
-                                    {/* 曲名（モバイルでもはみ出さず、読める絶妙なフォントサイズ） */}
+                                    {/* 曲名（/ 以降のアーティスト名を除去して曲名のみ表示） */}
                                     <span
                                         style={{
                                             flex: 1,
@@ -415,7 +401,7 @@ function SetlistViewContent() {
                                         className="font-serif group-hover:text-[#ffe29a]"
                                         title={song.title}
                                     >
-                                        {translateDynamicText(song.title)}
+                                        {translateDynamicText(displaySongTitle)}
                                     </span>
 
                                     {/* リンク再生アイコン */}
@@ -470,8 +456,39 @@ function SetlistViewContent() {
                 </div>
             </div>
 
+            {/* 🌟 セトリカードの下部に配置したシェア＆コピーボタン 🌟 */}
+            <div className="w-full max-w-[720px] flex flex-col sm:flex-row items-center justify-center gap-3 pt-2 px-2">
+                {/* クリップボードコピーボタン */}
+                <button
+                    onClick={handleCopyLink}
+                    className={`w-full sm:w-auto px-6 py-3.5 rounded-2xl text-sm sm:text-base font-serif font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg active:scale-95 ${
+                        copied
+                            ? 'bg-emerald-600 text-white shadow-emerald-900/50'
+                            : 'bg-black/80 hover:bg-black border border-[#ffe29a]/40 hover:border-[#ffe29a] text-[#ffe29a] hover:scale-105 shadow-[0_4px_20px_rgba(0,0,0,0.6)]'
+                    }`}
+                    title="閲覧リンクをコピー"
+                >
+                    <span className="text-base">{copied ? '✓' : '📋'}</span>
+                    <span>
+                        {copied
+                            ? (locale === 'zh' ? '已复制分享链接！' : '共有リンクをコピー完了！')
+                            : (locale === 'zh' ? '复制分享链接' : '共有リンクをコピー')}
+                    </span>
+                </button>
+
+                {/* X (Twitter) で共有ボタン */}
+                <button
+                    onClick={handleShareTwitter}
+                    className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-neutral-900 via-black to-neutral-900 hover:from-black hover:to-black border border-white/25 hover:border-sky-400 text-white text-sm sm:text-base font-serif font-bold transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-lg hover:scale-105 active:scale-95 shadow-[0_4px_20px_rgba(0,0,0,0.6)]"
+                    title="Xでシェア"
+                >
+                    <span className="text-sky-400 font-sans font-black text-lg">𝕏</span>
+                    <span>{locale === 'zh' ? '在 X 上分享歌单' : 'X でセトリを共有'}</span>
+                </button>
+            </div>
+
             {/* 下部リンク */}
-            <div className="text-center pt-2">
+            <div className="text-center pt-3 pb-6">
                 <Link
                     href="/songs"
                     className="inline-block text-xs font-serif text-[#ffe29a]/70 hover:text-white transition-colors"
