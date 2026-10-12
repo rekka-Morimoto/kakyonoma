@@ -49,8 +49,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
             images: [
                 {
                     url: ogImageUrl,
-                    width: 717,
-                    height: 1024,
+                    width: 1200,
+                    height: 630,
                     alt: title
                 }
             ]

@@ -164,216 +164,281 @@ export async function GET(req: NextRequest) {
             });
         }
 
-        // 🌟 実際のセトリと全く同じ縦長レイアウト（717 × 1024）を生成 🌟
+        // 🌟 Xの横長枠（1200 × 630）の中に縦長セトリ全体（427 × 610）をすっぽり収める 🌟
+        // カードの縮小比率: 610 / 1024 ≒ 0.5957
+        const cardW = 427;
+        const cardH = 610;
+        const starLeft = Math.round(cardW * 0.46); // ~196px
+        const starWidth = Math.round(cardW * 0.505); // ~215px
+        const starTop = Math.round(cardH * 0.175); // ~107px
+        const starHeight = Math.round(cardH * 0.78); // ~476px
+
         return new ImageResponse(
             (
                 <div
                     style={{
-                        width: '717px',
-                        height: '1024px',
+                        width: '1200px',
+                        height: '630px',
                         display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         position: 'relative',
-                        backgroundColor: '#04030a',
-                        overflow: 'hidden',
-                        fontFamily: '"Noto Sans JP", sans-serif'
+                        backgroundColor: '#05030c',
+                        backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(28, 18, 54, 0.95) 0%, rgba(5, 3, 12, 1) 100%)',
+                        fontFamily: '"Noto Sans JP", sans-serif',
+                        overflow: 'hidden'
                     }}
                 >
-                    {/* ベース背景イラスト（月＋佳鏡院＋SET LISTリボン＋星空） */}
-                    {templateImgBuffer ? (
-                        <img
-                            src={templateImgBuffer as any}
-                            alt="Template"
-                            width="717"
-                            height="1024"
-                            style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: '717px',
-                                height: '1024px'
-                            }}
-                        />
-                    ) : null}
-
-                    {/* 右側の星空余白スペース（実際のセトリと同じ座標配置） */}
+                    {/* 背景：両サイドの星空テクスチャとテキスト演出 */}
                     <div
                         style={{
                             position: 'absolute',
-                            left: '330px', // 46% of 717px
-                            width: '362px', // 50.5% of 717px
-                            top: '179px',  // 17.5% of 1024px
-                            height: '799px', // 78% of 1024px
+                            left: '50px',
+                            top: '45px',
                             display: 'flex',
                             flexDirection: 'column',
-                            justifyContent: 'space-between'
+                            gap: '8px'
                         }}
                     >
-                        {/* タイトル＆制作者名ヘッダー */}
-                        <div
+                        <span
                             style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                textAlign: 'center',
-                                paddingBottom: '8px',
-                                borderBottom: '1px solid rgba(255, 226, 154, 0.4)'
+                                fontSize: '13px',
+                                fontWeight: 900,
+                                color: '#ffe29a',
+                                letterSpacing: '0.12em'
                             }}
                         >
-                            {/* セトリタイトル */}
-                            <div
-                                style={{
-                                    fontSize: '24px',
-                                    fontWeight: 900,
-                                    color: '#ffffff',
-                                    letterSpacing: '0.04em',
-                                    lineHeight: 1.2,
-                                    textShadow: '0 0 14px rgba(255, 226, 154, 0.8), 0 2px 4px #000000',
-                                    marginBottom: '6px',
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    maxWidth: '350px'
-                                }}
-                            >
-                                {title}
-                            </div>
+                            MAISON DE KYO
+                        </span>
+                        <span
+                            style={{
+                                fontSize: '22px',
+                                fontWeight: 900,
+                                color: '#ffffff',
+                                letterSpacing: '0.04em',
+                                textShadow: '0 0 12px rgba(255, 226, 154, 0.4)'
+                            }}
+                        >
+                            個人的最強セトリ
+                        </span>
+                    </div>
 
-                            {/* 制作者名 */}
+                    <div
+                        style={{
+                            position: 'absolute',
+                            right: '50px',
+                            bottom: '45px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '8px 16px',
+                            borderRadius: '999px',
+                            background: 'rgba(255, 226, 154, 0.1)',
+                            border: '1px solid rgba(255, 226, 154, 0.3)'
+                        }}
+                    >
+                        <span style={{ fontSize: '14px' }}>🎵</span>
+                        <span style={{ fontSize: '13px', color: '#ffe29a', fontWeight: 800 }}>
+                            タップしてセトリをチェック
+                        </span>
+                    </div>
+
+                    {/* 中央：縮小された実物セトリカード（427 × 610） */}
+                    <div
+                        style={{
+                            width: `${cardW}px`,
+                            height: `${cardH}px`,
+                            borderRadius: '16px',
+                            overflow: 'hidden',
+                            boxShadow: '0 15px 50px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 226, 154, 0.25)',
+                            border: '1px solid rgba(255, 226, 154, 0.45)',
+                            display: 'flex',
+                            position: 'relative',
+                            backgroundColor: '#04030a'
+                        }}
+                    >
+                        {/* テンプレートイラスト（月＋佳鏡院＋SET LISTリボン＋星空） */}
+                        {templateImgBuffer ? (
+                            <img
+                                src={templateImgBuffer as any}
+                                alt="Template"
+                                width={cardW}
+                                height={cardH}
+                                style={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    width: `${cardW}px`,
+                                    height: `${cardH}px`
+                                }}
+                            />
+                        ) : null}
+
+                        {/* 右側星空スペース（縮小スケール配置） */}
+                        <div
+                            style={{
+                                position: 'absolute',
+                                left: `${starLeft}px`,
+                                width: `${starWidth}px`,
+                                top: `${starTop}px`,
+                                height: `${starHeight}px`,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between'
+                            }}
+                        >
+                            {/* タイトル＆制作者ヘッダー */}
                             <div
                                 style={{
                                     display: 'flex',
+                                    flexDirection: 'column',
                                     alignItems: 'center',
-                                    gap: '6px',
-                                    background: 'rgba(0, 0, 0, 0.75)',
-                                    padding: '3px 14px',
-                                    borderRadius: '999px',
-                                    border: '1px solid rgba(255, 226, 154, 0.5)'
+                                    textAlign: 'center',
+                                    paddingBottom: '4px',
+                                    borderBottom: '1px solid rgba(255, 226, 154, 0.35)'
                                 }}
                             >
-                                <span style={{ fontSize: '12px', color: '#ffe29a' }}>Selected by</span>
-                                <span
+                                <div
                                     style={{
                                         fontSize: '14px',
-                                        fontWeight: 800,
-                                        color: '#ffffff'
+                                        fontWeight: 900,
+                                        color: '#ffffff',
+                                        letterSpacing: '0.02em',
+                                        lineHeight: 1.2,
+                                        textShadow: '0 0 10px rgba(255, 226, 154, 0.8)',
+                                        marginBottom: '3px',
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        maxWidth: '205px'
                                     }}
                                 >
-                                    {creator || 'きょーめいと'}
-                                </span>
+                                    {title}
+                                </div>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        background: 'rgba(0, 0, 0, 0.75)',
+                                        padding: '2px 8px',
+                                        borderRadius: '999px',
+                                        border: '1px solid rgba(255, 226, 154, 0.4)'
+                                    }}
+                                >
+                                    <span style={{ fontSize: '9px', color: '#ffe29a' }}>Selected by</span>
+                                    <span style={{ fontSize: '10px', fontWeight: 800, color: '#ffffff' }}>
+                                        {creator || 'きょーめいと'}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* 12曲のトラックリスト（縦1列で12曲） */}
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'space-between',
-                                flex: 1,
-                                gap: '2px',
-                                marginTop: '4px',
-                                marginBottom: '4px'
-                            }}
-                        >
-                            {songs.map((song) => {
-                                const trackNum = song.track.toString().padStart(2, '0');
-                                return (
-                                    <div
-                                        key={song.track}
-                                        style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '6px',
-                                            width: '100%',
-                                            height: '44px',
-                                            padding: '0 8px',
-                                            borderRadius: '6px',
-                                            background: 'linear-gradient(90deg, rgba(8, 6, 20, 0.78) 0%, rgba(12, 10, 26, 0.65) 100%)',
-                                            border: '1px solid rgba(255, 226, 154, 0.28)'
-                                        }}
-                                    >
-                                        {/* トラック番号 */}
-                                        <span
+                            {/* 12曲のトラックリスト */}
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between',
+                                    flex: 1,
+                                    gap: '2px',
+                                    marginTop: '3px',
+                                    marginBottom: '3px'
+                                }}
+                            >
+                                {songs.map((song) => {
+                                    const trackNum = song.track.toString().padStart(2, '0');
+                                    return (
+                                        <div
+                                            key={song.track}
                                             style={{
-                                                fontSize: '15px',
-                                                fontWeight: 900,
-                                                color: '#ffe29a',
-                                                width: '24px',
-                                                textAlign: 'center'
-                                            }}
-                                        >
-                                            {trackNum}
-                                        </span>
-
-                                        {/* カテゴリタグ */}
-                                        <span
-                                            style={{
-                                                fontSize: '11px',
-                                                fontWeight: 800,
-                                                padding: '2px 5px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '4px',
+                                                width: '100%',
+                                                height: '26px',
+                                                padding: '0 5px',
                                                 borderRadius: '4px',
-                                                background:
-                                                    song.category === 'original'
-                                                        ? 'rgba(251, 191, 36, 0.35)'
-                                                        : song.category === 'cover'
-                                                        ? 'rgba(56, 189, 248, 0.35)'
-                                                        : 'rgba(244, 114, 182, 0.35)',
-                                                color:
-                                                    song.category === 'original'
-                                                        ? '#fef08a'
-                                                        : song.category === 'cover'
-                                                        ? '#bae6fd'
-                                                        : '#fbcfe8',
-                                                border: `1px solid ${
-                                                    song.category === 'original'
-                                                        ? 'rgba(251, 191, 36, 0.6)'
-                                                        : song.category === 'cover'
-                                                        ? 'rgba(56, 189, 248, 0.6)'
-                                                        : 'rgba(244, 114, 182, 0.6)'
-                                                }`
+                                                background: 'linear-gradient(90deg, rgba(8, 6, 20, 0.78) 0%, rgba(12, 10, 26, 0.65) 100%)',
+                                                border: '1px solid rgba(255, 226, 154, 0.25)'
                                             }}
                                         >
-                                            {song.alias ? song.alias : song.category === 'original' ? 'オリ' : song.category === 'cover' ? 'カバ' : '歌枠'}
-                                        </span>
+                                            <span
+                                                style={{
+                                                    fontSize: '10px',
+                                                    fontWeight: 900,
+                                                    color: '#ffe29a',
+                                                    width: '14px',
+                                                    textAlign: 'center'
+                                                }}
+                                            >
+                                                {trackNum}
+                                            </span>
+                                            <span
+                                                style={{
+                                                    fontSize: '8px',
+                                                    fontWeight: 800,
+                                                    padding: '1px 3px',
+                                                    borderRadius: '3px',
+                                                    background:
+                                                        song.category === 'original'
+                                                            ? 'rgba(251, 191, 36, 0.35)'
+                                                            : song.category === 'cover'
+                                                            ? 'rgba(56, 189, 248, 0.35)'
+                                                            : 'rgba(244, 114, 182, 0.35)',
+                                                    color:
+                                                        song.category === 'original'
+                                                            ? '#fef08a'
+                                                            : song.category === 'cover'
+                                                            ? '#bae6fd'
+                                                            : '#fbcfe8',
+                                                    border: `1px solid ${
+                                                        song.category === 'original'
+                                                            ? 'rgba(251, 191, 36, 0.6)'
+                                                            : song.category === 'cover'
+                                                            ? 'rgba(56, 189, 248, 0.6)'
+                                                            : 'rgba(244, 114, 182, 0.6)'
+                                                    }`
+                                                }}
+                                            >
+                                                {song.alias ? song.alias : song.category === 'original' ? 'オリ' : song.category === 'cover' ? 'カバ' : '歌枠'}
+                                            </span>
+                                            <span
+                                                style={{
+                                                    flex: 1,
+                                                    fontSize: '10px',
+                                                    fontWeight: 800,
+                                                    color: '#ffffff',
+                                                    whiteSpace: 'nowrap',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.95)'
+                                                }}
+                                            >
+                                                {song.title}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
 
-                                        {/* 曲名 */}
-                                        <span
-                                            style={{
-                                                flex: 1,
-                                                fontSize: '15px',
-                                                fontWeight: 800,
-                                                color: '#ffffff',
-                                                whiteSpace: 'nowrap',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                                letterSpacing: '0.01em',
-                                                textShadow: '0 1px 3px rgba(0, 0, 0, 0.95)'
-                                            }}
-                                        >
-                                            {song.title}
-                                        </span>
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        {/* 下部案内テキスト */}
-                        <div
-                            style={{
-                                textAlign: 'right',
-                                fontSize: '11px',
-                                color: 'rgba(255, 226, 154, 0.85)',
-                                paddingBottom: '2px'
-                            }}
-                        >
-                            佳鏡院 公式ファンサイト「メゾンドきょー」
+                            {/* 下部クレジット */}
+                            <div
+                                style={{
+                                    textAlign: 'right',
+                                    fontSize: '8px',
+                                    color: 'rgba(255, 226, 154, 0.85)',
+                                    paddingBottom: '2px'
+                                }}
+                            >
+                                佳鏡院 公式ファンサイト「メゾンドきょー」
+                            </div>
                         </div>
                     </div>
                 </div>
             ),
             {
-                width: 717,
-                height: 1024,
+                width: 1200,
+                height: 630,
                 fonts: [
                     {
                         name: 'Noto Sans JP',
