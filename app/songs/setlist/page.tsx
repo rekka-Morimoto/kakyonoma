@@ -165,45 +165,60 @@ export default function CreateSetlistPage() {
 
                 {/* メインパネル */}
                 <div className="glass-panel p-6 sm:p-10 md:p-14 rounded-[2.5rem] border-white/10 shadow-2xl space-y-8">
-                    <header className="border-b border-white/10 pb-6 text-center">
-                        <div className="inline-block px-4 py-1 rounded-full bg-[#c9a64e]/20 border border-[#c9a64e]/40 text-[#c9a64e] text-xs font-sans font-bold tracking-widest uppercase mb-3">
-                            Setlist Maker
+                    {/* ヘッダーエリア */}
+                    <header className="border-b border-white/10 pb-6 text-center relative overflow-hidden">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <img
+                                src="/images/kakyo_singer.png"
+                                alt="佳鏡院"
+                                className="w-20 h-auto object-contain drop-shadow-[0_0_15px_rgba(201,166,78,0.4)] animate-pulse"
+                            />
+                            <div>
+                                <div className="inline-block px-4 py-1 rounded-full bg-[#c9a64e]/20 border border-[#c9a64e]/40 text-[#c9a64e] text-xs font-sans font-bold tracking-widest uppercase mb-2">
+                                    Setlist Maker
+                                </div>
+                                <h1 className="text-3xl sm:text-5xl font-serif font-black text-white mb-2 text-outline">
+                                    {locale === 'zh' ? '制作个人最强歌单' : '個人的最強セトリ'}
+                                </h1>
+                                <p className="text-[#d4c5b0]/80 text-sm sm:text-base font-serif max-w-xl mx-auto">
+                                    {locale === 'zh'
+                                        ? '挑选12首你最喜欢的曲目，打造属于自己的专属神级歌单。'
+                                        : 'あなたの心に刺さる12曲を選んで、自分だけの究極のセットリストを完成させましょう。'}
+                                </p>
+                            </div>
                         </div>
-                        <h1 className="text-3xl sm:text-5xl font-serif font-black text-white mb-2 text-outline">
-                            {locale === 'zh' ? '制作个人最强歌单' : '個人的最強セトリ'}
-                        </h1>
-                        <p className="text-[#d4c5b0]/80 text-sm sm:text-base font-serif max-w-2xl mx-auto">
-                            {locale === 'zh'
-                                ? '挑选12首你最喜欢的曲目，打造属于自己的专属神级歌单。'
-                                : 'あなたの心に刺さる12曲を選んで、自分だけの究極のセットリストを完成させましょう。'}
-                        </p>
                     </header>
 
-                    {/* セトリ情報入力 */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-black/30 p-4 sm:p-6 rounded-2xl border border-white/10">
-                        <div>
-                            <label className="block text-xs font-serif font-bold text-[#c9a64e] mb-1">
-                                {locale === 'zh' ? '歌单标题' : 'セトリのタイトル'}
-                            </label>
-                            <input
-                                type="text"
-                                value={setlistTitle}
-                                onChange={(e) => setSetlistTitle(e.target.value)}
-                                placeholder="個人的最強セトリ"
-                                className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white font-serif focus:outline-none focus:border-[#c9a64e] transition-colors"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-serif font-bold text-[#c9a64e] mb-1">
-                                {locale === 'zh' ? '制作者名（可选）' : 'セトリ制作者名（ニックネーム）'}
-                            </label>
-                            <input
-                                type="text"
-                                value={creatorName}
-                                onChange={(e) => setCreatorName(e.target.value)}
-                                placeholder={locale === 'zh' ? '例如：院院めいと' : '例：きょーめいと'}
-                                className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white font-serif focus:outline-none focus:border-[#c9a64e] transition-colors"
-                            />
+                    {/* セトリ情報入力（タイトル＆制作者名） */}
+                    <div className="bg-gradient-to-r from-black/60 via-[#1e1710]/80 to-black/60 p-5 sm:p-7 rounded-2xl border-2 border-[#c9a64e]/40 shadow-[0_0_20px_rgba(201,166,78,0.15)] space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label className="flex items-center gap-2 text-sm font-serif font-black text-[#c9a64e] mb-2">
+                                    <span>🎵</span>
+                                    <span>{locale === 'zh' ? '歌单标题' : 'セトリのタイトル'}</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={setlistTitle}
+                                    onChange={(e) => setSetlistTitle(e.target.value)}
+                                    placeholder="例：個人的最強セトリ"
+                                    className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white font-serif text-base focus:outline-none focus:border-[#c9a64e] focus:bg-white/10 transition-all shadow-inner"
+                                />
+                            </div>
+                            <div>
+                                <label className="flex items-center gap-2 text-sm font-serif font-black text-[#ffe29a] mb-2">
+                                    <span>👤</span>
+                                    <span>{locale === 'zh' ? '制作者名字（显示在歌单上）' : '制作者のお名前（セトリに明記）'}</span>
+                                    <span className="text-[10px] text-[#c9a64e]/80 font-mono px-2 py-0.5 rounded bg-[#c9a64e]/20 border border-[#c9a64e]/40">必須推奨</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={creatorName}
+                                    onChange={(e) => setCreatorName(e.target.value)}
+                                    placeholder={locale === 'zh' ? '请输入您的昵称或名字' : 'あなたのお名前（例：きょーめいと、〇〇P）'}
+                                    className="w-full bg-white/5 border border-[#c9a64e]/40 rounded-xl px-4 py-3 text-[#ffe29a] font-serif text-base focus:outline-none focus:border-[#c9a64e] focus:bg-white/10 transition-all shadow-inner"
+                                />
+                            </div>
                         </div>
                     </div>
 
