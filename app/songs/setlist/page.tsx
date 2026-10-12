@@ -168,11 +168,9 @@ export default function CreateSetlistPage() {
                     {/* ヘッダーエリア */}
                     <header className="border-b border-white/10 pb-6 text-center relative overflow-hidden">
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <img
-                                src="/images/kakyo_singer.png"
-                                alt="佳鏡院"
-                                className="w-20 h-auto object-contain drop-shadow-[0_0_15px_rgba(201,166,78,0.4)] animate-pulse"
-                            />
+                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400/20 via-rose-500/20 to-indigo-900/40 border border-[#c9a64e]/40 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(201,166,78,0.3)] animate-pulse">
+                                🌕
+                            </div>
                             <div>
                                 <div className="inline-block px-4 py-1 rounded-full bg-[#c9a64e]/20 border border-[#c9a64e]/40 text-[#c9a64e] text-xs font-sans font-bold tracking-widest uppercase mb-2">
                                     Setlist Maker
