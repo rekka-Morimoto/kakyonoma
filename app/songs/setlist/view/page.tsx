@@ -13,26 +13,26 @@ function SetlistViewContent() {
     const [setlist, setSetlist] = useState<SetlistPayload | null>(null);
     const [copied, setCopied] = useState(false);
     const [downloading, setDownloading] = useState(false);
-    const [templateDataUrl, setTemplateDataUrl] = useState<string>('/images/setlist_template.png');
+    const [characterDataUrl, setCharacterDataUrl] = useState<string>('/images/kakyo_singer.png');
     const cardRef = useRef<HTMLDivElement>(null);
 
-    // テンプレート画像をBase64 DataURLとしてプリロード（CORS/Taintエラー完全防止）
+    // 立ち絵イラストをBase64 DataURLとしてプリロード（画像保存時のCORS・Taintエラー防止）
     useEffect(() => {
         const loadImg = async () => {
             try {
-                const res = await fetch('/images/setlist_template.png');
+                const res = await fetch('/images/kakyo_singer.png');
                 if (res.ok) {
                     const blob = await res.blob();
                     const reader = new FileReader();
                     reader.onloadend = () => {
                         if (typeof reader.result === 'string') {
-                            setTemplateDataUrl(reader.result);
+                            setCharacterDataUrl(reader.result);
                         }
                     };
                     reader.readAsDataURL(blob);
                 }
             } catch (err) {
-                console.warn('Failed to load template as DataURL:', err);
+                console.warn('Failed to load singer image as DataURL:', err);
             }
         };
         loadImg();
@@ -103,7 +103,7 @@ function SetlistViewContent() {
         }
     };
 
-    // 画面キャプチャPNG保存（dom-to-image-moreベース）
+    // 画面キャプチャPNG保存
     const handleDownloadPng = async () => {
         if (!cardRef.current || downloading) return;
         setDownloading(true);
@@ -113,7 +113,7 @@ function SetlistViewContent() {
             const domtoimage = (await import('dom-to-image-more')).default;
 
             const dataUrl = await domtoimage.toPng(node, {
-                bgcolor: '#080811',
+                bgcolor: '#0a0910',
                 quality: 1.0,
                 scale: 2,
                 style: {
@@ -129,14 +129,14 @@ function SetlistViewContent() {
             link.click();
             document.body.removeChild(link);
         } catch (err) {
-            console.error('dom-to-image error:', err);
+            console.error('dom-to-image error, trying html2canvas:', err);
             try {
                 const html2canvas = (await import('html2canvas')).default;
                 const canvas = await html2canvas(cardRef.current, {
                     scale: 2,
                     useCORS: true,
                     allowTaint: true,
-                    backgroundColor: '#080811',
+                    backgroundColor: '#0a0910',
                     logging: false
                 });
                 const dataUrl = canvas.toDataURL('image/png');
@@ -190,7 +190,7 @@ function SetlistViewContent() {
     return (
         <div className="max-w-4xl w-full space-y-6 relative z-10 flex flex-col items-center">
             {/* 上部アクションバー */}
-            <div className="w-full max-w-[840px] flex flex-wrap items-center justify-between gap-4">
+            <div className="w-full max-w-[860px] flex flex-wrap items-center justify-between gap-4">
                 <Link
                     href="/songs/setlist"
                     className="inline-flex items-center text-[#ffe29a] hover:text-white transition-colors group font-bold tracking-widest text-sm"
@@ -253,154 +253,127 @@ function SetlistViewContent() {
                 </div>
             )}
 
-            {/* 🌟 ユーザー指定のベースイラスト画像そのまま + 右下オーバーレイ 🌟 */}
+            {/* 🌟 和モダン高品位デザインカード（PNG画像化対象） 🌟 */}
             <div
                 ref={cardRef}
                 style={{
                     width: '100%',
-                    maxWidth: '840px',
-                    aspectRatio: '840 / 1024',
+                    maxWidth: '860px',
+                    background: 'linear-gradient(155deg, #130d17 0%, #09080e 45%, #150f1a 100%)',
+                    border: '2px solid rgba(201, 166, 78, 0.65)',
+                    borderRadius: '2rem',
                     position: 'relative',
                     overflow: 'hidden',
-                    boxShadow: '0 0 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 226, 154, 0.2)'
+                    boxShadow: '0 0 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(201, 166, 78, 0.25)'
                 }}
-                className="rounded-3xl select-none"
+                className="p-5 sm:p-8 md:p-10 select-none text-white font-serif"
             >
-                {/* ベース背景イラスト（そのまま表示） */}
-                <img
-                    src={templateDataUrl}
-                    alt="Maison de Kyo Setlist Base"
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        pointerEvents: 'none',
-                        zIndex: 0
-                    }}
-                />
+                {/* 飾り枠（和風コーナーアクセント） */}
+                <div className="absolute top-2.5 left-2.5 w-6 h-6 border-t-2 border-l-2 border-[#ffe29a]/60 pointer-events-none rounded-tl-sm" />
+                <div className="absolute top-2.5 right-2.5 w-6 h-6 border-t-2 border-r-2 border-[#ffe29a]/60 pointer-events-none rounded-tr-sm" />
+                <div className="absolute bottom-2.5 left-2.5 w-6 h-6 border-b-2 border-l-2 border-[#ffe29a]/60 pointer-events-none rounded-bl-sm" />
+                <div className="absolute bottom-2.5 right-2.5 w-6 h-6 border-b-2 border-r-2 border-[#ffe29a]/60 pointer-events-none rounded-br-sm" />
 
-                {/* 🌟 右側の星空余白スペース（タイトル・制作者名・12曲を重ねて表示） 🌟 */}
-                <div
-                    style={{
-                        position: 'absolute',
-                        left: '49%',
-                        right: '4%',
-                        top: '19%',
-                        bottom: '5%',
-                        zIndex: 10,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'flex-start'
-                    }}
-                >
-                    {/* タイトル＆制作者名ヘッダー */}
-                    <div
-                        style={{
-                            textAlign: 'center',
-                            marginBottom: '0.4rem',
-                            paddingBottom: '0.35rem',
-                            borderBottom: '1px solid rgba(255, 226, 154, 0.35)'
-                        }}
-                    >
-                        {/* セトリタイトル */}
-                        <h2
-                            style={{
-                                fontSize: 'clamp(1.1rem, 2.3vw, 1.8rem)',
-                                fontWeight: 900,
-                                color: '#ffffff',
-                                letterSpacing: '0.03em',
-                                lineHeight: 1.15,
-                                textShadow: '0 0 12px rgba(255, 226, 154, 0.6), 0 2px 4px #000000',
-                                marginBottom: '0.2rem'
-                            }}
-                            className="font-serif truncate"
-                            title={setlist.title}
-                        >
-                            {setlist.title}
-                        </h2>
+                {/* 背景の淡い和柄グロー光 */}
+                <div className="absolute -top-24 -left-24 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-1/3 -right-20 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl pointer-events-none" />
 
-                        {/* 制作者名 */}
-                        <div
-                            style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '0.3rem',
-                                background: 'rgba(0, 0, 0, 0.45)',
-                                padding: '0.15rem 0.6rem',
-                                borderRadius: '9999px',
-                                border: '1px solid rgba(255, 226, 154, 0.4)'
-                            }}
-                        >
-                            <span style={{ fontSize: '0.75rem', color: '#ffe29a' }}>Selected by</span>
-                            <span
-                                style={{
-                                    fontSize: 'clamp(0.75rem, 1.4vw, 0.95rem)',
-                                    fontWeight: 800,
-                                    color: '#ffffff'
-                                }}
-                                className="font-serif"
-                            >
-                                {setlist.creator || 'きょーめいと'}
-                            </span>
+                {/* 🌸 ヘッダーエリア 🌸 */}
+                <header className="relative z-10 border-b border-[#c9a64e]/35 pb-5 mb-6">
+                    <div className="flex items-center justify-between text-xs font-sans tracking-[0.3em] uppercase text-[#ffe29a] mb-2 font-bold">
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-[#c9a64e]">✦</span>
+                            <span>MAISON DE KYO</span>
+                            <span className="text-white/40">|</span>
+                            <span className="text-[#ffd67a]/80">SPECIAL SETLIST</span>
+                        </div>
+                        <div className="hidden sm:inline-block text-[10px] text-white/50 tracking-widest font-mono">
+                            12 SPECIAL TRACKS
                         </div>
                     </div>
 
-                    {/* 12曲のトラックリスト（星空の上にピッタリ12行美しく収める） */}
-                    <div
+                    <h1
                         style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            flex: 1,
-                            minHeight: 0,
-                            gap: '0.2rem'
+                            fontSize: 'clamp(1.7rem, 4vw, 2.7rem)',
+                            fontWeight: 900,
+                            letterSpacing: '0.04em',
+                            lineHeight: 1.25,
+                            background: 'linear-gradient(135deg, #ffffff 0%, #fff0c7 50%, #fcd299 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            textShadow: '0 2px 10px rgba(0,0,0,0.8)'
                         }}
+                        className="mb-3 font-serif"
                     >
+                        {setlist.title}
+                    </h1>
+
+                    <div className="flex flex-wrap items-center gap-2.5 text-xs sm:text-sm">
+                        <div className="px-3.5 py-1 rounded-full bg-black/60 border border-[#c9a64e]/50 text-[#ffe29a] flex items-center gap-2 shadow-inner">
+                            <span className="text-xs">👤</span>
+                            <span className="text-white/70">Selected by:</span>
+                            <strong className="text-white font-bold">{setlist.creator || 'きょーめいと'}</strong>
+                        </div>
+                        <div className="sm:hidden px-3 py-1 rounded-full bg-black/40 border border-white/10 text-white/60 font-mono text-[10px]">
+                            12 TRACKS
+                        </div>
+                    </div>
+                </header>
+
+                {/* 🌸 メインエリア（左側: 12曲リスト / 右側: 立ち絵イラスト） 🌸 */}
+                <div className="relative z-10 flex flex-col md:flex-row items-center md:items-stretch gap-6 md:gap-8">
+                    {/* 左側：01〜12曲のトラックリスト */}
+                    <div className="flex-1 w-full space-y-2">
                         {setlist.songs.map((song, idx) => {
                             const trackNum = (idx + 1).toString().padStart(2, '0');
                             const hasUrl = !!song.url;
 
-                            const content = (
+                            const itemContent = (
                                 <div
                                     style={{
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: '0.35rem',
+                                        gap: '0.6rem',
                                         width: '100%',
-                                        padding: '0.18rem 0.4rem',
-                                        borderRadius: '0.5rem',
-                                        background: 'rgba(5, 5, 15, 0.42)',
-                                        border: '1px solid rgba(255, 226, 154, 0.15)',
-                                        transition: 'all 0.15s ease'
+                                        padding: '0.35rem 0.6rem',
+                                        borderRadius: '0.75rem',
+                                        background: 'rgba(10, 8, 16, 0.65)',
+                                        border: '1px solid rgba(201, 166, 78, 0.25)',
+                                        transition: 'all 0.2s ease'
                                     }}
-                                    className="group-hover:bg-[#ffe29a]/15 group-hover:border-[#ffe29a]/50"
+                                    className="group-hover:bg-[#c9a64e]/15 group-hover:border-[#ffe29a]/70 group-hover:shadow-[0_0_12px_rgba(201,166,78,0.25)]"
                                 >
-                                    {/* トラック番号 */}
-                                    <span
+                                    {/* トラック番号バッジ */}
+                                    <div
                                         style={{
+                                            width: '1.85rem',
+                                            height: '1.85rem',
+                                            borderRadius: '0.5rem',
+                                            background: 'rgba(0, 0, 0, 0.8)',
+                                            border: '1px solid rgba(201, 166, 78, 0.5)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
                                             fontFamily: 'monospace',
                                             fontWeight: 900,
-                                            fontSize: 'clamp(0.68rem, 1.2vw, 0.85rem)',
+                                            fontSize: '0.82rem',
                                             color: '#ffe29a',
-                                            width: '1.4rem',
-                                            flexShrink: 0,
-                                            textAlign: 'center'
+                                            flexShrink: 0
                                         }}
+                                        className="group-hover:bg-[#c9a64e] group-hover:text-black transition-colors"
                                     >
                                         {trackNum}
-                                    </span>
+                                    </div>
 
-                                    {/* カテゴリタグ */}
+                                    {/* カテゴリバッジ */}
                                     <span
                                         style={{
-                                            fontSize: 'clamp(0.55rem, 0.9vw, 0.65rem)',
+                                            fontSize: '0.62rem',
                                             fontWeight: 700,
-                                            padding: '0.05rem 0.28rem',
-                                            borderRadius: '0.25rem',
+                                            padding: '0.12rem 0.35rem',
+                                            borderRadius: '0.3rem',
                                             flexShrink: 0,
+                                            fontFamily: 'sans-serif',
                                             background:
                                                 song.category === 'original'
                                                     ? 'rgba(251, 191, 36, 0.25)'
@@ -415,10 +388,10 @@ function SetlistViewContent() {
                                                     : '#fbcfe8',
                                             border: `1px solid ${
                                                 song.category === 'original'
-                                                    ? 'rgba(251, 191, 36, 0.4)'
+                                                    ? 'rgba(251, 191, 36, 0.45)'
                                                     : song.category === 'cover'
-                                                    ? 'rgba(56, 189, 248, 0.4)'
-                                                    : 'rgba(244, 114, 182, 0.4)'
+                                                    ? 'rgba(56, 189, 248, 0.45)'
+                                                    : 'rgba(244, 114, 182, 0.45)'
                                             }`
                                         }}
                                     >
@@ -430,7 +403,7 @@ function SetlistViewContent() {
                                         style={{
                                             flex: 1,
                                             minWidth: 0,
-                                            fontSize: 'clamp(0.68rem, 1.25vw, 0.88rem)',
+                                            fontSize: 'clamp(0.78rem, 1.4vw, 0.92rem)',
                                             fontWeight: 700,
                                             color: '#ffffff',
                                             whiteSpace: 'nowrap',
@@ -438,25 +411,36 @@ function SetlistViewContent() {
                                             textOverflow: 'ellipsis',
                                             textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)'
                                         }}
-                                        className="font-serif group-hover:text-[#ffe29a]"
+                                        className="group-hover:text-[#ffe29a] transition-colors"
                                         title={song.title}
                                     >
                                         {translateDynamicText(song.title)}
                                     </span>
 
-                                    {/* リンク再生アイコン */}
-                                    {hasUrl && (
-                                        <span
+                                    {/* リンク誘導アイコン */}
+                                    {hasUrl ? (
+                                        <div
                                             style={{
+                                                width: '1.4rem',
+                                                height: '1.4rem',
+                                                borderRadius: '50%',
+                                                background: 'rgba(201, 166, 78, 0.15)',
+                                                border: '1px solid rgba(201, 166, 78, 0.4)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
                                                 fontSize: '0.65rem',
                                                 color: '#ffe29a',
-                                                flexShrink: 0,
-                                                opacity: 0.8
+                                                flexShrink: 0
                                             }}
-                                            className="group-hover:opacity-100 group-hover:scale-110"
+                                            className="group-hover:bg-[#c9a64e] group-hover:text-black group-hover:scale-110 transition-all"
                                         >
-                                            ▶
-                                        </span>
+                                            ↗
+                                        </div>
+                                    ) : (
+                                        <div className="text-[10px] text-white/30 font-mono flex-shrink-0 px-1">
+                                            —
+                                        </div>
                                     )}
                                 </div>
                             );
@@ -470,29 +454,66 @@ function SetlistViewContent() {
                                     className="block group cursor-pointer"
                                     title={`${song.title} を開く`}
                                 >
-                                    {content}
+                                    {itemContent}
                                 </a>
                             ) : (
                                 <div key={idx} className="block">
-                                    {content}
+                                    {itemContent}
                                 </div>
                             );
                         })}
                     </div>
 
-                    {/* 下部案内テキスト */}
-                    <div
-                        style={{
-                            textAlign: 'right',
-                            fontSize: 'clamp(0.55rem, 0.9vw, 0.65rem)',
-                            color: 'rgba(255, 226, 154, 0.65)',
-                            marginTop: '0.25rem',
-                            fontFamily: 'sans-serif'
-                        }}
-                    >
-                        ※ 曲をタップすると試聴先へ移動します
+                    {/* 右側：立ち絵キャラクター＆プレート */}
+                    <div className="w-full md:w-[280px] lg:w-[310px] flex-shrink-0 flex flex-col items-center justify-between relative pt-2">
+                        {/* 立ち絵枠（丸窓風のバックライト） */}
+                        <div className="relative w-full flex flex-col items-center justify-center">
+                            <div className="w-56 h-56 rounded-full bg-gradient-to-tr from-amber-500/15 via-rose-500/15 to-transparent border border-[#c9a64e]/30 absolute top-10 pointer-events-none blur-sm" />
+
+                            <img
+                                src={characterDataUrl}
+                                alt="佳鏡院"
+                                style={{
+                                    width: 'auto',
+                                    maxHeight: '440px',
+                                    objectFit: 'contain',
+                                    filter: 'drop-shadow(0 0 25px rgba(201, 166, 78, 0.4))'
+                                }}
+                                className="relative z-10 select-none pointer-events-none"
+                            />
+                        </div>
+
+                        {/* ネームプレート */}
+                        <div
+                            style={{
+                                width: '90%',
+                                marginTop: '0.5rem',
+                                padding: '0.45rem 0.8rem',
+                                borderRadius: '9999px',
+                                background: 'linear-gradient(135deg, rgba(20, 15, 25, 0.9) 0%, rgba(10, 8, 14, 0.95) 100%)',
+                                border: '1.5px solid rgba(201, 166, 78, 0.6)',
+                                textAlign: 'center',
+                                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.6), 0 0 10px rgba(201, 166, 78, 0.2)'
+                            }}
+                            className="relative z-10"
+                        >
+                            <div className="text-[11px] font-sans tracking-widest text-[#ffe29a] font-bold">
+                                佳鏡院 - Maison de Kyo
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                {/* 🌸 カードフッター 🌸 */}
+                <footer className="relative z-10 mt-6 pt-4 border-t border-[#c9a64e]/25 flex flex-col sm:flex-row items-center justify-between text-xs text-white/50 font-serif gap-2">
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-[#c9a64e]">❖</span>
+                        <span>Maison de Kyo Official Fan Setlist</span>
+                    </div>
+                    <div className="text-[10px] font-sans text-center sm:text-right text-[#ffe29a]/80">
+                        ※ 曲をタップすると試聴・動画リンクへジャンプします
+                    </div>
+                </footer>
             </div>
 
             {/* 下部リンク */}
