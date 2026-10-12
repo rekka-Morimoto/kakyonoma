@@ -17,6 +17,7 @@ interface VoiceItem {
   thumbnailUrl?: string;
   songs?: SongSubItem[];
   category?: string;
+  alias?: string;
 }
 
 interface VoiceSection {
@@ -29,11 +30,16 @@ export default function KakyoArchivePage() {
   const [sections, setSections] = useState<VoiceSection[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedVoice, setSelectedVoice] = useState<VoiceItem | null>(null);
+  const [selectedAlias, setSelectedAlias] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchCategory, setSearchCategory] = useState<string>('all');
+
+  const originalAliases = useMemo(() => {
+    return ['all', '佳鏡院', '心世紀', '少女革命計画'] as const;
+  }, []);
 
   useEffect(() => {
     async function fetchVoices() {
@@ -67,9 +73,29 @@ export default function KakyoArchivePage() {
     setSelectedCategory(categoryName);
     const targetSection = sections.find(s => s.category === categoryName);
     if (targetSection && targetSection.items.length > 0) {
-      setSelectedVoice(targetSection.items[0]);
+      if (categoryName === 'オリジナル曲' && selectedAlias !== 'all') {
+        const matchingItem = targetSection.items.find(item => item.alias === selectedAlias) || targetSection.items[0];
+        setSelectedVoice(matchingItem);
+      } else {
+        setSelectedVoice(targetSection.items[0]);
+      }
     } else {
       setSelectedVoice(null);
+    }
+  };
+
+  const handleAliasSelect = (aliasName: string) => {
+    setSelectedAlias(aliasName);
+    const targetSection = sections.find(s => s.category === 'オリジナル曲');
+    if (targetSection) {
+      const filtered = aliasName === 'all'
+        ? targetSection.items
+        : targetSection.items.filter(item => item.alias === aliasName);
+      if (filtered.length > 0) {
+        setSelectedVoice(filtered[0]);
+      } else {
+        setSelectedVoice(null);
+      }
     }
   };
 
@@ -112,6 +138,25 @@ export default function KakyoArchivePage() {
 
   const activeSection = sections.find(s => s.category === selectedCategory);
 
+  const aliasCounts = useMemo(() => {
+    const originalSec = sections.find(s => s.category === 'オリジナル曲');
+    if (!originalSec) return {};
+    const counts: Record<string, number> = { all: originalSec.items.length };
+    for (const item of originalSec.items) {
+      const a = item.alias || '佳鏡院';
+      counts[a] = (counts[a] || 0) + 1;
+    }
+    return counts;
+  }, [sections]);
+
+  const displayedActiveItems = useMemo(() => {
+    if (!activeSection) return [];
+    if (selectedCategory === 'オリジナル曲' && selectedAlias !== 'all') {
+      return activeSection.items.filter(item => item.alias === selectedAlias);
+    }
+    return activeSection.items;
+  }, [activeSection, selectedCategory, selectedAlias]);
+
   const row1Categories = ["カバー曲", "オリジナル曲", "歌枠セトリ", "Vlog"];
   const row2Categories = ["おやすみかきょボイス", "かきょみこ、ふたりのーと。", "#きょーのお話", "まいにちかきょボイス"];
 
@@ -145,8 +190,9 @@ export default function KakyoArchivePage() {
         const songMatch = item.songs
           ? item.songs.some(s => s.title.toLowerCase().includes(q))
           : false;
+        const aliasMatch = item.alias ? item.alias.toLowerCase().includes(q) : false;
 
-        if (titleMatch || dateMatch || subtitleMatch || songMatch) {
+        if (titleMatch || dateMatch || subtitleMatch || songMatch || aliasMatch) {
           results.push({
             ...item,
             category: sec.category
@@ -284,15 +330,48 @@ export default function KakyoArchivePage() {
                     <span className="text-xs text-[#d4c5b0] font-sans font-normal opacity-80">
                       {isSearching
                         ? (locale === 'zh' ? `匹配 ${filteredItems.length} 项` : `${filteredItems.length} 件一致`)
-                        : (locale === 'zh' ? `共 ${activeSection?.items.length || 0} 项` : `全 ${activeSection?.items.length || 0} 件`)}
+                        : (selectedCategory === 'オリジナル曲' && selectedAlias !== 'all'
+                            ? (locale === 'zh' ? `${translateDynamicText(selectedAlias)}: ${displayedActiveItems.length} 项` : `${translateDynamicText(selectedAlias)}: 全 ${displayedActiveItems.length} 件`)
+                            : (locale === 'zh' ? `共 ${activeSection?.items.length || 0} 项` : `全 ${activeSection?.items.length || 0} 件`))}
                     </span>
                   </h3>
+
+                  {/* オリジナル曲の名義タブ */}
+                  {selectedCategory === 'オリジナル曲' && !isSearching && (
+                    <div className="flex items-center gap-1.5 p-1 bg-black/30 rounded-xl border border-white/10 mb-1 overflow-x-auto shadow-inner">
+                      {originalAliases.map((alias) => {
+                        const isSelected = selectedAlias === alias;
+                        const label = alias === 'all'
+                          ? (locale === 'zh' ? '全部' : locale === 'en' ? 'All' : 'すべて')
+                          : translateDynamicText(alias);
+                        const count = aliasCounts[alias] ?? 0;
+                        return (
+                          <button
+                            key={alias}
+                            onClick={() => handleAliasSelect(alias)}
+                            className={`flex-1 min-w-[70px] py-1.5 px-2 rounded-lg text-xs font-serif font-bold transition-all whitespace-nowrap flex items-center justify-center gap-1 cursor-pointer ${
+                              isSelected
+                                ? 'bg-gradient-to-r from-[#c9a64e] to-[#b38f38] text-black shadow-md font-black'
+                                : 'text-[#d4c5b0] hover:text-white hover:bg-white/10'
+                            }`}
+                          >
+                            <span>{label}</span>
+                            <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-sans ${
+                              isSelected ? 'bg-black/20 text-black font-bold' : 'bg-white/10 text-[#c9a64e]'
+                            }`}>
+                              {count}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                   
                   <div className="voice-scrollbar overflow-y-auto space-y-3 pr-2 max-h-[540px]">
                     {isSearching ? (
                       filteredItems.length > 0 ? (
                         filteredItems.map((item, index) => {
-                          const isSelected = selectedVoice?.url === item.url && selectedVoice?.title === item.title;
+                          const isSelected = selectedVoice?.title === item.title && (selectedVoice?.url === item.url || (!selectedVoice?.url && !item.url));
                           const displayTabLabel = item.category === '#きょーのお話' 
                             ? (item.date || item.title)
                             : item.title;
@@ -319,11 +398,21 @@ export default function KakyoArchivePage() {
                                   <div className="text-[11px] text-[#c9a64e] font-sans font-bold mb-0.5 flex items-center gap-1">
                                     <span>{getCategoryIcon(item.category)}</span>
                                     <span>{getCategoryDisplayName(item.category)}</span>
+                                    {item.alias && (
+                                      <span className="text-[10px] text-[#d4c5b0]/80 font-normal">
+                                        • {translateDynamicText(item.alias)}
+                                      </span>
+                                    )}
                                   </div>
                                 )}
                                 <div className="font-bold text-sm leading-relaxed break-words line-clamp-2">
                                   {translateDynamicText(displayTabLabel)}
                                 </div>
+                                {!item.url && (
+                                  <div className="text-[10px] text-[#d4c5b0]/60 font-sans mt-0.5">
+                                    💿 {locale === 'zh' ? '链接准备中' : 'リンク準備中'}
+                                  </div>
+                                )}
                               </div>
                             </button>
                           );
@@ -333,9 +422,9 @@ export default function KakyoArchivePage() {
                           {t('kakyovoice.noItems')}
                         </div>
                       )
-                    ) : activeSection && activeSection.items.length > 0 ? (
-                      activeSection.items.map((item, index) => {
-                        const isSelected = selectedVoice?.url === item.url && selectedVoice?.title === item.title;
+                    ) : displayedActiveItems.length > 0 ? (
+                      displayedActiveItems.map((item, index) => {
+                        const isSelected = selectedVoice?.title === item.title && (selectedVoice?.url === item.url || (!selectedVoice?.url && !item.url));
                         const displayTabLabel = selectedCategory === '#きょーのお話' 
                           ? (item.date || item.title)
                           : item.title;
@@ -358,9 +447,20 @@ export default function KakyoArchivePage() {
                               />
                             )}
                             <div className="flex-1 overflow-hidden">
+                              {selectedCategory === 'オリジナル曲' && selectedAlias === 'all' && item.alias && (
+                                <div className="text-[10px] text-[#c9a64e] font-sans font-bold mb-0.5 flex items-center gap-1">
+                                  <span>🏷️</span>
+                                  <span>{translateDynamicText(item.alias)}</span>
+                                </div>
+                              )}
                               <div className="font-bold text-sm leading-relaxed break-words line-clamp-2">
                                 {translateDynamicText(displayTabLabel)}
                               </div>
+                              {!item.url && (
+                                <div className="text-[10px] text-[#d4c5b0]/60 font-sans mt-0.5">
+                                  💿 {locale === 'zh' ? '链接准备中' : 'リンク準備中'}
+                                </div>
+                              )}
                             </div>
                           </button>
                         );
@@ -445,13 +545,8 @@ export default function KakyoArchivePage() {
                         )}
                       </div>
                     ) : (
-                      <a
-                        href={selectedVoice.url || '#'}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`glass-panel rounded-2xl p-6 border-white/5 hover:border-[#c9a64e]/60 transition-all duration-300 group flex-1 flex flex-col items-center justify-center min-h-[480px] relative overflow-hidden shadow-2xl ${
-                          selectedVoice.url ? 'cursor-pointer' : 'cursor-default pointer-events-none'
-                        }`}
+                      <div
+                        className="glass-panel rounded-2xl p-6 border-white/5 transition-all duration-300 group flex-1 flex flex-col items-center justify-center min-h-[480px] relative overflow-hidden shadow-2xl"
                       >
                         <div className="absolute inset-0 bg-gradient-to-b from-[#c9a64e]/5 via-transparent to-[#c9a64e]/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
@@ -459,8 +554,20 @@ export default function KakyoArchivePage() {
                           <div className="text-center mb-2">
                             <div className="text-xs text-[#c9a64e] tracking-widest font-sans font-bold uppercase mb-1 flex items-center justify-center gap-1.5">
                               <span>Viewing {getCategoryDisplayName(selectedVoice.category || selectedCategory)}</span>
+                              {selectedVoice.alias && (
+                                <span className="px-2 py-0.5 rounded-full bg-[#c9a64e]/20 text-[#ffe29a] font-normal text-[10px]">
+                                  {translateDynamicText(selectedVoice.alias)}
+                                </span>
+                              )}
                               {selectedVoice.url && (
-                                <span className="group-hover:translate-x-1 transition-transform">↗</span>
+                                <a
+                                  href={selectedVoice.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="hover:translate-x-1 transition-transform cursor-pointer"
+                                >
+                                  ↗
+                                </a>
                               )}
                             </div>
 
@@ -475,34 +582,60 @@ export default function KakyoArchivePage() {
                           </div>
 
                           <div className="w-full max-w-[500px] flex justify-center py-2">
-                            {selectedVoice.thumbnailUrl ? (
-                              <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 group-hover:border-[#c9a64e]/50 transition-all">
-                                <img
-                                  src={selectedVoice.thumbnailUrl}
-                                  alt={selectedVoice.title}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                />
-                                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                                  <div className="w-16 h-16 rounded-full bg-[#c9a64e]/90 text-black flex items-center justify-center pl-1 text-2xl shadow-2xl group-hover:scale-110 transition-transform">
-                                    ▶
+                            {selectedVoice.url ? (
+                              selectedVoice.thumbnailUrl ? (
+                                <a
+                                  href={selectedVoice.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 group-hover:border-[#c9a64e]/50 transition-all cursor-pointer block"
+                                >
+                                  <img
+                                    src={selectedVoice.thumbnailUrl}
+                                    alt={selectedVoice.title}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                  />
+                                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                                    <div className="w-16 h-16 rounded-full bg-[#c9a64e]/90 text-black flex items-center justify-center pl-1 text-2xl shadow-2xl group-hover:scale-110 transition-transform">
+                                      ▶
+                                    </div>
                                   </div>
+                                </a>
+                              ) : (
+                                <div className="w-full bg-[#1a140d]/40 rounded-xl p-3 border border-white/5 shadow-inner pointer-events-auto">
+                                  <MediaEmbed url={selectedVoice.url} title={selectedVoice.title} />
                                 </div>
-                              </div>
+                              )
                             ) : (
-                              <div className="w-full bg-[#1a140d]/40 rounded-xl p-3 border border-white/5 shadow-inner pointer-events-auto">
-                                <MediaEmbed url={selectedVoice.url} title={selectedVoice.title} />
+                              <div className="w-full bg-[#1a140d]/60 rounded-2xl p-8 border border-white/10 shadow-inner flex flex-col items-center justify-center text-center space-y-3">
+                                <div className="w-16 h-16 rounded-full bg-[#c9a64e]/15 border border-[#c9a64e]/30 flex items-center justify-center text-3xl shadow-lg">
+                                  💿
+                                </div>
+                                <div className="text-white font-serif font-bold text-base md:text-lg">
+                                  {locale === 'zh' ? '音源/视频链接准备中' : '音源・動画リンク準備中'}
+                                </div>
+                                <p className="text-xs text-[#d4c5b0]/70 font-sans max-w-xs leading-relaxed">
+                                  {locale === 'zh'
+                                    ? '该曲目尚未公开外部播放链接，敬请期待后续更新。'
+                                    : 'こちらの楽曲は外部視聴リンクが未登録です。今後の公開・更新をお待ちください。'}
+                                </p>
                               </div>
                             )}
                           </div>
 
                           {selectedVoice.url && (
-                            <div className="text-xs text-[#c9a64e] font-serif font-bold tracking-wider pt-2 group-hover:underline flex items-center gap-1">
+                            <a
+                              href={selectedVoice.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-[#c9a64e] font-serif font-bold tracking-wider pt-2 hover:underline flex items-center gap-1 cursor-pointer"
+                            >
                               <span>{t('kakyovoice.viewPost')}</span>
                               <span>↗</span>
-                            </div>
+                            </a>
                           )}
                         </div>
-                      </a>
+                      </div>
                     )
                   ) : (
                     <div className="glass-panel rounded-2xl p-6 border-white/5 flex-1 flex flex-col items-center justify-center min-h-[480px]">

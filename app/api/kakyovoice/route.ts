@@ -14,6 +14,7 @@ export interface VoiceItem {
     url: string;
     thumbnailUrl?: string;
     songs?: SongSubItem[];
+    alias?: string;
 }
 
 export interface VoiceSection {
@@ -55,6 +56,58 @@ export async function GET() {
         return undefined;
     };
 
+    const parseOriginalSongsFile = async (filePath: string): Promise<VoiceItem[]> => {
+        try {
+            const content = await fs.readFile(filePath, 'utf-8');
+            const lines = content.split('\n').map(l => l.trim());
+            const items: VoiceItem[] = [];
+            let currentAlias = '佳鏡院';
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                if (!line) continue;
+
+                const aliasMatch = line.match(/^<([^>]+)>$/);
+                if (aliasMatch) {
+                    currentAlias = aliasMatch[1].trim();
+                    continue;
+                }
+
+                const isTitleLine = /^\d+\./.test(line) || (!line.startsWith('http://') && !line.startsWith('https://'));
+                if (isTitleLine) {
+                    const title = line.replace(/^\d+\.\s*/, '');
+                    let url = '';
+
+                    // 次の非空行をチェック
+                    let nextIdx = i + 1;
+                    while (nextIdx < lines.length && !lines[nextIdx]) {
+                        nextIdx++;
+                    }
+
+                    if (nextIdx < lines.length && (lines[nextIdx].startsWith('http://') || lines[nextIdx].startsWith('https://'))) {
+                        url = lines[nextIdx];
+                        i = nextIdx;
+                    }
+
+                    const thumbnailUrl = url ? getYouTubeThumbnail(url) : undefined;
+                    const parsed = parseItemTitle(title);
+                    items.push({
+                        title: title,
+                        date: parsed.date,
+                        subtitle: parsed.subtitle,
+                        url: url,
+                        thumbnailUrl: thumbnailUrl,
+                        alias: currentAlias
+                    });
+                }
+            }
+            return items;
+        } catch (e) {
+            console.error(`Error reading ${filePath}:`, e);
+            return [];
+        }
+    };
+
     const parseSongFile = async (filePath: string): Promise<VoiceItem[]> => {
         try {
             const content = await fs.readFile(filePath, 'utf-8');
@@ -69,9 +122,15 @@ export async function GET() {
                 if (isTitleLine) {
                     const title = line.replace(/^\d+\.\s*/, '');
                     let url = '';
-                    if (lines[i + 1] && (lines[i + 1].startsWith('http://') || lines[i + 1].startsWith('https://'))) {
-                        url = lines[i + 1];
-                        i++;
+
+                    let nextIdx = i + 1;
+                    while (nextIdx < lines.length && !lines[nextIdx]) {
+                        nextIdx++;
+                    }
+
+                    if (nextIdx < lines.length && (lines[nextIdx].startsWith('http://') || lines[nextIdx].startsWith('https://'))) {
+                        url = lines[nextIdx];
+                        i = nextIdx;
                     }
 
                     const thumbnailUrl = url ? getYouTubeThumbnail(url) : undefined;
@@ -192,7 +251,7 @@ export async function GET() {
         }
 
         // 3. オリジナル曲 & カバー曲 の読み込み
-        const originalItems = await parseSongFile(originalSongPath);
+        const originalItems = await parseOriginalSongsFile(originalSongPath);
         if (originalItems.length > 0) {
             sections.push({
                 category: "オリジナル曲",
