@@ -103,25 +103,32 @@ function SetlistViewContent() {
         }
     };
 
-    // 画面キャプチャPNG保存（dom-to-image-more & html2canvas対応）
+    // 画面キャプチャPNG保存（白枠アーティファクト防止のためhtml2canvasを優先し、高解像度レンダリング）
     const handleDownloadPng = async () => {
         if (!cardRef.current || downloading) return;
         setDownloading(true);
 
         try {
-            const node = cardRef.current;
-            const domtoimage = (await import('dom-to-image-more')).default;
-
-            const dataUrl = await domtoimage.toPng(node, {
-                bgcolor: '#04030a',
-                quality: 1.0,
+            const html2canvas = (await import('html2canvas')).default;
+            const canvas = await html2canvas(cardRef.current, {
                 scale: 2,
-                style: {
-                    transform: 'none',
-                    margin: '0'
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: null,
+                logging: false,
+                imageTimeout: 15000,
+                onclone: (clonedDoc) => {
+                    // クローンされたDOM上の全要素から余計なborderやoutlineを完全に除去
+                    const allNodes = clonedDoc.querySelectorAll('*');
+                    allNodes.forEach((node) => {
+                        const el = node as HTMLElement;
+                        if (el.style) {
+                            el.style.outline = 'none';
+                        }
+                    });
                 }
             });
-
+            const dataUrl = canvas.toDataURL('image/png');
             const link = document.createElement('a');
             link.download = `${setlist?.title || '最強セトリ'}_MaisonDeKyo.png`;
             link.href = dataUrl;
@@ -129,17 +136,14 @@ function SetlistViewContent() {
             link.click();
             document.body.removeChild(link);
         } catch (err) {
-            console.error('dom-to-image error, fallback to html2canvas:', err);
+            console.error('html2canvas error, trying fallback:', err);
             try {
-                const html2canvas = (await import('html2canvas')).default;
-                const canvas = await html2canvas(cardRef.current, {
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: true,
-                    backgroundColor: '#04030a',
-                    logging: false
+                const domtoimage = (await import('dom-to-image-more')).default;
+                const dataUrl = await domtoimage.toPng(cardRef.current, {
+                    bgcolor: '#04030a',
+                    quality: 1.0,
+                    scale: 2
                 });
-                const dataUrl = canvas.toDataURL('image/png');
                 const link = document.createElement('a');
                 link.download = `${setlist?.title || '最強セトリ'}_MaisonDeKyo.png`;
                 link.href = dataUrl;
@@ -190,7 +194,7 @@ function SetlistViewContent() {
     return (
         <div className="max-w-3xl w-full space-y-6 relative z-10 flex flex-col items-center">
             {/* 上部アクションバー */}
-            <div className="w-full max-w-[720px] flex flex-wrap items-center justify-between gap-4">
+            <div className="w-full max-w-[760px] flex flex-wrap items-center justify-between gap-4">
                 <Link
                     href="/songs/setlist"
                     className="inline-flex items-center text-[#ffe29a] hover:text-white transition-colors group font-bold tracking-widest text-sm"
@@ -258,13 +262,15 @@ function SetlistViewContent() {
                 ref={cardRef}
                 style={{
                     width: '100%',
-                    maxWidth: '720px',
+                    maxWidth: '760px',
                     aspectRatio: '717 / 1024',
                     position: 'relative',
                     overflow: 'hidden',
                     borderRadius: '1.25rem',
                     boxShadow: '0 0 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 226, 154, 0.25)',
-                    backgroundColor: '#04030a'
+                    backgroundColor: '#04030a',
+                    border: 'none',
+                    outline: 'none'
                 }}
                 className="select-none"
             >
@@ -280,43 +286,51 @@ function SetlistViewContent() {
                         height: '100%',
                         objectFit: 'contain',
                         pointerEvents: 'none',
-                        zIndex: 0
+                        zIndex: 0,
+                        border: 'none',
+                        outline: 'none'
                     }}
                 />
 
-                {/* 🌟 右側の星空余白スペース（タイトル・制作者名・12曲を重ねて整然と表示） 🌟 */}
+                {/* 🌟 右側の星空余白スペース（横幅と高さいっぱいに曲名・タイトルを大きく堂々と配置） 🌟 */}
                 <div
                     style={{
                         position: 'absolute',
-                        left: '48%',
-                        right: '4.5%',
-                        top: '18.5%',
+                        left: '46%',
+                        right: '3.5%',
+                        top: '18%',
                         bottom: '5.5%',
                         zIndex: 10,
                         display: 'flex',
                         flexDirection: 'column',
-                        justifyContent: 'flex-start'
+                        justifyContent: 'flex-start',
+                        border: 'none',
+                        outline: 'none'
                     }}
                 >
                     {/* タイトル＆制作者名ヘッダー */}
                     <div
                         style={{
                             textAlign: 'center',
-                            marginBottom: '0.45rem',
-                            paddingBottom: '0.4rem',
-                            borderBottom: '1px solid rgba(255, 226, 154, 0.35)'
+                            marginBottom: '0.5rem',
+                            paddingBottom: '0.45rem',
+                            border: 'none',
+                            outline: 'none',
+                            boxShadow: '0 1px 0 rgba(255, 226, 154, 0.35)'
                         }}
                     >
-                        {/* セトリタイトル */}
+                        {/* セトリタイトル（より大きく存在感アップ） */}
                         <h2
                             style={{
-                                fontSize: 'clamp(1rem, 2.3vw, 1.55rem)',
+                                fontSize: 'clamp(1.15rem, 2.6vw, 1.8rem)',
                                 fontWeight: 900,
                                 color: '#ffffff',
                                 letterSpacing: '0.04em',
                                 lineHeight: 1.2,
-                                textShadow: '0 0 12px rgba(255, 226, 154, 0.7), 0 2px 4px #000000',
-                                marginBottom: '0.2rem'
+                                textShadow: '0 0 16px rgba(255, 226, 154, 0.8), 0 2px 6px #000000',
+                                marginBottom: '0.25rem',
+                                border: 'none',
+                                outline: 'none'
                             }}
                             className="font-serif truncate"
                             title={setlist.title}
@@ -329,17 +343,19 @@ function SetlistViewContent() {
                             style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: '0.35rem',
-                                background: 'rgba(0, 0, 0, 0.55)',
-                                padding: '0.15rem 0.65rem',
+                                gap: '0.4rem',
+                                background: 'rgba(0, 0, 0, 0.6)',
+                                padding: '0.18rem 0.8rem',
                                 borderRadius: '9999px',
-                                border: '1px solid rgba(255, 226, 154, 0.45)'
+                                boxShadow: 'inset 0 0 0 1px rgba(255, 226, 154, 0.45)',
+                                border: 'none',
+                                outline: 'none'
                             }}
                         >
-                            <span style={{ fontSize: '0.7rem', color: '#ffe29a' }}>Selected by</span>
+                            <span style={{ fontSize: '0.75rem', color: '#ffe29a' }}>Selected by</span>
                             <span
                                 style={{
-                                    fontSize: 'clamp(0.72rem, 1.4vw, 0.92rem)',
+                                    fontSize: 'clamp(0.8rem, 1.5vw, 1.05rem)',
                                     fontWeight: 800,
                                     color: '#ffffff'
                                 }}
@@ -350,7 +366,7 @@ function SetlistViewContent() {
                         </div>
                     </div>
 
-                    {/* 12曲のトラックリスト（星空スペースの高さに合わせて均等に12行美しく配置） */}
+                    {/* 12曲のトラックリスト（星空スペースいっぱいに文字を大きく、隙間なく整然と配置） */}
                     <div
                         style={{
                             display: 'flex',
@@ -358,7 +374,9 @@ function SetlistViewContent() {
                             justifyContent: 'space-between',
                             flex: 1,
                             minHeight: 0,
-                            gap: '0.25rem'
+                            gap: '0.35rem',
+                            border: 'none',
+                            outline: 'none'
                         }}
                     >
                         {setlist.songs.map((song, idx) => {
@@ -370,77 +388,85 @@ function SetlistViewContent() {
                                     style={{
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: '0.35rem',
+                                        gap: '0.45rem',
                                         width: '100%',
-                                        padding: '0.18rem 0.45rem',
-                                        borderRadius: '0.45rem',
-                                        background: 'rgba(5, 5, 18, 0.52)',
-                                        border: '1px solid rgba(255, 226, 154, 0.22)',
-                                        backdropFilter: 'blur(2px)',
+                                        padding: '0.24rem 0.55rem',
+                                        borderRadius: '0.5rem',
+                                        background: 'linear-gradient(90deg, rgba(8, 6, 20, 0.72) 0%, rgba(12, 10, 26, 0.58) 100%)',
+                                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 226, 154, 0.22)',
+                                        border: 'none',
+                                        outline: 'none',
                                         transition: 'all 0.15s ease'
                                     }}
-                                    className="group-hover:bg-[#ffe29a]/20 group-hover:border-[#ffe29a]/60"
+                                    className="group-hover:bg-[#ffe29a]/20 group-hover:shadow-[0_0_12px_rgba(255,226,154,0.3)]"
                                 >
-                                    {/* トラック番号 */}
+                                    {/* トラック番号（大きく見やすく） */}
                                     <span
                                         style={{
                                             fontFamily: 'monospace',
                                             fontWeight: 900,
-                                            fontSize: 'clamp(0.68rem, 1.25vw, 0.85rem)',
+                                            fontSize: 'clamp(0.8rem, 1.45vw, 1.05rem)',
                                             color: '#ffe29a',
-                                            width: '1.4rem',
+                                            width: '1.65rem',
                                             flexShrink: 0,
-                                            textAlign: 'center'
+                                            textAlign: 'center',
+                                            border: 'none',
+                                            outline: 'none'
                                         }}
                                     >
                                         {trackNum}
                                     </span>
 
-                                    {/* カテゴリタグ */}
+                                    {/* カテゴリタグ（見やすく鮮明に） */}
                                     <span
                                         style={{
-                                            fontSize: 'clamp(0.55rem, 0.95vw, 0.65rem)',
-                                            fontWeight: 700,
-                                            padding: '0.06rem 0.3rem',
-                                            borderRadius: '0.25rem',
+                                            fontSize: 'clamp(0.62rem, 1.05vw, 0.75rem)',
+                                            fontWeight: 800,
+                                            padding: '0.08rem 0.38rem',
+                                            borderRadius: '0.28rem',
                                             flexShrink: 0,
                                             fontFamily: 'sans-serif',
                                             background:
                                                 song.category === 'original'
-                                                    ? 'rgba(251, 191, 36, 0.3)'
+                                                    ? 'rgba(251, 191, 36, 0.35)'
                                                     : song.category === 'cover'
-                                                    ? 'rgba(56, 189, 248, 0.3)'
-                                                    : 'rgba(244, 114, 182, 0.3)',
+                                                    ? 'rgba(56, 189, 248, 0.35)'
+                                                    : 'rgba(244, 114, 182, 0.35)',
                                             color:
                                                 song.category === 'original'
                                                     ? '#fef08a'
                                                     : song.category === 'cover'
                                                     ? '#bae6fd'
                                                     : '#fbcfe8',
-                                            border: `1px solid ${
+                                            boxShadow: `inset 0 0 0 1px ${
                                                 song.category === 'original'
-                                                    ? 'rgba(251, 191, 36, 0.45)'
+                                                    ? 'rgba(251, 191, 36, 0.6)'
                                                     : song.category === 'cover'
-                                                    ? 'rgba(56, 189, 248, 0.45)'
-                                                    : 'rgba(244, 114, 182, 0.45)'
-                                            }`
+                                                    ? 'rgba(56, 189, 248, 0.6)'
+                                                    : 'rgba(244, 114, 182, 0.6)'
+                                            }`,
+                                            border: 'none',
+                                            outline: 'none'
                                         }}
                                     >
                                         {song.alias ? song.alias : song.category === 'original' ? 'オリ' : song.category === 'cover' ? 'カバ' : '歌枠'}
                                     </span>
 
-                                    {/* 曲名 */}
+                                    {/* 曲名（フォントサイズを大幅に拡大、太字でクッキリ読みやすく） */}
                                     <span
                                         style={{
                                             flex: 1,
                                             minWidth: 0,
-                                            fontSize: 'clamp(0.68rem, 1.3vw, 0.88rem)',
-                                            fontWeight: 700,
+                                            fontSize: 'clamp(0.82rem, 1.55vw, 1.1rem)',
+                                            fontWeight: 800,
                                             color: '#ffffff',
                                             whiteSpace: 'nowrap',
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis',
-                                            textShadow: '0 1px 4px rgba(0, 0, 0, 0.95)'
+                                            textShadow: '0 1px 4px rgba(0, 0, 0, 0.95), 0 0 6px rgba(0, 0, 0, 0.8)',
+                                            letterSpacing: '0.02em',
+                                            border: 'none',
+                                            outline: 'none'
                                         }}
                                         className="font-serif group-hover:text-[#ffe29a]"
                                         title={song.title}
@@ -452,10 +478,12 @@ function SetlistViewContent() {
                                     {hasUrl && (
                                         <span
                                             style={{
-                                                fontSize: '0.65rem',
+                                                fontSize: '0.75rem',
                                                 color: '#ffe29a',
                                                 flexShrink: 0,
-                                                opacity: 0.85
+                                                opacity: 0.9,
+                                                border: 'none',
+                                                outline: 'none'
                                             }}
                                             className="group-hover:opacity-100 group-hover:scale-110"
                                         >
@@ -471,13 +499,14 @@ function SetlistViewContent() {
                                     href={song.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="block group cursor-pointer"
+                                    style={{ border: 'none', outline: 'none' }}
+                                    className="block group cursor-pointer focus:outline-none"
                                     title={`${song.title} を開く`}
                                 >
                                     {content}
                                 </a>
                             ) : (
-                                <div key={idx} className="block">
+                                <div key={idx} style={{ border: 'none', outline: 'none' }} className="block">
                                     {content}
                                 </div>
                             );
@@ -488,10 +517,12 @@ function SetlistViewContent() {
                     <div
                         style={{
                             textAlign: 'right',
-                            fontSize: 'clamp(0.55rem, 0.9vw, 0.65rem)',
-                            color: 'rgba(255, 226, 154, 0.7)',
-                            marginTop: '0.3rem',
-                            fontFamily: 'sans-serif'
+                            fontSize: 'clamp(0.6rem, 1vw, 0.72rem)',
+                            color: 'rgba(255, 226, 154, 0.75)',
+                            marginTop: '0.35rem',
+                            fontFamily: 'sans-serif',
+                            border: 'none',
+                            outline: 'none'
                         }}
                     >
                         ※ 曲をタップすると試聴先へ移動します
