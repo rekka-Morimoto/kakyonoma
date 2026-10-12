@@ -13,52 +13,114 @@ function SetlistViewContent() {
     const [setlist, setSetlist] = useState<SetlistPayload | null>(null);
     const [copied, setCopied] = useState(false);
 
-    // セトリデータのデコード
+    // セトリデータのデコード（新短縮形式 's' および 旧形式 'data' の両方に対応）
     useEffect(() => {
-        const rawData = searchParams.get('data');
-        if (rawData) {
-            try {
-                const binaryStr = atob(rawData);
-                const bytes = new Uint8Array(binaryStr.length);
-                for (let i = 0; i < binaryStr.length; i++) {
-                    bytes[i] = binaryStr.charCodeAt(i);
-                }
-                const jsonStr = new TextDecoder().decode(bytes);
-                const rawParsed = JSON.parse(jsonStr);
+        const shortParam = searchParams.get('s');
+        const legacyParam = searchParams.get('data');
 
-                if (rawParsed.s && Array.isArray(rawParsed.s)) {
-                    setSetlist({
-                        title: rawParsed.t || '個人的最強セトリ',
-                        creator: rawParsed.c || '',
-                        createdAt: rawParsed.d || '',
-                        songs: rawParsed.s.map((arr: any) => ({
-                            track: arr[0],
-                            title: arr[1],
-                            category: arr[2] || 'original',
-                            alias: arr[3] || undefined,
-                            url: arr[4] || undefined
-                        }))
-                    });
-                } else {
-                    setSetlist(rawParsed as SetlistPayload);
-                }
-            } catch (e) {
-                console.error('Failed to parse with TextDecoder:', e);
+        if (!shortParam && !legacyParam) return;
+
+        // Base64URL または 通常Base64 を安全にデコードする関数
+        const decodeBase64Utf8 = (str: string) => {
+            let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+            while (base64.length % 4 !== 0) {
+                base64 += '=';
+            }
+            const binaryStr = atob(base64);
+            const bytes = new Uint8Array(binaryStr.length);
+            for (let i = 0; i < binaryStr.length; i++) {
+                bytes[i] = binaryStr.charCodeAt(i);
+            }
+            return new TextDecoder().decode(bytes);
+        };
+
+        const processDecode = async () => {
+            // 1. 新形式（超短縮形式: 曲IDのカンマ区切り）
+            if (shortParam) {
                 try {
-                    const legacyStr = decodeURIComponent(
-                        Array.prototype.map
-                            .call(atob(rawData), (c: string) => {
-                                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                            })
-                            .join('')
-                    );
-                    setSetlist(JSON.parse(legacyStr));
-                } catch (err2) {
-                    console.error('Legacy decode failed:', err2);
+                    const jsonStr = decodeBase64Utf8(shortParam);
+                    const parsed = JSON.parse(jsonStr);
+                    const songIdList: string[] = (parsed.s || '').split(',');
+
+                    // 全曲データをAPIから取得してID逆引き
+                    let songMap = new Map<string, any>();
+                    try {
+                        const res = await fetch('/api/songs/all');
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (Array.isArray(data.songs)) {
+                                data.songs.forEach((s: any) => songMap.set(s.id, s));
+                            }
+                        }
+                    } catch (fetchErr) {
+                        console.error('Failed to fetch songs for lookup:', fetchErr);
+                    }
+
+                    const hydratedSongs = songIdList.map((id, idx) => {
+                        const found = id ? songMap.get(id) : null;
+                        return {
+                            track: idx + 1,
+                            title: found ? found.title : (id ? '（曲名取得中）' : (locale === 'zh' ? '（未选择）' : '（未設定）')),
+                            category: (found?.category as any) || 'original',
+                            alias: found?.alias || undefined,
+                            url: found?.url || undefined
+                        };
+                    });
+
+                    setSetlist({
+                        title: parsed.t || '個人的最強セトリ',
+                        creator: parsed.c || '',
+                        createdAt: '',
+                        songs: hydratedSongs
+                    });
+                    return;
+                } catch (err) {
+                    console.error('Failed to parse short setlist param:', err);
                 }
             }
-        }
-    }, [searchParams]);
+
+            // 2. 旧形式（互換性保持: 全データ入りBase64）
+            if (legacyParam) {
+                try {
+                    const jsonStr = decodeBase64Utf8(legacyParam);
+                    const rawParsed = JSON.parse(jsonStr);
+
+                    if (rawParsed.s && Array.isArray(rawParsed.s)) {
+                        setSetlist({
+                            title: rawParsed.t || '個人的最強セトリ',
+                            creator: rawParsed.c || '',
+                            createdAt: rawParsed.d || '',
+                            songs: rawParsed.s.map((arr: any) => ({
+                                track: arr[0],
+                                title: arr[1],
+                                category: arr[2] || 'original',
+                                alias: arr[3] || undefined,
+                                url: arr[4] || undefined
+                            }))
+                        });
+                    } else {
+                        setSetlist(rawParsed as SetlistPayload);
+                    }
+                } catch (e) {
+                    console.error('Failed to parse legacy data with TextDecoder:', e);
+                    try {
+                        const legacyStr = decodeURIComponent(
+                            Array.prototype.map
+                                .call(atob(legacyParam), (c: string) => {
+                                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                                })
+                                .join('')
+                        );
+                        setSetlist(JSON.parse(legacyStr));
+                    } catch (err2) {
+                        console.error('Legacy decode failed:', err2);
+                    }
+                }
+            }
+        };
+
+        processDecode();
+    }, [searchParams, locale]);
 
     // リンクをクリップボードにコピー
     const handleCopyLink = async () => {

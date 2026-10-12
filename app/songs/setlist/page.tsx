@@ -108,7 +108,7 @@ export default function CreateSetlistPage() {
         }
     };
 
-    // セトリ完成＆閲覧ページへ遷移
+    // セトリ完成＆閲覧ページへ遷移（超短縮URL生成）
     const handleComplete = () => {
         const filledCount = selectedSlots.filter(Boolean).length;
         if (filledCount === 0) {
@@ -116,17 +116,11 @@ export default function CreateSetlistPage() {
             return;
         }
 
+        // 超軽量ペイロード: 曲名やURLを丸ごと入れず、曲IDのカンマ区切り文字列のみを格納
         const payload = {
             t: setlistTitle.trim() || '個人的最強セトリ',
             c: creatorName.trim() || (locale === 'zh' ? '院院めいと' : 'きょーめいと'),
-            d: new Date().toISOString(),
-            s: selectedSlots.map((song, i) => [
-                i + 1,
-                song ? song.title : (locale === 'zh' ? '（未选择）' : '（未設定）'),
-                song?.category || 'original',
-                song?.alias || '',
-                song?.url || ''
-            ])
+            s: selectedSlots.map((song) => (song ? song.id : '')).join(',')
         };
 
         try {
@@ -136,8 +130,13 @@ export default function CreateSetlistPage() {
             for (let i = 0; i < bytes.length; i++) {
                 binary += String.fromCharCode(bytes[i]);
             }
-            const base64 = btoa(binary);
-            router.push(`/songs/setlist/view?data=${encodeURIComponent(base64)}`);
+            // URLセーフなBase64形式（+を-、/を_に置換し、パディング=を削除）
+            const base64Url = btoa(binary)
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=+$/, '');
+
+            router.push(`/songs/setlist/view?s=${base64Url}`);
         } catch (e) {
             console.error('Encoding error:', e);
             alert(locale === 'zh' ? '保存歌单时出错' : 'セトリの生成に失敗しました');
