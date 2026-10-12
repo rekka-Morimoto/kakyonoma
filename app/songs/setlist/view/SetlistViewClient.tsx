@@ -487,6 +487,17 @@ function SetlistViewInner() {
                 </button>
             </div>
 
+            {/* 🌟 新しくセトリを作るボタン 🌟 */}
+            <div className="w-full max-w-[720px] flex justify-center pt-1 px-2">
+                <Link
+                    href="/songs/setlist"
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-white text-sm sm:text-base font-serif font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:scale-105 active:scale-95 shadow-amber-900/30 border border-amber-300/40"
+                >
+                    <span className="text-base">✨</span>
+                    <span>{locale === 'zh' ? '制作新歌单' : '新しくセトリを作る'}</span>
+                </Link>
+            </div>
+
             {/* 下部リンク */}
             <div className="text-center pt-3 pb-6">
                 <Link
