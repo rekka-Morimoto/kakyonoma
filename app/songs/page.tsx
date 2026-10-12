@@ -110,10 +110,21 @@ export default function SongsPage() {
 
                     </div>
 
-                    <div className="pt-12">
+                    <div className="pt-12 flex flex-col sm:flex-row items-center justify-center gap-6">
+                        <Link
+                            href="/songs/setlist"
+                            className="glass-panel px-10 py-8 rounded-[2rem] border-[#c9a64e]/40 hover:border-[#c9a64e] bg-gradient-to-br from-[#c9a64e]/10 via-transparent to-[#c9a64e]/5 hover:from-[#c9a64e]/20 hover:to-[#c9a64e]/15 transition-all duration-500 group inline-flex flex-col items-center gap-2 shadow-[0_0_25px_rgba(201,166,78,0.2)] hover:shadow-[0_0_35px_rgba(201,166,78,0.4)] hover:scale-105 min-w-[280px]"
+                        >
+                            <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">🎧</div>
+                            <span className="text-xl font-black text-white font-serif text-outline">
+                                {locale === 'zh' ? '制作个人最强歌单' : '個人的最強セトリ'}
+                            </span>
+                            <span className="text-[#c9a64e] font-bold text-xs tracking-widest opacity-90 group-hover:opacity-100 transition-opacity uppercase font-sans">Create Your Setlist →</span>
+                        </Link>
+
                         <Link
                             href="/kakyovoice"
-                            className="glass-panel px-12 py-8 rounded-[2rem] border-white/10 hover:border-[#c9a64e]/50 transition-all duration-500 group inline-flex flex-col items-center gap-2 hover:bg-white/5 min-w-[320px]"
+                            className="glass-panel px-10 py-8 rounded-[2rem] border-white/10 hover:border-[#c9a64e]/50 transition-all duration-500 group inline-flex flex-col items-center gap-2 hover:bg-white/5 min-w-[280px]"
                         >
                             <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">📋</div>
                             <span className="text-xl font-black text-white font-serif text-outline">
