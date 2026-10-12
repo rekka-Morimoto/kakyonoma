@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useLanguage } from '../../../../lib/i18nContext';
 import { SetlistPayload } from '../page';
-import html2canvas from 'html2canvas';
 
 function SetlistViewContent() {
     const searchParams = useSearchParams();
@@ -17,7 +16,7 @@ function SetlistViewContent() {
     const [characterDataUrl, setCharacterDataUrl] = useState<string>('/images/kakyo_singer.png');
     const cardRef = useRef<HTMLDivElement>(null);
 
-    // キャラ画像をBase64 DataURLとしてプリロード（CORS/Taintエラーを完全に防止）
+    // キャラ画像をBase64 DataURLとしてプリロード（CORS制限を完全回避）
     useEffect(() => {
         const loadImg = async () => {
             try {
@@ -33,7 +32,7 @@ function SetlistViewContent() {
                     reader.readAsDataURL(blob);
                 }
             } catch (err) {
-                console.warn('Failed to convert image to DataURL, using default src:', err);
+                console.warn('Failed to load image as DataURL:', err);
             }
         };
         loadImg();
@@ -69,7 +68,7 @@ function SetlistViewContent() {
                     setSetlist(rawParsed as SetlistPayload);
                 }
             } catch (e) {
-                console.error('Failed to parse setlist data with TextDecoder, trying legacy:', e);
+                console.error('Failed to parse with TextDecoder:', e);
                 try {
                     const legacyStr = decodeURIComponent(
                         Array.prototype.map
@@ -80,7 +79,7 @@ function SetlistViewContent() {
                     );
                     setSetlist(JSON.parse(legacyStr));
                 } catch (err2) {
-                    console.error('All decode methods failed:', err2);
+                    console.error('Legacy decode failed:', err2);
                 }
             }
         }
@@ -104,61 +103,45 @@ function SetlistViewContent() {
         }
     };
 
-    // 画面のカード要素をそのまま高解像度キャプチャしてPNG保存
+    // 画面キャプチャPNG保存（dom-to-image-more を主軸に、html2canvas不要で不要な枠線バグゼロ）
     const handleDownloadPng = async () => {
         if (!cardRef.current || downloading) return;
         setDownloading(true);
 
         try {
-            const element = cardRef.current;
+            const node = cardRef.current;
+            const domtoimage = (await import('dom-to-image-more')).default;
 
-            // キャプチャオプション
-            const canvas = await html2canvas(element, {
-                scale: 2, // 2倍高解像度
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: '#0c0910',
-                logging: false,
-                scrollX: 0,
-                scrollY: 0,
-                windowWidth: element.scrollWidth,
-                windowHeight: element.scrollHeight
+            // dom-to-image-more でクローン生成（SVG foreignObjectベースなので余計な枠線バグが一切出ない）
+            const dataUrl = await domtoimage.toPng(node, {
+                bgcolor: '#140e1b',
+                quality: 1.0,
+                scale: 2,
+                style: {
+                    transform: 'none',
+                    margin: '0'
+                }
             });
 
-            // Blob経由で確実にダウンロード
-            canvas.toBlob((blob) => {
-                if (!blob) {
-                    // フォールバック: toDataURL
-                    const dataUrl = canvas.toDataURL('image/png');
-                    const link = document.createElement('a');
-                    link.download = `${setlist?.title || '最強セトリ'}_MaisonDeKyo.png`;
-                    link.href = dataUrl;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    setDownloading(false);
-                    return;
-                }
-
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.download = `${setlist?.title || '最強セトリ'}_MaisonDeKyo.png`;
-                link.href = url;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                setTimeout(() => URL.revokeObjectURL(url), 1000);
-                setDownloading(false);
-            }, 'image/png');
+            const link = document.createElement('a');
+            link.download = `${setlist?.title || '最強セトリ'}_MaisonDeKyo.png`;
+            link.href = dataUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         } catch (err) {
-            console.error('Capture error:', err);
-            // フォールバック（dom-to-image）
+            console.error('dom-to-image error:', err);
+            // 万が一のフォールバック
             try {
-                const domtoimage = await import('dom-to-image-more');
-                const dataUrl = await domtoimage.default.toPng(cardRef.current, {
-                    quality: 0.95,
-                    bgcolor: '#0c0910'
+                const html2canvas = (await import('html2canvas')).default;
+                const canvas = await html2canvas(cardRef.current, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#140e1b',
+                    logging: false
                 });
+                const dataUrl = canvas.toDataURL('image/png');
                 const link = document.createElement('a');
                 link.download = `${setlist?.title || '最強セトリ'}_MaisonDeKyo.png`;
                 link.href = dataUrl;
@@ -166,11 +149,11 @@ function SetlistViewContent() {
                 link.click();
                 document.body.removeChild(link);
             } catch (fallbackErr) {
-                console.error('Fallback capture error:', fallbackErr);
+                console.error('All capture methods failed:', fallbackErr);
                 alert(locale === 'zh' ? '保存图片失败，请截图保存' : '画像の保存に失敗しました。画面のスクリーンショットでも保存いただけます。');
-            } finally {
-                setDownloading(false);
             }
+        } finally {
+            setDownloading(false);
         }
     };
 
@@ -178,7 +161,7 @@ function SetlistViewContent() {
     const handleShareTwitter = () => {
         if (!setlist) return;
         const text = encodeURIComponent(
-            `【${setlist.title}】\n制作者: ${setlist.creator || 'きょーめいと'}\n私の個人的最強セトリを作りました！🎧✨\n\n#佳鏡院 #個人的最強セトリ #メゾンドきょー\n`
+            `【${setlist.title}】\n🌸 制作者: ${setlist.creator || 'きょーめいと'}\n私の個人的最強セトリを作りました！🎧✨\n\n#佳鏡院 #個人的最強セトリ #メゾンドきょー\n`
         );
         const url = encodeURIComponent(window.location.href);
         window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
@@ -186,18 +169,18 @@ function SetlistViewContent() {
 
     if (!setlist) {
         return (
-            <div className="glass-panel p-12 rounded-3xl border-white/10 text-center space-y-4 max-w-xl mx-auto my-20">
-                <div className="text-4xl">⚠️</div>
+            <div className="glass-panel p-12 rounded-3xl border border-pink-500/20 text-center space-y-4 max-w-xl mx-auto my-20">
+                <div className="text-4xl animate-bounce">🌸</div>
                 <h2 className="text-xl font-serif font-bold text-white">
                     {locale === 'zh' ? '歌单数据不存在或链接无效' : 'セトリデータが見つかりません'}
                 </h2>
-                <p className="text-sm text-[#d4c5b0]/70 font-sans">
+                <p className="text-sm text-pink-200/70 font-sans">
                     {locale === 'zh' ? '请确认链接是否完整。' : 'URLが正しいかご確認ください。'}
                 </p>
                 <div className="pt-4">
                     <Link
                         href="/songs/setlist"
-                        className="inline-block py-3 px-6 rounded-xl bg-[#c9a64e] text-black font-serif font-bold text-sm"
+                        className="inline-block py-3 px-6 rounded-2xl bg-gradient-to-r from-pink-500 to-amber-400 text-white font-serif font-bold text-sm shadow-lg shadow-pink-500/25"
                     >
                         {locale === 'zh' ? '制作新歌单' : 'セトリを作成する'}
                     </Link>
@@ -206,15 +189,82 @@ function SetlistViewContent() {
         );
     }
 
+    // 12曲を前半(0〜5)と後半(6〜11)に分割して2列配置
+    const firstColSongs = setlist.songs.slice(0, 6);
+    const secondColSongs = setlist.songs.slice(6, 12);
+
+    const renderSongItem = (song: typeof setlist.songs[0], idx: number) => {
+        const trackNum = (idx + 1).toString().padStart(2, '0');
+        const hasUrl = !!song.url;
+
+        const content = (
+            <div className="flex items-center gap-3 w-full">
+                {/* 可愛いトラック番号 */}
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-pink-500/30 to-amber-500/20 border border-pink-400/40 flex items-center justify-center font-mono font-black text-xs text-pink-200 flex-shrink-0 shadow-sm group-hover:scale-105 group-hover:border-pink-300 transition-all">
+                    {trackNum}
+                </div>
+
+                {/* 曲情報 */}
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className={`text-[9px] font-sans px-2 py-0.2 rounded-full font-bold shadow-sm ${
+                            song.category === 'original'
+                                ? 'bg-amber-400/25 text-amber-200 border border-amber-300/40'
+                                : song.category === 'cover'
+                                ? 'bg-sky-400/25 text-sky-200 border border-sky-300/40'
+                                : 'bg-pink-400/25 text-pink-200 border border-pink-300/40'
+                        }`}>
+                            {song.alias ? song.alias : song.category === 'original' ? 'オリジナル' : song.category === 'cover' ? 'カバー' : '歌枠'}
+                        </span>
+                    </div>
+                    <div className="text-white font-serif font-bold text-sm truncate group-hover:text-pink-200 transition-colors">
+                        {translateDynamicText(song.title)}
+                    </div>
+                </div>
+
+                {/* リンク誘導アイコン */}
+                {hasUrl ? (
+                    <div className="w-7 h-7 rounded-full bg-pink-500/20 border border-pink-400/30 flex items-center justify-center text-xs text-pink-200 group-hover:bg-pink-500 group-hover:text-white group-hover:scale-110 transition-all flex-shrink-0 shadow-sm">
+                        ▶
+                    </div>
+                ) : (
+                    <div className="text-[10px] text-pink-300/30 font-mono flex-shrink-0">
+                        —
+                    </div>
+                )}
+            </div>
+        );
+
+        return hasUrl ? (
+            <a
+                key={idx}
+                href={song.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 rounded-2xl bg-black/45 hover:bg-pink-950/30 border border-pink-500/20 hover:border-pink-400/60 transition-all duration-200 flex items-center group shadow-sm hover:shadow-md hover:translate-x-0.5 cursor-pointer backdrop-blur-sm"
+                title={`${song.title} を再生する`}
+            >
+                {content}
+            </a>
+        ) : (
+            <div
+                key={idx}
+                className="p-2.5 rounded-2xl bg-black/35 border border-pink-500/10 flex items-center opacity-85"
+            >
+                {content}
+            </div>
+        );
+    };
+
     return (
-        <div className="max-w-5xl w-full space-y-8 relative z-10">
+        <div className="max-w-4xl w-full space-y-6 relative z-10">
             {/* 上部アクションバー */}
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <Link
                     href="/songs/setlist"
-                    className="inline-flex items-center text-[#c9a64e] hover:text-white transition-colors group font-bold tracking-widest text-sm sm:text-base"
+                    className="inline-flex items-center text-pink-300 hover:text-white transition-colors group font-bold tracking-widest text-sm"
                 >
-                    <span className="mr-2 transform group-hover:-translate-x-1 transition-transform text-lg">←</span>
+                    <span className="mr-1.5 transform group-hover:-translate-x-1 transition-transform">←</span>
                     {locale === 'zh' ? '重新制作歌单' : '新しくセトリを作る'}
                 </Link>
 
@@ -222,14 +272,14 @@ function SetlistViewContent() {
                     {/* クリップボードコピーボタン */}
                     <button
                         onClick={handleCopyLink}
-                        className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all flex items-center gap-2 cursor-pointer border shadow-lg ${
+                        className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif font-bold transition-all flex items-center gap-2 cursor-pointer shadow-md ${
                             copied
-                                ? 'bg-emerald-600 border-emerald-400 text-white shadow-emerald-900/50'
-                                : 'bg-gradient-to-r from-[#c9a64e]/30 to-[#c9a64e]/15 border-[#c9a64e]/70 text-[#ffe29a] hover:bg-[#c9a64e]/40 hover:scale-105'
+                                ? 'bg-emerald-600 text-white shadow-emerald-900/40'
+                                : 'bg-pink-950/60 border border-pink-500/40 text-pink-200 hover:bg-pink-900/60 hover:scale-105'
                         }`}
                         title="閲覧リンクをコピー"
                     >
-                        <span className="text-base">{copied ? '✓' : '📋'}</span>
+                        <span>{copied ? '✓' : '📋'}</span>
                         <span>
                             {copied
                                 ? (locale === 'zh' ? '已复制分享链接！' : 'リンクをコピーしました！')
@@ -237,17 +287,17 @@ function SetlistViewContent() {
                         </span>
                     </button>
 
-                    {/* PNG画像ダウンロードボタン（画面キャプチャ） */}
+                    {/* PNG画像ダウンロードボタン */}
                     <button
                         onClick={handleDownloadPng}
                         disabled={downloading}
-                        className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-[#e5c97b] to-amber-500 text-black text-xs sm:text-sm font-serif font-black transition-all flex items-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(201,166,78,0.4)] hover:shadow-[0_0_30px_rgba(201,166,78,0.7)] hover:scale-105 active:scale-95 disabled:opacity-50"
-                        title="この画面をそのままPNG画像として保存"
+                        className="px-5 py-2 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-400 to-amber-400 text-white text-xs sm:text-sm font-serif font-bold transition-all flex items-center gap-2 cursor-pointer shadow-lg shadow-pink-500/30 hover:shadow-pink-500/50 hover:scale-105 active:scale-95 disabled:opacity-50"
+                        title="このセトリを可愛いPNG画像として保存"
                     >
-                        <span className="text-base">{downloading ? '⏳' : '🖼️'}</span>
+                        <span>{downloading ? '⏳' : '🌸'}</span>
                         <span>
                             {downloading
-                                ? (locale === 'zh' ? 'キャプチャ中...' : '画面キャプチャ中...')
+                                ? (locale === 'zh' ? '保存中...' : 'PNG保存中...')
                                 : (locale === 'zh' ? '保存为PNG图片' : 'セトリをPNG保存')}
                         </span>
                     </button>
@@ -255,170 +305,206 @@ function SetlistViewContent() {
                     {/* X シェアボタン */}
                     <button
                         onClick={handleShareTwitter}
-                        className="px-4 py-2.5 rounded-xl bg-black/80 hover:bg-black border border-white/20 hover:border-sky-400 text-white text-xs sm:text-sm font-serif font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
+                        className="px-4 py-2 rounded-2xl bg-black/80 hover:bg-black border border-white/20 hover:border-sky-400 text-white text-xs sm:text-sm font-serif font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
                         title="Xでポスト"
                     >
                         <span className="text-sky-400 font-sans">𝕏</span>
-                        <span className="hidden sm:inline">{locale === 'zh' ? '分享' : 'シェア'}</span>
+                        <span className="hidden sm:inline">{locale === 'zh' ? 'シェア' : 'シェア'}</span>
                     </button>
                 </div>
             </div>
 
             {/* コピー完了トースト通知 */}
             {copied && (
-                <div className="fixed bottom-6 right-6 z-50 bg-emerald-700/95 border-2 border-emerald-400 text-white px-6 py-3.5 rounded-2xl shadow-2xl backdrop-blur-md flex items-center gap-3 font-serif text-sm animate-bounce">
-                    <span className="text-lg">✓</span>
+                <div className="fixed bottom-6 right-6 z-50 bg-pink-700/95 border-2 border-pink-300 text-white px-6 py-3.5 rounded-2xl shadow-2xl backdrop-blur-md flex items-center gap-3 font-serif text-sm animate-bounce">
+                    <span className="text-lg">🌸</span>
                     <span>{locale === 'zh' ? '閲覧用链接已成功复制到剪贴板！' : '閲覧用リンクをクリップボードにコピーしました！'}</span>
                 </div>
             )}
 
-            {/* 閲覧用ポスターカード本体（画面表示 ＆ キャプチャ対象） */}
+            {/* 🌸 可愛いセトリ表示カード本体（画面表示 ＆ PNGキャプチャ対象） 🌸 */}
             <div
                 ref={cardRef}
                 style={{
-                    backgroundColor: '#0c0910',
-                    backgroundImage: 'linear-gradient(135deg, #0c0910 0%, #130f1a 50%, #1a120b 100%)'
+                    backgroundColor: '#140e1b',
+                    backgroundImage: 'linear-gradient(135deg, #140e1b 0%, #201322 50%, #170f1a 100%)',
+                    borderRadius: '2rem',
+                    border: '2px solid rgba(244, 114, 182, 0.4)',
+                    boxShadow: '0 0 40px rgba(244, 114, 182, 0.15)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    padding: '2rem'
                 }}
-                className="border-2 border-[#c9a64e]/70 rounded-[2.5rem] p-5 sm:p-9 md:p-12 shadow-[0_0_60px_rgba(201,166,78,0.3)] relative overflow-hidden text-left"
+                className="text-left select-none"
             >
-                {/* 装飾の和モダン四隅コーナーアクセント */}
-                <div className="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-[#ffe29a] pointer-events-none" />
-                <div className="absolute top-4 right-4 w-6 h-6 border-t-2 border-r-2 border-[#ffe29a] pointer-events-none" />
-                <div className="absolute bottom-4 left-4 w-6 h-6 border-b-2 border-l-2 border-[#ffe29a] pointer-events-none" />
-                <div className="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-[#ffe29a] pointer-events-none" />
+                {/* 🌸 背景透過キャラ素材（右〜中央背面に大きくふんわり配置） 🌸 */}
+                <div
+                    style={{
+                        position: 'absolute',
+                        right: '-2%',
+                        bottom: '-5%',
+                        width: '56%',
+                        maxHeight: '95%',
+                        opacity: 0.28,
+                        pointerEvents: 'none',
+                        zIndex: 0,
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        alignItems: 'flex-end'
+                    }}
+                >
+                    <img
+                        src={characterDataUrl}
+                        alt="佳鏡院"
+                        style={{
+                            width: '100%',
+                            height: 'auto',
+                            maxHeight: '750px',
+                            objectFit: 'contain',
+                            filter: 'drop-shadow(0 0 20px rgba(244,114,182,0.4))'
+                        }}
+                    />
+                </div>
 
-                {/* ヘッダーエリア */}
-                <header className="border-b border-[#c9a64e]/30 pb-5 mb-6 relative z-10">
-                    <div className="flex items-center gap-2 text-xs font-sans font-black tracking-[0.4em] uppercase text-[#c9a64e] mb-2 drop-shadow">
-                        <span>✦ MAISON DE KYO ✦</span>
-                        <span className="text-[#ffe29a]/60">SPECIAL SETLIST</span>
+                {/* 背景のやわらかい光輪 */}
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: '-10%',
+                        right: '10%',
+                        width: '350px',
+                        height: '350px',
+                        borderRadius: '50%',
+                        background: 'radial-gradient(circle, rgba(244,114,182,0.18) 0%, rgba(251,191,36,0.08) 50%, transparent 70%)',
+                        pointerEvents: 'none',
+                        zIndex: 0
+                    }}
+                />
+
+                {/* 🌸 ヘッダーエリア（タイトル＆制作者名を大きく可愛く表示） 🌸 */}
+                <header
+                    style={{
+                        position: 'relative',
+                        zIndex: 1,
+                        borderBottom: '1px solid rgba(244, 114, 182, 0.25)',
+                        paddingBottom: '1.5rem',
+                        marginBottom: '1.5rem',
+                        textAlign: 'center'
+                    }}
+                >
+                    {/* かわいいリボンバッジ */}
+                    <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-pink-500/20 border border-pink-400/40 text-pink-200 text-xs font-serif font-bold tracking-widest uppercase mb-3 shadow-sm">
+                        <span>🌸</span>
+                        <span>MAISON DE KYO SPECIAL SETLIST</span>
+                        <span>🌸</span>
                     </div>
 
-                    <h1 className="text-2xl sm:text-4xl md:text-5xl font-serif font-black text-white text-outline mb-3 tracking-wide drop-shadow-md">
+                    {/* 超大型タイトル */}
+                    <h1
+                        style={{
+                            fontSize: 'clamp(2rem, 5vw, 3.2rem)',
+                            fontWeight: 900,
+                            lineHeight: 1.2,
+                            letterSpacing: '0.04em',
+                            margin: '0.2rem 0 0.8rem 0',
+                            background: 'linear-gradient(to right, #ffffff, #fed7aa, #fbcfe8)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            filter: 'drop-shadow(0 2px 8px rgba(244,114,182,0.3))'
+                        }}
+                        className="font-serif font-black"
+                    >
                         {setlist.title}
                     </h1>
 
-                    <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm font-serif">
-                        <div className="px-4 py-1.5 rounded-full bg-black/70 border border-[#c9a64e]/60 text-[#ffe29a] shadow-inner flex items-center gap-2">
-                            <span>👤</span>
-                            <span>Selected by:</span>
-                            <strong className="text-white font-bold text-sm sm:text-base">{setlist.creator || 'きょーめいと'}</strong>
+                    {/* 超目立つ制作者名表示 */}
+                    <div className="flex flex-wrap items-center justify-center gap-3 text-sm font-serif">
+                        <div
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(244,114,182,0.2) 0%, rgba(251,191,36,0.15) 100%)',
+                                border: '1.5px solid rgba(244, 114, 182, 0.5)',
+                                padding: '0.5rem 1.4rem',
+                                borderRadius: '9999px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                boxShadow: '0 4px 15px rgba(244,114,182,0.15)'
+                            }}
+                        >
+                            <span className="text-base">🎀</span>
+                            <span className="text-pink-200 text-xs sm:text-sm font-medium">Selected by:</span>
+                            <span
+                                style={{
+                                    fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)',
+                                    fontWeight: 900,
+                                    color: '#ffffff',
+                                    letterSpacing: '0.02em'
+                                }}
+                            >
+                                {setlist.creator || 'きょーめいと'}
+                            </span>
+                            <span className="text-base">✨</span>
                         </div>
-                        <div className="px-3 py-1.5 rounded-full bg-black/50 border border-white/15 text-[#d4c5b0]/80 font-mono text-xs">
+
+                        <div className="px-3.5 py-1.5 rounded-full bg-black/40 border border-pink-400/20 text-pink-200/80 font-mono text-xs">
                             12 SPECIAL TRACKS
                         </div>
                     </div>
                 </header>
 
-                {/* メインレイアウト: トラックリスト と 透過キャラ */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative z-10">
-                    {/* 左側: 12曲のトラックリスト (幅7〜8列) */}
-                    <div className="lg:col-span-7 xl:col-span-8 space-y-2 sm:space-y-2.5">
-                        {setlist.songs.map((song, idx) => {
-                            const trackNum = (idx + 1).toString().padStart(2, '0');
-                            const hasUrl = !!song.url;
-
-                            const itemInner = (
-                                <>
-                                    {/* ナンバリングバッジ */}
-                                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-black/80 border border-[#c9a64e]/60 flex items-center justify-center font-mono font-black text-xs sm:text-sm text-[#ffe29a] flex-shrink-0 group-hover:border-[#c9a64e] group-hover:bg-[#c9a64e] group-hover:text-black transition-all shadow-md">
-                                        {trackNum}
-                                    </div>
-
-                                    {/* 曲名 & カテゴリ */}
-                                    <div className="flex-1 overflow-hidden">
-                                        <div className="flex items-center gap-2 mb-0.5">
-                                            <span className={`text-[9px] font-sans px-2 py-0.2 rounded font-bold ${
-                                                song.category === 'original'
-                                                    ? 'bg-[#c9a64e]/20 text-[#ffe29a] border border-[#c9a64e]/40'
-                                                    : song.category === 'cover'
-                                                    ? 'bg-blue-500/20 text-blue-200 border border-blue-500/40'
-                                                    : 'bg-purple-500/20 text-purple-200 border border-purple-500/40'
-                                            }`}>
-                                                {song.alias ? song.alias : song.category === 'original' ? 'オリジナル' : song.category === 'cover' ? 'カバー' : '歌枠'}
-                                            </span>
-                                        </div>
-                                        <div className="text-white font-serif font-bold text-sm sm:text-base truncate group-hover:text-[#ffe29a] transition-colors">
-                                            {translateDynamicText(song.title)}
-                                        </div>
-                                    </div>
-
-                                    {/* リンク誘導アイコン */}
-                                    {hasUrl ? (
-                                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#c9a64e]/15 border border-[#c9a64e]/40 flex items-center justify-center text-xs text-[#ffe29a] group-hover:bg-[#c9a64e] group-hover:text-black group-hover:scale-110 transition-all flex-shrink-0 shadow">
-                                            ↗
-                                        </div>
-                                    ) : (
-                                        <div className="text-[10px] text-[#d4c5b0]/40 font-mono flex-shrink-0">
-                                            —
-                                        </div>
-                                    )}
-                                </>
-                            );
-
-                            return hasUrl ? (
-                                <a
-                                    key={idx}
-                                    href={song.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="p-2.5 sm:p-3 rounded-2xl bg-black/60 hover:bg-[#c9a64e]/15 border border-[#c9a64e]/25 hover:border-[#c9a64e] transition-all duration-300 flex items-center gap-3 sm:gap-3.5 group shadow-md hover:shadow-[0_0_15px_rgba(201,166,78,0.25)] hover:translate-x-1 cursor-pointer"
-                                    title={`${song.title} を再生する (新しいタブで開く)`}
-                                >
-                                    {itemInner}
-                                </a>
-                            ) : (
-                                <div
-                                    key={idx}
-                                    className="p-2.5 sm:p-3 rounded-2xl bg-black/40 border border-white/5 flex items-center gap-3 sm:gap-3.5 opacity-80"
-                                >
-                                    {itemInner}
-                                </div>
-                            );
-                        })}
+                {/* 🌸 12曲トラックリスト（2列レイアウトでバランス良く可愛く配置） 🌸 */}
+                <div
+                    style={{
+                        position: 'relative',
+                        zIndex: 1
+                    }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3"
+                >
+                    {/* 左列 (Track 01〜06) */}
+                    <div className="space-y-2.5">
+                        {firstColSongs.map((song, i) => renderSongItem(song, i))}
                     </div>
 
-                    {/* 右側: 佳鏡院の歌唱立ち絵キャラクター (幅4〜5列、カッコよく前面配置) */}
-                    <div className="lg:col-span-5 xl:col-span-4 flex flex-col items-center justify-center relative pt-4 lg:pt-0">
-                        <div className="relative w-full max-w-[280px] sm:max-w-[320px] lg:max-w-none flex justify-center">
-                            {/* キャラの背景オーラ・後光 */}
-                            <div className="absolute inset-0 bg-radial from-[#c9a64e]/25 via-purple-600/10 to-transparent blur-2xl rounded-full pointer-events-none" />
-
-                            {/* 透過キャラ画像 */}
-                            <img
-                                src={characterDataUrl}
-                                alt="佳鏡院"
-                                className="relative z-10 w-full h-auto object-contain max-h-[640px] drop-shadow-[0_0_25px_rgba(201,166,78,0.55)] select-none"
-                            />
-
-                            {/* 足元フェード */}
-                            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#1a120b] via-[#1a120b]/60 to-transparent z-20 pointer-events-none" />
-                        </div>
-
-                        {/* キャラクタースタンプ・クレジットバッジ */}
-                        <div className="mt-2 px-4 py-1.5 rounded-full bg-black/70 border border-[#c9a64e]/40 text-[#c9a64e] text-xs font-serif font-black tracking-widest text-center shadow-lg">
-                            佳鏡院 - Maison de Kyo
-                        </div>
+                    {/* 右列 (Track 07〜12) */}
+                    <div className="space-y-2.5">
+                        {secondColSongs.map((song, i) => renderSongItem(song, i + 6))}
                     </div>
                 </div>
 
-                {/* カードフッター */}
-                <footer className="pt-5 mt-6 border-t border-[#c9a64e]/30 flex flex-col sm:flex-row items-center justify-between text-xs text-[#d4c5b0]/70 font-serif gap-2 relative z-10">
-                    <div className="flex items-center gap-2">
-                        <span className="text-[#c9a64e]">❖</span>
-                        <span>Maison de Kyo Official Fan Setlist</span>
+                {/* 🌸 フッターエリア 🌸 */}
+                <footer
+                    style={{
+                        position: 'relative',
+                        zIndex: 1,
+                        borderTop: '1px solid rgba(244, 114, 182, 0.25)',
+                        paddingTop: '1.2rem',
+                        marginTop: '1.5rem',
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontSize: '0.75rem',
+                        color: 'rgba(251, 207, 232, 0.7)'
+                    }}
+                    className="font-serif"
+                >
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-pink-400">🌸</span>
+                        <span className="font-bold text-pink-200">佳鏡院 (Kakyo-in)</span>
+                        <span>— Maison de Kyo Fan Setlist</span>
                     </div>
-                    <div className="text-[11px] font-sans text-center sm:text-right text-[#ffe29a]/90">
-                        ※ 曲をタップすると試聴・動画リンクへジャンプします
+                    <div className="text-[11px] text-pink-300/80">
+                        ※ 曲をタップすると動画・試聴先へジャンプします 🎵
                     </div>
                 </footer>
             </div>
 
             {/* 下部リンク */}
-            <div className="text-center pt-4">
+            <div className="text-center pt-2">
                 <Link
                     href="/songs"
-                    className="inline-block text-xs font-serif text-[#d4c5b0]/70 hover:text-white transition-colors"
+                    className="inline-block text-xs font-serif text-pink-300/70 hover:text-white transition-colors"
                 >
                     ← きょーの一曲 トップへ
                 </Link>
@@ -429,8 +515,8 @@ function SetlistViewContent() {
 
 export default function SetlistViewPage() {
     return (
-        <main className="min-h-screen bg-transparent p-4 sm:p-8 md:p-16 relative overflow-hidden flex flex-col items-center">
-            <Suspense fallback={<div className="text-white font-serif py-20">Loading setlist...</div>}>
+        <main className="min-h-screen bg-transparent p-4 sm:p-8 md:p-12 relative overflow-hidden flex flex-col items-center">
+            <Suspense fallback={<div className="text-pink-200 font-serif py-20">Loading setlist...</div>}>
                 <SetlistViewContent />
             </Suspense>
         </main>
